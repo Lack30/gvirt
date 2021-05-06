@@ -22,6 +22,40 @@
 
 package gkvm
 
-type Volume interface {
+type Unit string
 
+const (
+	UnitBytes = "bytes"
+	UnitM     = "M"
+	UnitG     = "G"
+	UnitT     = "T"
+)
+
+type Capacity struct {
+	Unit Unit   `xml:"unit,attr" json:"unit,omitempty"`
+	Data uint64 `xml:",chardata" json:"data,omitempty"`
 }
+
+type Allocation struct {
+	Unit Unit   `xml:"unit,attr" json:"unit,omitempty"`
+	Data uint64 `xml:",chardata" json:"data,omitempty"`
+}
+
+type Available struct {
+	Unit Unit   `xml:"unit,attr" json:"unit,omitempty"`
+	Data uint64 `xml:",chardata" json:"data,omitempty"`
+}
+
+type Permissions struct {
+	Model int32  `xml:"model" json:"model"`
+	Owner int32  `xml:"owner" json:"owner"`
+	Group int32  `xml:"group" json:"group"`
+	Label string `xml:"label" json:"label"`
+}
+
+type ButtonState string
+
+const (
+	ButtonStateYes = "yes"
+	ButtonStateNo  = "no"
+)

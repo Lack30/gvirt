@@ -63,11 +63,14 @@ func main() {
 	//libvirt.EventRegisterDefaultImpl()
 	//libvirt.EventRegisterImpl(libvirt.EventLoop())
 
-	d.Suspend()
-	d.Resume()
-	d.Shutdown()
-	d.Destroy()
-	d.Undefine()
+
+	//d.SendKey()
+
+	_ = d.Suspend()
+	_ = d.Resume()
+	_ = d.Shutdown()
+	_ = d.Destroy()
+	_ = d.Undefine()
 
 	uuid, err := d.GetUUIDString()
 	if err != nil {

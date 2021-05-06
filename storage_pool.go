@@ -22,6 +22,6 @@
 
 package gkvm
 
-type Volume interface {
-
+type Pool interface {
+	GetXmlInfo() (StoragePoolXml, error)
 }

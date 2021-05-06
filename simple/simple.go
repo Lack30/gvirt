@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/url"
 
 	libvirt "libvirt.org/libvirt-go"
 )
@@ -13,6 +14,12 @@ func main() {
 		log.Fatalln(err)
 	}
 	defer conn.Close()
+
+	u, _ := conn.GetURI()
+	uu, _ := url.Parse(u)
+	fmt.Println(uu.Scheme)
+	fmt.Println(conn.GetVersion())
+	fmt.Println(conn.GetLibVersion())
 
 	doms, err := conn.ListAllDomains(libvirt.CONNECT_LIST_DOMAINS_ACTIVE | libvirt.CONNECT_LIST_DOMAINS_INACTIVE)
 	if err != nil {
@@ -26,6 +33,8 @@ func main() {
 		uuid, _ := dom.GetUUIDString()
 		name, _ := dom.GetName()
 		info, _ := dom.GetInfo()
+		hostname, _ := dom.GetHostname(libvirt.DOMAIN_GET_HOSTNAME_AGENT)
+		fmt.Println(hostname)
 		fmt.Printf("%d \t %s \t %s\t %d \n", id, string(uuid), name, info.State)
 		_ = dom.Free()
 	}
@@ -59,7 +68,8 @@ func main() {
 	//	log.Fatalln(err)
 	//}
 	//for _, pool := range pools {
-	//	n, _ := pool.GetName()
-	//	fmt.Println(n)
+	//	x, _ := pool.GetXMLDesc(libvirt.STORAGE_XML_INACTIVE)
+	//	fmt.Println(x)
+	//	//info, _ := pool.GetInfo()
 	//}
 }
