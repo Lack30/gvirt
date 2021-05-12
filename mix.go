@@ -59,3 +59,13 @@ const (
 	ButtonStateYes = "yes"
 	ButtonStateNo  = "no"
 )
+
+type Entry struct {
+	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
+	File string `xml:"file,attr,omitempty" json:"file,omitempty"`
+	Data string `xml:",chardata" json:"data"`
+}
+
+type Entries struct {
+	Entry []Entry `xml:"entry" json:"entry"`
+}
