@@ -62,11 +62,11 @@ type StoragePoolXml struct {
 
 	UUID string `xml:"uuid" json:"uuid"`
 
-	Allocation Allocation `xml:"allocation" json:"allocation"`
+	Allocation Size `xml:"allocation" json:"allocation"`
 
-	Capacity Capacity `xml:"capacity" json:"capacity"`
+	Capacity Size `xml:"capacity" json:"capacity"`
 
-	Available Available `xml:"available" json:"available"`
+	Available Size `xml:"available" json:"available"`
 
 	// some pools support optional features
 	Features *StoragePoolFeatures `xml:"features,omitempty" json:"features,omitempty"`
@@ -251,9 +251,9 @@ const (
 type StorageVolumeXml struct {
 	Name string `xml:"name" json:"name"`
 
-	Allocation Allocation `xml:"allocation" json:"allocation"`
+	Allocation Size `xml:"allocation" json:"allocation"`
 
-	Capacity Capacity `xml:"capacity" json:"capacity"`
+	Capacity Size `xml:"capacity" json:"capacity"`
 
 	Target StoragePoolTarget `xml:"target" json:"target"`
 }

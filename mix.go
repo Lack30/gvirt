@@ -29,21 +29,15 @@ const (
 	UnitM     = "M"
 	UnitG     = "G"
 	UnitT     = "T"
+	UnitKiB   = "KiB"
+	UnitMiB   = "MiB"
+	UnitGiB   = "GiB"
+	UnitTiB   = "TiB"
 )
 
-type Capacity struct {
-	Unit Unit   `xml:"unit,attr" json:"unit,omitempty"`
-	Data uint64 `xml:",chardata" json:"data,omitempty"`
-}
-
-type Allocation struct {
-	Unit Unit   `xml:"unit,attr" json:"unit,omitempty"`
-	Data uint64 `xml:",chardata" json:"data,omitempty"`
-}
-
-type Available struct {
-	Unit Unit   `xml:"unit,attr" json:"unit,omitempty"`
-	Data uint64 `xml:",chardata" json:"data,omitempty"`
+type Size struct {
+	Unit Unit  `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+	Data int64 `xml:",chardata" json:"data,omitempty"`
 }
 
 type Permissions struct {
@@ -60,6 +54,13 @@ const (
 	ButtonStateNo  = "no"
 )
 
+type TurnState string
+
+const (
+	TurnStateOn  TurnState = "no"
+	TurnStateOff TurnState = "off"
+)
+
 type Entry struct {
 	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 	File string `xml:"file,attr,omitempty" json:"file,omitempty"`
@@ -68,4 +69,7 @@ type Entry struct {
 
 type Entries struct {
 	Entry []Entry `xml:"entry" json:"entry"`
+}
+
+type Empty struct {
 }

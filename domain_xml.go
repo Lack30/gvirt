@@ -47,12 +47,6 @@ const (
 	DomainLoaderTypeRom DomainLoaderType = "rom"
 )
 
-type DomainOSSmbiosMode string
-
-const (
-	DomainOSSmbiosModeSysInfo DomainOSSmbiosMode = "sysinfo"
-)
-
 type DomainXml struct {
 	// Type specifies the hypervisor used for running the domain. The allowed values
 	// are driver specific, but include "xen", "kvm", "qemu" and "lxc".
@@ -135,6 +129,93 @@ type DomainXml struct {
 	// to be enabled as well. All non-hotpluggable CPUs present at boot need to be grouped after vCPU 0.
 	// Since 2.2.0 (QEMU only)
 	Vcpus *Vcpus `xml:"vcpus,omitempty" json:"vcpus,omitempty"`
+
+	// The content of this optional element defines the number of IOThreads to be assigned to the domain for use
+	// by supported target storage devices. There should be only 1 or 2 IOThreads per host CPU. There may be more
+	// than one supported device assigned to each IOThread.
+	// Since 1.2.8
+	IOThreads *DomainIOThreads `xml:"iothreads,omitempty" json:"iothreads,omitempty"`
+
+	// The optional iothreadids element provides the capability to specifically define the IOThread ID's for the
+	// domain. By default, IOThread ID's are sequentially numbered starting from 1 through the number of iothreads
+	// defined for the domain. The id attribute is used to define the IOThread ID. The id attribute must be a positive
+	// integer greater than 0. If there are less iothreadids defined than iothreads defined for the domain, then
+	// libvirt will sequentially fill iothreadids starting at 1 avoiding any predefined id. If there are more
+	// iothreadids defined than iothreads defined for the domain, then the iothreads value will be adjusted accordingly.
+	// Since 1.2.15
+	IOThreadIds *DomainIOThreadIds `xml:"iothreadids,omitempty" json:"iothreadids,omitempty"`
+
+	// The optional cputune element provides details regarding the CPU tunable parameters for the domain.
+	// Note: for the qemu driver, the optional vcpupin and emulatorpin pinning settings are honored after
+	// the emulator is launched and NUMA constraints considered. This means that it is expected that other
+	// physical CPUs of the host will be used during this time by the domain, which will be reflected by
+	// the output of virsh cpu-stats.
+	// Since 0.9.0
+	CpuTune *DomainCpuTune `xml:"cputune,omitempty" json:"cputune,omitempty"`
+
+	// The run time maximum memory allocation of the guest. The initial memory specified by either the <memory>
+	// element or the NUMA cell size configuration can be increased by hot-plugging of memory to the limit
+	// specified by this element. The unit attribute behaves the same as for <memory>. The slots attribute
+	// specifies the number of slots available for adding memory to the guest. The bounds are hypervisor
+	// specific. Note that due to alignment of the memory chunks added via memory hotplug the full size
+	// allocation specified by this element may be impossible to achieve.
+	// Since 1.2.14 supported by the QEMU driver.
+	MaxMemory *DomainMaxMemory `xml:"maxMemory,omitempty" json:"maxMemory,omitempty"`
+
+	// The maximum allocation of memory for the guest at boot time. The memory allocation includes possible
+	// additional memory devices specified at start or hotplugged later. The units for this value are determined
+	// by the optional attribute unit, which defaults to "KiB" (kibibytes, 210 or blocks of 1024 bytes). Valid units are
+	// "b" or "bytes" for bytes, "KB" for kilobytes (103 or 1,000 bytes), "k" or "KiB" for kibibytes (1024 bytes),
+	// "MB" for megabytes (106 or 1,000,000 bytes), "M" or "MiB" for mebibytes (220 or 1,048,576 bytes),
+	// "GB" for gigabytes (109 or 1,000,000,000 bytes), "G" or "GiB" for gibibytes (230 or 1,073,741,824 bytes),
+	// "TB" for terabytes (1012 or 1,000,000,000,000 bytes), or "T" or "TiB" for tebibytes (240 or 1,099,511,627,776 bytes).
+	// However, the value will be rounded up to the nearest kibibyte by libvirt, and may be further rounded to
+	// the granularity supported by the hypervisor. Some hypervisors also enforce a minimum, such as 4000KiB.
+	// In case NUMA is configured for the guest the memory element can be omitted. In the case of crash,
+	// optional attribute dumpCore can be used to control whether the guest memory should be included in the generated
+	// coredump or not (values "on", "off").
+	// unit since 0.9.11 , dumpCore since 0.10.2 (QEMU only)
+	Memory DomainMemory `xml:"memory,omitempty" json:"memory,omitempty"`
+
+	// The actual allocation of memory for the guest. This value can be less than the maximum allocation, to allow
+	// for ballooning up the guests memory on the fly. If this is omitted, it defaults to the same value as the
+	// memory element. The unit attribute behaves the same as for memory.
+	CurrentMemory *DomainCurrentMemory `xml:"currentMemory,omitempty" json:"currentMemory,omitempty"`
+
+	// The optional memoryBacking element may contain several elements that influence how virtual memory
+	// pages are backed by host pages.
+	MemoryBacking *DomainMemoryBacking `xml:"memoryBacking,omitempty" json:"memoryBacking,omitempty"`
+
+	// The optional memtune element provides details regarding the memory tunable parameters for the domain.
+	// If this is omitted, it defaults to the OS provided defaults. For QEMU/KVM, the parameters are applied
+	// to the QEMU process as a whole. Thus, when counting them, one needs to add up guest RAM, guest video
+	// RAM, and some memory overhead of QEMU itself. The last piece is hard to determine so one needs guess
+	// and try. For each tunable, it is possible to designate which unit the number is in on input, using the
+	// same values as for <memory>. For backwards compatibility, output is always in KiB. unit since 0.9.11
+	// Possible values for all *_limit parameters are in range from 0 to VIR_DOMAIN_MEMORY_PARAM_UNLIMITED.
+	MemTune *DomainMemTune `xml:"memtune,omitempty" json:"memtune,omitempty"`
+
+	// The optional numatune element provides details of how to tune the performance of a NUMA host via controlling
+	// NUMA policy for domain process. NB, only supported by QEMU driver.
+	// Since 0.9.3
+	NumaTune *DomainNumaTune `xml:"numatune,omitempty" json:"numatune,omitempty"`
+
+	// The optional blkiotune element provides the ability to tune Blkio cgroup tunable parameters for the domain.
+	// If this is omitted, it defaults to the OS provided defaults.
+	// Since 0.8.8
+	BlkioTune *DomainBlkioTune `xml:"blkiotune,omitempty" json:"blkiotune,omitempty"`
+
+	// Hypervisors may allow for virtual machines to be placed into resource partitions, potentially with nesting
+	// of said partitions. The resource element groups together configuration related to resource partitioning.
+	// It currently supports a child element partition whose content defines the absolute path of the resource
+	// partition in which to place the domain. If no partition is listed, then the domain will be placed in a
+	// default partition. It is the responsibility of the app/admin to ensure that the partition exists prior to
+	// starting the guest. Only the (hypervisor specific) default partition can be assumed to exist by default.
+	//
+	// Resource partitions are currently supported by the QEMU and LXC drivers, which map partition paths to
+	// cgroups directories, in all mounted controllers.
+	// Since 1.0.5
+	Resource *DomainResource `xml:"resource,omitempty" json:"resource,omitempty"`
 }
 
 type DomainMetadata struct {
@@ -315,6 +396,12 @@ type DomainBootMenu struct {
 	Timeout int64 `xml:"timeout,attr" json:"timeout"`
 }
 
+type DomainOSSmbiosMode string
+
+const (
+	DomainOSSmbiosModeSysInfo DomainOSSmbiosMode = "sysinfo"
+)
+
 type DomainSmbios struct {
 	Mode DomainOSSmbiosMode `xml:"mode,attr" json:"mode"`
 }
@@ -442,4 +529,435 @@ type Vcpu struct {
 
 type Vcpus struct {
 	Vcpu []Vcpu `xml:"vcpu,omitempty" json:"vcpu,omitempty"`
+}
+
+type DomainIOThreadIds struct {
+	DomainIOThread []DomainIOThread `xml:"iothread,omitempty" json:"iothread,omitempty"`
+}
+
+type DomainIOThread struct {
+	Id int32 `xml:"id,attr" json:"id,omitempty"`
+}
+
+type DomainIOThreads struct {
+	Data int32 `xml:",chardata" json:"data"`
+}
+
+type DomainCpuTune struct {
+	// The optional vcpupin element specifies which of host's physical CPUs the domain vCPU will
+	// be pinned to. If this is omitted, and attribute cpuset of element vcpu is not specified,
+	// the vCPU is pinned to all the physical CPUs by default. It contains two required attributes,
+	// the attribute vcpu specifies vCPU id, and the attribute cpuset is same as attribute cpuset of
+	// element vcpu. QEMU driver support since 0.9.0, Xen driver support since 0.9.1
+	VcpuPin []DomainVcpuPin `xml:"vcpupin,omitempty" json:"vcpupin,omitempty"`
+
+	// The optional emulatorpin element specifies which of host physical CPUs the "emulator",
+	// a subset of a domain not including vCPU or iothreads will be pinned to. If this is omitted,
+	// and attribute cpuset of element vcpu is not specified, "emulator" is pinned to all the physical
+	// CPUs by default. It contains one required attribute cpuset specifying which physical CPUs to pin to.
+	Emulatorpin DomainEmulatorpin `xml:"emulatorpin,omitempty" json:"emulatorpin,omitempty"`
+
+	// The optional iothreadpin element specifies which of host physical CPUs the IOThreads will be pinned to.
+	// If this is omitted and attribute cpuset of element vcpu is not specified, the IOThreads are pinned to
+	// all the physical CPUs by default. There are two required attributes, the attribute iothread specifies
+	// the IOThread ID and the attribute cpuset specifying which physical CPUs to pin to. See the iothreadids
+	// description for valid iothread values.
+	// Since 1.2.9
+	IOThreadPin []DomainIOThreadPin `xml:"iothreadpin,omitempty" json:"iothreadpin,omitempty"`
+
+	// The optional shares element specifies the proportional weighted share for the domain. If this is omitted,
+	// it defaults to the OS provided defaults. NB, There is no unit for the value, it's a relative measure based
+	// on the setting of other VM, e.g. A VM configured with value 2048 will get twice as much CPU time as a
+	// VM configured with value 1024. The value should be in range [2, 262144].
+	// Since 0.9.0
+	Shares int64 `xml:"shares,omitempty" json:"shares,omitempty"`
+
+	// The optional period element specifies the enforcement interval (unit: microseconds). Within period, each
+	// vCPU of the domain will not be allowed to consume more than quota worth of runtime. The value should be
+	// in range [1000, 1000000]. A period with value 0 means no value.
+	// Only QEMU driver support since 0.9.4, LXC since 0.9.10
+	Period int64 `xml:"period,omitempty" json:"period,omitempty"`
+
+	// The optional quota element specifies the maximum allowed bandwidth (unit: microseconds). A domain with
+	// quota as any negative value indicates that the domain has infinite bandwidth for vCPU threads, which
+	// means that it is not bandwidth controlled. The value should be in range [1000, 17592186044415] or
+	// less than 0. A quota with value 0 means no value. You can use this feature to ensure that all vCPUs
+	// run at the same speed.
+	// Only QEMU driver support since 0.9.4, LXC since 0.9.10
+	Quota int32 `xml:"quota,omitempty" json:"quota,omitempty"`
+
+	// The optional global_period element specifies the enforcement CFS scheduler interval (unit: microseconds)
+	// for the whole domain in contrast with period which enforces the interval per vCPU. The value should
+	// be in range 1000, 1000000]. A global_period with value 0 means no value.
+	// Only QEMU driver support since 1.3.3
+	GlobalPeriod int64 `xml:"global_period,omitempty" json:"global_period,omitempty"`
+
+	// The optional global_quota element specifies the maximum allowed bandwidth (unit: microseconds) within
+	// a period for the whole domain. A domain with global_quota as any negative value indicates that the domain
+	// has infinite bandwidth, which means that it is not bandwidth controlled. The value should be in range
+	// [1000, 17592186044415] or less than 0. A global_quota with value 0 means no value.
+	// Only QEMU driver support since 1.3.3
+	GlobalQuota int32 `xml:"global_quota,omitempty" json:"global_quota,omitempty"`
+
+	// The optional emulator_period element specifies the enforcement interval (unit: microseconds).
+	// Within emulator_period, emulator threads (those excluding vCPUs) of the domain will not be allowed
+	// to consume more than emulator_quota worth of runtime. The value should be in range [1000, 1000000].
+	// A period with value 0 means no value.
+	// Only QEMU driver support since 0.10.0
+	EmulatorPeriod int64 `xml:"emulator_period,omitempty" json:"emulator_period,omitempty"`
+
+	// The optional emulator_quota element specifies the maximum allowed bandwidth (unit: microseconds)
+	// for domain's emulator threads (those excluding vCPUs). A domain with emulator_quota as any negative
+	// value indicates that the domain has infinite bandwidth for emulator threads (those excluding vCPUs),
+	// which means that it is not bandwidth controlled. The value should be in range [1000, 17592186044415]
+	// or less than 0. A quota with value 0 means no value.
+	// Only QEMU driver support since 0.10.0
+	EmulatorQuota int32 `xml:"emulator_quota,omitempty" json:"emulator_quota,omitempty"`
+
+	// The optional iothread_period element specifies the enforcement interval (unit: microseconds) for IOThreads.
+	// Within iothread_period, each IOThread of the domain will not be allowed to consume more than iothread_quota
+	// worth of runtime. The value should be in range [1000, 1000000]. An iothread_period with value 0 means no value.
+	// Only QEMU driver support since 2.1.0
+	IOThreadPeriod int64 `xml:"iothread_period,omitempty" json:"iothread_period,omitempty"`
+
+	// The optional iothread_quota element specifies the maximum allowed bandwidth (unit: microseconds) for IOThreads.
+	// A domain with iothread_quota as any negative value indicates that the domain IOThreads have infinite bandwidth,
+	// which means that it is not bandwidth controlled. The value should be in range [1000, 17592186044415] or less
+	// than 0. An iothread_quota with value 0 means no value. You can use this feature to ensure that all IOThreads
+	// run at the same speed.
+	// Only QEMU driver support since 2.1.0
+	IOThreadQuota int32 `xml:"iothread_quota,omitempty" json:"iothread_quota,omitempty"`
+
+	// The optional vcpusched, iothreadsched and emulatorsched elements specify the scheduler type
+	// (values batch, idle, fifo, rr) for particular vCPU, IOThread and emulator threads respectively.
+	// For vcpusched and iothreadsched the attributes vcpus and iothreads select which vCPUs/IOThreads
+	// this setting applies to, leaving them out sets the default. The element emulatorsched does not have
+	// that attribute. Valid vcpus values start at 0 through one less than the number of vCPU's defined
+	// for the domain. Valid iothreads values are described in the iothreadids description. If no
+	// iothreadids are defined, then libvirt numbers IOThreads from 1 to the number of iothreads available
+	// for the domain. For real-time schedulers (fifo, rr), priority must be specified as well (and is
+	// ignored for non-real-time ones). The value range for the priority depends on the host kernel
+	// (usually 1-99).
+	// Since 1.2.13 emulatorsched since 5.3.0
+	Vcpusched *DomainVcpuSched `xml:"vcpusched,omitempty" json:"vcpusched,omitempty"`
+
+	IOThreadSched *DomainIOThreadSched `xml:"iothreadsched,omitempty" json:"iothreadsched,omitempty"`
+
+	// Optional cachetune element can control allocations for CPU caches using the resctrl on the host.
+	// Whether or not is this supported can be gathered from capabilities where some limitations like
+	// minimum size and required granularity are reported as well. The required attribute vcpus specifies
+	// to which vCPUs this allocation applies. A vCPU can only be member of one cachetune element allocation.
+	// The vCPUs specified by cachetune can be identical with those in memorytune, however they are not
+	// allowed to overlap.
+	CacheTune []DomainCacheTune `xml:"cachetune,omitempty" json:"cachetune,omitempty"`
+
+	// Optional memorytune element can control allocations for memory bandwidth using the resctrl on the host.
+	// Whether or not is this supported can be gathered from capabilities where some limitations like minimum
+	// bandwidth and required granularity are reported as well. The required attribute vcpus specifies to which
+	// vCPUs this allocation applies. A vCPU can only be member of one memorytune element allocation.
+	// The vcpus specified by memorytune can be identical to those specified by cachetune.
+	// However they are not allowed to overlap each other.
+	MemoryTune *DomainMemoryTune `xml:"memorytune,omitempty" json:"memorytune,omitempty"`
+}
+
+type DomainVcpuPin struct {
+	Vcpu   int32  `xml:"vcpu,attr,omitempty" json:"vcpu,omitempty"`
+	CpuSet string `xml:"cpuset,attr,omitempty" json:"cpuset,omitempty"`
+}
+
+type DomainEmulatorpin struct {
+	CpuSet string `xml:"cpuset,omitempty" json:"cpuset,omitempty"`
+}
+
+type DomainIOThreadPin struct {
+	IOThread int32  `xml:"iothread,attr,omitempty" json:"iothread,omitempty"`
+	CpuSet   string `xml:"cpuset,attr,omitempty" json:"cpuset,omitempty"`
+}
+
+type CPUSchedType string
+
+const (
+	CPUSchedTypeBatch CPUSchedType = "batch"
+	CPUSchedTypeIdle  CPUSchedType = "idle"
+	CPUSchedTypeFifo  CPUSchedType = "fifo"
+	CPUSchedTypeRR    CPUSchedType = "rr"
+)
+
+type DomainVcpuSched struct {
+	Vcpus     string       `xml:"vcpus,omitempty" json:"vcpus,omitempty"`
+	Scheduler CPUSchedType `xml:"scheduler,omitempty" json:"scheduler,omitempty"`
+	Priority  int32        `xml:"priority,omitempty" json:"priority,omitempty"`
+}
+
+type DomainIOThreadSched struct {
+	IOThreads int32        `xml:"iothreads,omitempty" json:"iothreads,omitempty"`
+	Scheduler CPUSchedType `xml:"scheduler,omitempty" json:"scheduler,omitempty"`
+}
+
+type DomainCacheTune struct {
+	Vcpus string `xml:"vcpus,attr,omitempty" json:"vcpus,omitempty"`
+
+	// This optional element controls the allocation of CPU cache
+	Cache []DomainTuneCache `xml:"cache,omitempty" json:"cache,omitempty"`
+
+	// The optional element monitor creates the cache monitor(s) for current cache allocation
+	Monitor []DomainTuneMonitor `xml:"monitor,omitempty" json:"monitor,omitempty"`
+}
+
+type CacheType string
+
+const (
+	CacheTypeCode CacheType = "code"
+	CacheTypeData CacheType = "data"
+	CacheTypeBoth CacheType = "both"
+)
+
+type DomainTuneCache struct {
+	// Host cache id from which to allocate.
+	Id int32 `xml:"id,attr,omitempty" json:"id,omitempty"`
+
+	// Host cache level from which to allocate.
+	Level int32 `xml:"level,attr,omitempty" json:"level,omitempty"`
+
+	// Type of allocation. Can be code for code (instructions), data for data or both for both code and data (unified).
+	// Currently the allocation can be done only with the same type as the host supports, meaning you cannot request
+	// both for host with CDP (code/data prioritization) enabled.
+	Type CacheType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	// The size of the region to allocate. The value by default is in bytes, but the unit attribute can
+	// be used to scale the value.
+	Size int64 `xml:"size,attr,omitempty" json:"size,omitempty"`
+
+	// If specified it is the unit such as KiB, MiB, GiB, or TiB (described in the memory element for Memory
+	// Allocation) in which size is specified, defaults to bytes.
+	Unit Unit `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+}
+
+type DomainTuneMonitor struct {
+	// Host cache level the monitor belongs to.
+	Level int32 `xml:"level,attr,omitempty" json:"level,omitempty"`
+
+	// vCPU list the monitor applies to. A monitor's vCPU list can only be the member(s) of the vCPU list
+	// of the associated allocation. The default monitor has the same vCPU list as the associated allocation.
+	// For non-default monitors, overlapping vCPUs are not permitted.
+	Vcpus string `xml:"vcpus,attr,omitempty" json:"vcpus,omitempty"`
+}
+
+type DomainMemoryTune struct {
+	Vcpus string `xml:"vcpus,attr,omitempty" json:"vcpus,omitempty"`
+
+	// This element controls the allocation of CPU memory bandwidth
+	Node []DomainTuneNode `xml:"node,attr" json:"node,omitempty"`
+}
+
+type DomainTuneNode struct {
+	// Host node id from which to allocate memory bandwidth.
+	Id int32 `xml:"id,attr,omitempty" json:"id,omitempty"`
+
+	// The memory bandwidth to allocate from this node. The value by default is in percentage.
+	BandWidth int32 `xml:"bandwidth,attr,omitempty" json:"bandwidth,omitempty"`
+}
+
+type DomainMaxMemory struct {
+	Slots int32 `xml:"slots,attr,omitempty" json:"slots,omitempty"`
+	Unit  Unit  `xml:"unit,attr,attr" json:"unit,omitempty,omitempty"`
+	Data  int64 `xml:",chardata" json:"data"`
+}
+
+type DomainMemory struct {
+	Unit Unit  `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+	Data int64 `xml:",chardata" json:"data"`
+}
+
+type DomainCurrentMemory struct {
+	Unit Unit  `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+	Data int64 `xml:",chardata" json:"data"`
+}
+
+type DomainMemoryBacking struct {
+	// This tells the hypervisor that the guest should have its memory allocated using hugepages instead of the
+	// normal native page size. Since 1.2.5 it's possible to set hugepages more specifically per numa node.
+	// The page element is introduced. It has one compulsory attribute size which specifies which hugepages
+	// should be used (especially useful on systems supporting hugepages of different sizes). The default
+	// unit for the size attribute is kilobytes (multiplier of 1024). If you want to use different unit,
+	// use optional unit attribute. For systems with NUMA, the optional nodeset attribute may come handy
+	// as it ties given guest's NUMA nodes to certain hugepage sizes. From the example snippet, one gigabyte
+	// hugepages are used for every NUMA node except node number four. For the correct syntax see this.
+	HugePages *DomainHugePages `xml:"hugepages,omitempty" json:"hugepages,omitempty"`
+
+	// Instructs hypervisor to disable shared pages (memory merge, KSM) for this domain. Since 1.0.6
+	NoSharePages *Empty `xml:"nosharepages,omitempty" json:"nosharepages,omitempty"`
+
+	// When set and supported by the hypervisor, memory pages belonging to the domain will be locked in
+	// host's memory and the host will not be allowed to swap them out, which might be required for some
+	// workloads such as real-time. For QEMU/KVM guests, the memory used by the QEMU process itself will
+	// be locked too: unlike guest memory, this is an amount libvirt has no way of figuring out in advance,
+	// so it has to remove the limit on locked memory altogether. Thus, enabling this option opens up to a
+	// potential security risk: the host will be unable to reclaim the locked memory back from the guest when
+	// it's running out of memory, which means a malicious guest allocating large amounts of locked memory
+	// could cause a denial-of-service attack on the host. Because of this, using this option is discouraged
+	// unless your workload demands it; even then, it's highly recommended to set a hard_limit (see memory tuning)
+	// on memory allocation suitable for the specific environment at the same time to mitigate the risks described above.
+	// Since 1.0.6
+	Locked *Empty `xml:"locked,omitempty" json:"locked,omitempty"`
+
+	// Using the type attribute, it's possible to provide "file" to utilize file memorybacking or keep the default "anonymous".
+	// Since 4.10.0 , you may choose "memfd" backing. (QEMU/KVM only)
+	Source *DomainMemorySource `xml:"source,attr,omitempty" json:"source,omitempty"`
+
+	// Using the mode attribute, specify if the memory is to be "shared" or "private". This can be overridden per numa node by memAccess.
+	Access *DomainMemoryAccess `xml:"access,attr,omitempty" json:"access,omitempty"`
+
+	// Using the mode attribute, specify when to allocate the memory by supplying either "immediate" or "ondemand".
+	Allocation *DomainMemoryAllocation `xml:"allocation,attr,omitempty" json:"allocation,omitempty"`
+
+	// When set and supported by hypervisor the memory content is discarded just before guest shuts down
+	// (or when DIMM module is unplugged). Please note that this is just an optimization and is not guaranteed
+	// to work in all cases (e.g. when hypervisor crashes).
+	// Since 4.4.0 (QEMU/KVM only)
+	Discard *Empty `xml:"discard,omitempty" json:"discard,omitempty"`
+}
+
+type DomainHugePages struct {
+	Page []DomainPage `xml:"page,omitempty" json:"page,omitempty"`
+}
+
+type DomainPage struct {
+	Size    int64  `xml:"size,attr" json:"size,omitempty"`
+	Unit    Unit   `xml:"unit,attr" json:"unit,omitempty"`
+	NodeSet string `xml:"nodeset,omitempty" json:"nodeset,omitempty"`
+}
+
+type MemorySourceType string
+
+const (
+	MemorySourceTypeFile      MemorySourceType = "file"
+	MemorySourceTypeAnonymous MemorySourceType = "anonymous"
+	MemorySourceTypeMemFd     MemorySourceType = "memfd"
+)
+
+type MemoryAccessMode string
+
+const (
+	MemoryAccessModeShared  MemoryAccessMode = "shared"
+	MemoryAccessModePrivate MemoryAccessMode = "private"
+)
+
+type DomainMemorySource struct {
+	Type MemorySourceType `xml:"type,attr,omitempty" json:"type,omitempty"`
+}
+
+type DomainMemoryAccess struct {
+	Mode MemoryAccessMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+}
+
+type MemoryAllocationMode string
+
+const (
+	MemoryAllocationModeShared  MemoryAllocationMode = "immediate"
+	MemoryAllocationModePrivate MemoryAllocationMode = "ondemand"
+)
+
+type DomainMemoryAllocation struct {
+	Mode MemoryAllocationMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+}
+
+type DomainMemTune struct {
+	// The optional hard_limit element is the maximum memory the guest can use. The units for this value are
+	// kibibytes (i.e. blocks of 1024 bytes). Users of QEMU and KVM are strongly advised not to set this limit
+	// as domain may get killed by the kernel if the guess is too low, and determining the memory needed for
+	// a process to run is an undecidable problem; that said, if you already set locked in memory backing
+	// because your workload demands it, you'll have to take into account the specifics of your deployment
+	// and figure out a value for hard_limit that is large enough to support the memory requirements of your
+	// guest, but small enough to protect your host against a malicious guest locking all memory.
+	HardLimit Size `xml:"hard_limit,omitempty" json:"hard_limit,omitempty"`
+
+	// The optional soft_limit element is the memory limit to enforce during memory contention.
+	// The units for this value are kibibytes (i.e. blocks of 1024 bytes)
+	SoftLimit Size `xml:"soft_limit,omitempty" json:"soft_limit,omitempty"`
+
+	// The optional swap_hard_limit element is the maximum memory plus swap the guest can use. The units for
+	// this value are kibibytes (i.e. blocks of 1024 bytes). This has to be more than hard_limit value provided
+	SwapHardLimit Size `xml:"swap_hard_limit,omitempty" json:"swap_hard_limit,omitempty"`
+
+	// The optional min_guarantee element is the guaranteed minimum memory allocation for the guest.
+	// The units for this value are kibibytes (i.e. blocks of 1024 bytes). This element is only supported
+	// by VMware ESX and OpenVZ drivers.
+	MinGuarantee Size `xml:"min_guarantee,omitempty" json:"min_guarantee,omitempty"`
+}
+
+type DomainNumaTune struct {
+	// The optional memory element specifies how to allocate memory for the domain process on a NUMA host.
+	// It contains several optional attributes. Attribute mode is either 'interleave', 'strict', 'preferred', or 'restrictive',
+	// defaults to 'strict'. The value 'restrictive' specifies using system default policy and only cgroups is used to
+	// restrict the memory nodes, and it requires setting mode to 'restrictive' in memnode elements. Attribute
+	// nodeset specifies the NUMA nodes, using the same syntax as attribute cpuset of element vcpu. Attribute
+	// placement ( since 0.9.12 ) can be used to indicate the memory placement mode for domain process, its
+	// value can be either "static" or "auto", defaults to placement of vcpu, or "static" if nodeset is specified.
+	// "auto" indicates the domain process will only allocate memory from the advisory nodeset returned from querying
+	// numad, and the value of attribute nodeset will be ignored if it's specified. If placement of vcpu is 'auto',
+	// and numatune is not specified, a default numatune with placement 'auto' and mode 'strict' will be added implicitly.
+	// Since 0.9.3
+	Memory *DomainNumaMemory `xml:"memory,omitempty" json:"memory,omitempty"`
+
+	// Optional memnode elements can specify memory allocation policies per each guest NUMA node.
+	// For those nodes having no corresponding memnode element, the default from element memory will be used.
+	// Attribute cellid addresses guest NUMA node for which the settings are applied. Attributes mode and
+	// nodeset have the same meaning and syntax as in memory element. This setting is not compatible with
+	// automatic placement.
+	// QEMU Since 1.2.7
+	MemNode []DomainNumaMemNode `xml:"memnode,omitempty" json:"memnode,omitempty"`
+}
+
+type DomainNumaMemoryMode string
+
+const (
+	DomainNumaMemoryModeInterleave  DomainNumaMemoryMode = "interleave"
+	DomainNumaMemoryModeStrict      DomainNumaMemoryMode = "strict"
+	DomainNumaMemoryModePreferred   DomainNumaMemoryMode = "preferred"
+	DomainNumaMemoryModeRestrictive DomainNumaMemoryMode = "restrictive"
+)
+
+type DomainNumaMemory struct {
+	Mode    DomainNumaMemoryMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+	NodeSet string               `xml:"nodeset,attr,omitempty" json:"nodeset,omitempty"`
+}
+
+type DomainNumaMemNode struct {
+	CellId  int32                `xml:"cellid,attr,omitempty" json:"cellid,omitempty"`
+	Mode    DomainNumaMemoryMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+	NodeSet string               `xml:"nodeset,attr,omitempty" json:"nodeset,omitempty"`
+}
+
+type DomainBlkioTune struct {
+	// The optional weight element is the overall I/O weight of the guest. The value should be in the
+	// range [100, 1000]. After kernel 2.6.39, the value could be in the range [10, 1000].
+	Weight int64 `xml:"weight,omitempty" json:"weight,omitempty"`
+
+	// The domain may have multiple device elements that further tune the weights for each host block device
+	// in use by the domain. Note that multiple guest disks can share a single host block device, if they are
+	// backed by files within the same host file system, which is why this tuning parameter is at the global
+	// domain level rather than associated with each guest disk device (contrast this to the <iotune> element
+	// which can apply to an individual <disk>). Each device element has two mandatory sub-elements, path describing
+	// the absolute path of the device, and weight giving the relative weight of that device, in the range [100, 1000].
+	// After kernel 2.6.39, the value could be in the range [10, 1000]. Since 0.9.8 Additionally, the following
+	// optional sub-elements can be used:
+	// 	read_bytes_sec  : Read throughput limit in bytes per second. Since 1.2.2
+	//  write_bytes_sec : Write throughput limit in bytes per second. Since 1.2.2
+	//  read_iops_sec   : Read I/O operations per second limit. Since 1.2.2
+	//  write_iops_sec  : Write I/O operations per second limit. Since 1.2.2
+	Device []DomainBlkioDevice `xml:"device,omitempty" json:"device,omitempty"`
+}
+
+type DomainBlkioDevice struct {
+	Path         string `xml:"path,omitempty" json:"path,omitempty"`
+	Weight       int64  `xml:"weight,omitempty" json:"weight,omitempty"`
+	ReadBytesSec int64  `xml:"read_bytes_sec,omitempty" json:"read_bytes_sec,omitempty"`
+	WriteByteSec int64  `xml:"write_byte_sec,omitempty" json:"write_byte_sec,omitempty"`
+	ReadIOPSSec  int64  `xml:"read_iops_sec,omitempty" json:"read_iops_sec,omitempty"`
+	WriteIOPSSec int64  `xml:"write_iops_sec,omitempty" json:"write_iops_sec,omitempty"`
+}
+
+type DomainResource struct {
+	Partition string `xml:"partition,omitempty" json:"partition,omitempty"`
 }
