@@ -148,3 +148,203 @@ var xml = `<domain type='kvm' id='11'>
     </rng>
   </devices>
 </domain>`
+
+const DeviceXml = `...
+<devices>
+  <disk type='file' snapshot='external'>
+    <driver name="tap" type="aio" cache="default"/>
+    <source file='/var/lib/xen/images/fv0' startupPolicy='optional'>
+      <seclabel relabel='no'/>
+    </source>
+    <target dev='hda' bus='ide'/>
+    <iotune>
+      <total_bytes_sec>10000000</total_bytes_sec>
+      <read_iops_sec>400000</read_iops_sec>
+      <write_iops_sec>100000</write_iops_sec>
+    </iotune>
+    <boot order='2'/>
+    <encryption type='...'>
+      ...
+    </encryption>
+    <shareable/>
+    <serial>
+      ...
+    </serial>
+  </disk>
+    ...
+  <disk type='network'>
+    <driver name="qemu" type="raw" io="threads" ioeventfd="on" event_idx="off"/>
+    <source protocol="sheepdog" name="image_name">
+      <host name="hostname" port="7000"/>
+    </source>
+    <target dev="hdb" bus="ide"/>
+    <boot order='1'/>
+    <transient/>
+    <address type='drive' controller='0' bus='1' unit='0'/>
+  </disk>
+  <disk type='network'>
+    <driver name="qemu" type="raw"/>
+    <source protocol="rbd" name="image_name2">
+      <host name="hostname" port="7000"/>
+      <snapshot name="snapname"/>
+      <config file="/path/to/file"/>
+      <auth username='myuser'>
+        <secret type='ceph' usage='mypassid'/>
+      </auth>
+    </source>
+    <target dev="hdc" bus="ide"/>
+  </disk>
+  <disk type='block' device='cdrom'>
+    <driver name='qemu' type='raw'/>
+    <target dev='hdd' bus='ide' tray='open'/>
+    <readonly/>
+  </disk>
+  <disk type='network' device='cdrom'>
+    <driver name='qemu' type='raw'/>
+    <source protocol="http" name="url_path" query="foo=bar&amp;baz=flurb>
+      <host name="hostname" port="80"/>
+      <cookies>
+        <cookie name="test">somevalue</cookie>
+      </cookies>
+      <readahead size='65536'/>
+      <timeout seconds='6'/>
+    </source>
+    <target dev='hde' bus='ide' tray='open'/>
+    <readonly/>
+  </disk>
+  <disk type='network' device='cdrom'>
+    <driver name='qemu' type='raw'/>
+    <source protocol="https" name="url_path">
+      <host name="hostname" port="443"/>
+      <ssl verify="no"/>
+    </source>
+    <target dev='hdf' bus='ide' tray='open'/>
+    <readonly/>
+  </disk>
+  <disk type='network' device='cdrom'>
+    <driver name='qemu' type='raw'/>
+    <source protocol="ftp" name="url_path">
+      <host name="hostname" port="21"/>
+    </source>
+    <target dev='hdg' bus='ide' tray='open'/>
+    <readonly/>
+  </disk>
+  <disk type='network' device='cdrom'>
+    <driver name='qemu' type='raw'/>
+    <source protocol="ftps" name="url_path">
+      <host name="hostname" port="990"/>
+    </source>
+    <target dev='hdh' bus='ide' tray='open'/>
+    <readonly/>
+  </disk>
+  <disk type='network' device='cdrom'>
+    <driver name='qemu' type='raw'/>
+    <source protocol="tftp" name="url_path">
+      <host name="hostname" port="69"/>
+    </source>
+    <target dev='hdi' bus='ide' tray='open' rotation_rate='7200'/>
+    <readonly/>
+  </disk>
+  <disk type='block' device='lun'>
+    <driver name='qemu' type='raw'/>
+    <source dev='/dev/sda'>
+      <slices>
+        <slice type='storage' offset='12345' size='123'/>
+      </slices>
+      <reservations managed='no'>
+        <source type='unix' path='/path/to/qemu-pr-helper' mode='client'/>
+      </reservations>
+    </source>
+    <target dev='sda' bus='scsi' rotation_rate='1'/>
+    <address type='drive' controller='0' bus='0' target='3' unit='0'/>
+  </disk>
+  <disk type='block' device='disk'>
+    <driver name='qemu' type='raw'/>
+    <source dev='/dev/sda'/>
+    <geometry cyls='16383' heads='16' secs='63' trans='lba'/>
+    <blockio logical_block_size='512' physical_block_size='4096'/>
+    <target dev='hdj' bus='ide'/>
+  </disk>
+  <disk type='volume' device='disk'>
+    <driver name='qemu' type='raw'/>
+    <source pool='blk-pool0' volume='blk-pool0-vol0'/>
+    <target dev='hdk' bus='ide'/>
+  </disk>
+  <disk type='network' device='disk'>
+    <driver name='qemu' type='raw'/>
+    <source protocol='iscsi' name='iqn.2013-07.com.example:iscsi-nopool/2'>
+      <host name='example.com' port='3260'/>
+      <auth username='myuser'>
+        <secret type='iscsi' usage='libvirtiscsi'/>
+      </auth>
+    </source>
+    <target dev='vda' bus='virtio'/>
+  </disk>
+  <disk type='network' device='lun'>
+    <driver name='qemu' type='raw'/>
+    <source protocol='iscsi' name='iqn.2013-07.com.example:iscsi-nopool/1'>
+      <host name='example.com' port='3260'/>
+      <auth username='myuser'>
+        <secret type='iscsi' usage='libvirtiscsi'/>
+      </auth>
+    </source>
+    <target dev='sdb' bus='scsi'/>
+  </disk>
+  <disk type='network' device='disk'>
+    <driver name='qemu' type='raw'/>
+    <source protocol='nfs' name='PATH'>
+      <host name='example.com'/>
+      <identity user='USER' group='GROUP'/>
+    </source>
+    <target dev='vda' bus='virtio'/>
+  </disk>
+  <disk type='network' device='lun'>
+    <driver name='qemu' type='raw'/>
+    <source protocol='iscsi' name='iqn.2013-07.com.example:iscsi-nopool/0'>
+      <host name='example.com' port='3260'/>
+      <initiator>
+        <iqn name='iqn.2013-07.com.example:client'/>
+      </initiator>
+    </source>
+    <target dev='sdb' bus='scsi'/>
+  </disk>
+  <disk type='volume' device='disk'>
+    <driver name='qemu' type='raw'/>
+    <source pool='iscsi-pool' volume='unit:0:0:1' mode='host'/>
+    <target dev='vdb' bus='virtio'/>
+  </disk>
+  <disk type='volume' device='disk'>
+    <driver name='qemu' type='raw'/>
+    <source pool='iscsi-pool' volume='unit:0:0:2' mode='direct'/>
+    <target dev='vdc' bus='virtio'/>
+  </disk>
+  <disk type='file' device='disk'>
+    <driver name='qemu' type='qcow2' queues='4'/>
+    <source file='/var/lib/libvirt/images/domain.qcow'/>
+    <backingStore type='file'>
+      <format type='qcow2'/>
+      <source file='/var/lib/libvirt/images/snapshot.qcow'/>
+      <backingStore type='block'>
+        <format type='raw'/>
+        <source dev='/dev/mapper/base'/>
+        <backingStore/>
+      </backingStore>
+    </backingStore>
+    <target dev='vdd' bus='virtio'/>
+  </disk>
+  <disk type='nvme' device='disk'>
+    <driver name='qemu' type='raw'/>
+    <source type='pci' managed='yes' namespace='1'>
+      <address domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
+    </source>
+    <target dev='vde' bus='virtio'/>
+  </disk>
+  <disk type='vhostuser' device='disk'>
+    <driver name='qemu' type='raw'/>
+    <source type='unix' path='/tmp/vhost-blk.sock'>
+      <reconnect enabled='yes' timeout='10'/>
+    </source>
+    <target dev='vdf' bus='virtio'/>
+  </disk>
+</devices>
+...`

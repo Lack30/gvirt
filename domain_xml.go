@@ -420,7 +420,7 @@ type DomainOSType struct {
 
 	Machine string `xml:"machine,attr,omitempty" json:"machine,omitempty"`
 
-	Data DomainOsType `xml:",chardata" json:"data"`
+	Value DomainOsType `xml:",chardata" json:"value"`
 }
 
 type DomainBoot struct {
@@ -428,19 +428,19 @@ type DomainBoot struct {
 }
 
 type DomainOSLoader struct {
-	ReadOnly ButtonState `xml:"readonly,attr" json:"readonly"`
+	ReadOnly ButtonState `xml:"readonly,attr,omitempty" json:"readonly,omitempty"`
 
-	Secure ButtonState `xml:"secure,attr" json:"secure"`
+	Secure ButtonState `xml:"secure,attr,omitempty" json:"secure,omitempty"`
 
-	Type DomainLoaderType `xml:"type,attr" json:"type"`
+	Type DomainLoaderType `xml:"type,attr,omitempty" json:"type,omitempty"`
 
-	Data string `xml:",chardata" json:"data"`
+	Value string `xml:",chardata" json:"value"`
 }
 
 type DomainNvram struct {
-	Template string `xml:"template,attr" json:"template"`
+	Template string `xml:"template,attr,omitempty" json:"template,omitempty"`
 
-	Data string `xml:",chardata" json:"data"`
+	Value string `xml:",chardata" json:"value"`
 }
 
 type DomainBootMenu struct {
@@ -475,8 +475,8 @@ const (
 )
 
 type DomainAcpiTable struct {
-	Type DomainAcpiType `xml:"type,attr" json:"type"`
-	Data string         `xml:",chardata" json:"data"`
+	Type  DomainAcpiType `xml:"type,attr" json:"type"`
+	Value string         `xml:",chardata" json:"value"`
 }
 
 type DomainSysInfoType string
@@ -589,11 +589,11 @@ type DomainIOThreadIds struct {
 }
 
 type DomainIOThread struct {
-	Id int32 `xml:"id,attr" json:"id,omitempty"`
+	Id int32 `xml:"id,attr,omitempty" json:"id,omitempty"`
 }
 
 type DomainIOThreads struct {
-	Data int32 `xml:",chardata" json:"data"`
+	Value int32 `xml:",chardata" json:"value"`
 }
 
 type DomainCpuTune struct {
@@ -643,21 +643,21 @@ type DomainCpuTune struct {
 	// for the whole domain in contrast with period which enforces the interval per vCPU. The value should
 	// be in range 1000, 1000000]. A global_period with value 0 means no value.
 	// Only QEMU driver support since 1.3.3
-	GlobalPeriod int64 `xml:"global_period,omitempty" json:"global_period,omitempty"`
+	GlobalPeriod int64 `xml:"global_period,omitempty" json:"globalPeriod,omitempty"`
 
 	// The optional global_quota element specifies the maximum allowed bandwidth (unit: microseconds) within
 	// a period for the whole domain. A domain with global_quota as any negative value indicates that the domain
 	// has infinite bandwidth, which means that it is not bandwidth controlled. The value should be in range
 	// [1000, 17592186044415] or less than 0. A global_quota with value 0 means no value.
 	// Only QEMU driver support since 1.3.3
-	GlobalQuota int32 `xml:"global_quota,omitempty" json:"global_quota,omitempty"`
+	GlobalQuota int32 `xml:"global_quota,omitempty" json:"globalQuota,omitempty"`
 
 	// The optional emulator_period element specifies the enforcement interval (unit: microseconds).
 	// Within emulator_period, emulator threads (those excluding vCPUs) of the domain will not be allowed
 	// to consume more than emulator_quota worth of runtime. The value should be in range [1000, 1000000].
 	// A period with value 0 means no value.
 	// Only QEMU driver support since 0.10.0
-	EmulatorPeriod int64 `xml:"emulator_period,omitempty" json:"emulator_period,omitempty"`
+	EmulatorPeriod int64 `xml:"emulator_period,omitempty" json:"emulatorPeriod,omitempty"`
 
 	// The optional emulator_quota element specifies the maximum allowed bandwidth (unit: microseconds)
 	// for domain's emulator threads (those excluding vCPUs). A domain with emulator_quota as any negative
@@ -665,13 +665,13 @@ type DomainCpuTune struct {
 	// which means that it is not bandwidth controlled. The value should be in range [1000, 17592186044415]
 	// or less than 0. A quota with value 0 means no value.
 	// Only QEMU driver support since 0.10.0
-	EmulatorQuota int32 `xml:"emulator_quota,omitempty" json:"emulator_quota,omitempty"`
+	EmulatorQuota int32 `xml:"emulator_quota,omitempty" json:"emulatorQuota,omitempty"`
 
 	// The optional iothread_period element specifies the enforcement interval (unit: microseconds) for IOThreads.
 	// Within iothread_period, each IOThread of the domain will not be allowed to consume more than iothread_quota
 	// worth of runtime. The value should be in range [1000, 1000000]. An iothread_period with value 0 means no value.
 	// Only QEMU driver support since 2.1.0
-	IOThreadPeriod int64 `xml:"iothread_period,omitempty" json:"iothread_period,omitempty"`
+	IOThreadPeriod int64 `xml:"iothread_period,omitempty" json:"iothreadPeriod,omitempty"`
 
 	// The optional iothread_quota element specifies the maximum allowed bandwidth (unit: microseconds) for IOThreads.
 	// A domain with iothread_quota as any negative value indicates that the domain IOThreads have infinite bandwidth,
@@ -679,7 +679,7 @@ type DomainCpuTune struct {
 	// than 0. An iothread_quota with value 0 means no value. You can use this feature to ensure that all IOThreads
 	// run at the same speed.
 	// Only QEMU driver support since 2.1.0
-	IOThreadQuota int32 `xml:"iothread_quota,omitempty" json:"iothread_quota,omitempty"`
+	IOThreadQuota int32 `xml:"iothread_quota,omitempty" json:"iothreadQuota,omitempty"`
 
 	// The optional vcpusched, iothreadsched and emulatorsched elements specify the scheduler type
 	// (values batch, idle, fifo, rr) for particular vCPU, IOThread and emulator threads respectively.
@@ -814,17 +814,17 @@ type DomainTuneNode struct {
 type DomainMaxMemory struct {
 	Slots int32 `xml:"slots,attr,omitempty" json:"slots,omitempty"`
 	Unit  Unit  `xml:"unit,attr,attr" json:"unit,omitempty,omitempty"`
-	Data  int64 `xml:",chardata" json:"data"`
+	Value int64 `xml:",chardata" json:"value"`
 }
 
 type DomainMemory struct {
-	Unit Unit  `xml:"unit,attr,omitempty" json:"unit,omitempty"`
-	Data int64 `xml:",chardata" json:"data"`
+	Unit  Unit  `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+	Value int64 `xml:",chardata" json:"value"`
 }
 
 type DomainCurrentMemory struct {
-	Unit Unit  `xml:"unit,attr,omitempty" json:"unit,omitempty"`
-	Data int64 `xml:",chardata" json:"data"`
+	Unit  Unit  `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+	Value int64 `xml:",chardata" json:"value"`
 }
 
 type DomainMemoryBacking struct {
@@ -923,20 +923,20 @@ type DomainMemTune struct {
 	// because your workload demands it, you'll have to take into account the specifics of your deployment
 	// and figure out a value for hard_limit that is large enough to support the memory requirements of your
 	// guest, but small enough to protect your host against a malicious guest locking all memory.
-	HardLimit Size `xml:"hard_limit,omitempty" json:"hard_limit,omitempty"`
+	HardLimit Size `xml:"hard_limit,omitempty" json:"hardLimit,omitempty"`
 
 	// The optional soft_limit element is the memory limit to enforce during memory contention.
 	// The units for this value are kibibytes (i.e. blocks of 1024 bytes)
-	SoftLimit Size `xml:"soft_limit,omitempty" json:"soft_limit,omitempty"`
+	SoftLimit Size `xml:"soft_limit,omitempty" json:"softLimit,omitempty"`
 
 	// The optional swap_hard_limit element is the maximum memory plus swap the guest can use. The units for
 	// this value are kibibytes (i.e. blocks of 1024 bytes). This has to be more than hard_limit value provided
-	SwapHardLimit Size `xml:"swap_hard_limit,omitempty" json:"swap_hard_limit,omitempty"`
+	SwapHardLimit Size `xml:"swap_hard_limit,omitempty" json:"swapHardLimit,omitempty"`
 
 	// The optional min_guarantee element is the guaranteed minimum memory allocation for the guest.
 	// The units for this value are kibibytes (i.e. blocks of 1024 bytes). This element is only supported
 	// by VMware ESX and OpenVZ drivers.
-	MinGuarantee Size `xml:"min_guarantee,omitempty" json:"min_guarantee,omitempty"`
+	MinGuarantee Size `xml:"min_guarantee,omitempty" json:"minGuarantee,omitempty"`
 }
 
 type DomainNumaTune struct {
@@ -1005,10 +1005,10 @@ type DomainBlkioTune struct {
 type DomainBlkioDevice struct {
 	Path          string `xml:"path,omitempty" json:"path,omitempty"`
 	Weight        int64  `xml:"weight,omitempty" json:"weight,omitempty"`
-	ReadBytesSec  int64  `xml:"read_bytes_sec,omitempty" json:"read_bytes_sec,omitempty"`
-	WriteBytesSec int64  `xml:"write_bytes_sec,omitempty" json:"write_bytes_sec,omitempty"`
-	ReadIOPSSec   int64  `xml:"read_iops_sec,omitempty" json:"read_iops_sec,omitempty"`
-	WriteIOPSSec  int64  `xml:"write_iops_sec,omitempty" json:"write_iops_sec,omitempty"`
+	ReadBytesSec  int64  `xml:"read_bytes_sec,omitempty" json:"readBytesSec,omitempty"`
+	WriteBytesSec int64  `xml:"write_bytes_sec,omitempty" json:"writeBytesSec,omitempty"`
+	ReadIOPSSec   int64  `xml:"read_iops_sec,omitempty" json:"readIopsSec,omitempty"`
+	WriteIOPSSec  int64  `xml:"write_iops_sec,omitempty" json:"writeIopsSec,omitempty"`
 }
 
 type DomainResource struct {
@@ -1194,7 +1194,7 @@ const (
 
 type DomainCPUModel struct {
 	Fallback DomainCPUModelFallback `xml:"fallback,attr,omitempty" json:"fallback,omitempty"`
-	Data     string                 `xml:",chardata" json:"data"`
+	Value    string                 `xml:",chardata" json:"value"`
 }
 
 type DomainCPUTopology struct {
@@ -1582,7 +1582,7 @@ type DomainFeatureHyperv struct {
 	Reset *DomainFeatureCase `xml:"reset,omitempty" json:"reset,omitempty"`
 
 	// Set hypervisor vendor id
-	VendorId *DomainFeatureCase `xml:"vendor_id,omitempty" json:"vendor_id,omitempty"`
+	VendorId *DomainFeatureCase `xml:"vendor_id,omitempty" json:"vendorId,omitempty"`
 
 	// Expose frequency MSRs
 	Frequencies *DomainFeatureCase `xml:"frequencies,omitempty" json:"frequencies,omitempty"`
@@ -1916,17 +1916,572 @@ type DomainDevices struct {
 type DomainDeviceDiskType string
 
 const (
-	DomainDeviceTypeFile DomainDeviceDiskType = "file"
+	DomainDeviceDiskTypeFile      DomainDeviceDiskType = "file"
+	DomainDeviceDiskTypeBlock     DomainDeviceDiskType = "block"
+	DomainDeviceDiskTypeDir       DomainDeviceDiskType = "dir"
+	DomainDeviceDiskTypeNetwork   DomainDeviceDiskType = "network"
+	DomainDeviceDiskTypeVolume    DomainDeviceDiskType = "volume"
+	DomainDeviceDiskTypeNvme      DomainDeviceDiskType = "nvme"
+	DomainDeviceDiskTypeVHostUser DomainDeviceDiskType = "vhostuser"
+)
+
+type DomainDeviceDiskDevice string
+
+const (
+	DomainDeviceDiskDeviceFloppy DomainDeviceDiskDevice = "floppy"
+	DomainDeviceDiskDeviceDisk   DomainDeviceDiskDevice = "disk"
+	DomainDeviceDiskDeviceCdrom  DomainDeviceDiskDevice = "cdrom"
+	DomainDeviceDiskDeviceLun    DomainDeviceDiskDevice = "lun"
+)
+
+type DomainDeviceDiskSgio string
+
+const (
+	DomainDeviceDiskSgioFiltered   DomainDeviceDiskSgio = "filtered"
+	DomainDeviceDiskSgioUnfiltered DomainDeviceDiskSgio = "unfiltered"
+)
+
+type DomainDeviceDiskSnapshot string
+
+const (
+	DomainDeviceDiskSnapshotInternal DomainDeviceDiskSnapshot = "internal"
+	DomainDeviceDiskSnapshotExternal DomainDeviceDiskSnapshot = "external"
 )
 
 type DomainDeviceDisk struct {
+	// Valid values are "file", "block", "dir" ( since 0.7.5 ), "network" ( since 0.8.7 ),
+	// or "volume" ( since 1.0.5 ), or "nvme" ( since 6.0.0 ), or "vhostuser" ( since 7.1.0 )
+	// and refer to the underlying source for the disk. Since 0.0.3
 	Type DomainDeviceDiskType `xml:"type,attr,omitempty" json:"type,omitempty"`
 
-	Alias *DomainDeviceDiskAlias `xml:"alias,omitempty" json:"alias,omitempty"`
+	Alias *DomainDeviceAlias `xml:"alias,omitempty" json:"alias,omitempty"`
+
+	// Indicates how the disk is to be exposed to the guest OS. Possible values for this attribute are "floppy",
+	// "disk", "cdrom", and "lun", defaulting to "disk". Using "lun" ( since 0.9.10 ) is only valid when the type
+	// is "block" or "network" for protocol='iscsi' or when the type is "volume" when using an iSCSI source pool
+	// for mode "host" or as an NPIV virtual Host Bus Adapter (vHBA) using a Fibre Channel storage pool.
+	// Configured in this manner, the LUN behaves identically to "disk", except that generic SCSI commands from
+	// the guest are accepted and passed through to the physical device. Also note that device='lun' will only
+	// be recognized for actual raw devices, but never for individual partitions or LVM partitions (in those cases,
+	// the kernel will reject the generic SCSI commands, making it identical to device='disk').
+	// Since 0.1.4
+	Device DomainDeviceDiskDevice `xml:"device,attr,omitempty" json:"device,omitempty"`
+
+	// Indicates the emulated device model of the disk. Typically this is indicated solely by the bus property
+	// but for bus "virtio" the model can be specified further with "virtio-transitional", "virtio-non-transitional",
+	// or "virtio". See Virtio transitional devices for more details. Since 5.2.0
+	Model string `xml:"model,attr,omitempty" json:"model,omitempty"`
+
+	// Indicates whether the disk needs rawio capability. Valid settings are "yes" or "no" (default is "no").
+	// If any one disk in a domain has rawio='yes', rawio capability will be enabled for all disks in the domain
+	// (because, in the case of QEMU, this capability can only be set on a per-process basis). This attribute is
+	// only valid when device is "lun". NB, rawio intends to confine the capability per-device, however, current
+	// QEMU implementation gives the domain process broader capability than that (per-process basis, affects all
+	// the domain disks). To confine the capability as much as possible for QEMU driver as this stage, sgio is
+	// recommended, it's more secure than rawio. Since 0.9.10
+	Rawio ButtonState `xml:"rawio,attr,omitempty" json:"rawio,omitempty"`
+
+	// If supported by the hypervisor and OS, indicates whether unprivileged SG_IO commands are filtered for the
+	// disk. Valid settings are "filtered" or "unfiltered" where the default is "filtered". Only available when
+	// the device is 'lun'. Since 1.0.2
+	Sgio DomainDeviceDiskSgio `xml:"sgio,attr,omitempty" json:"sgio,omitempty"`
+
+	// Indicates the default behavior of the disk during disk snapshots: "internal" requires a file format such
+	// as qcow2 that can store both the snapshot and the data changes since the snapshot; "external" will separate
+	// the snapshot from the live data; and "no" means the disk will not participate in snapshots. Read-only disks
+	// default to "no", while the default for other disks depends on the hypervisor's capabilities. Some hypervisors
+	// allow a per-snapshot choice as well, during domain snapshot creation. Not all snapshot modes are supported;
+	// for example, enabling snapshots with a transient disk generally does not make sense. Since 0.9.5
+	Snapshot DomainDeviceDiskSnapshot `xml:"snapshot,attr,omitempty" json:"snapshot,omitempty"`
+
+	// The optional driver element allows specifying further details related to the hypervisor driver
+	// used to provide the disk
+	Driver *DomainDeviceDiskDriver `xml:"driver,attr,omitempty" json:"driver,omitempty"`
+
+	// Representation of the disk source depends on the disk type
+	Source *DomainDeviceDiskSource `xml:"source,omitempty" json:"source,omitempty"`
 }
 
-type DomainDeviceDiskAlias struct {
+type DomainDeviceAlias struct {
 	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
+}
+
+type DomainDeviceDiskDriverName string
+
+const (
+	DomainDeviceDiskDriverNameTap  DomainDeviceDiskDriverName = "tap"
+	DomainDeviceDiskDriverNameTap2 DomainDeviceDiskDriverName = "tap2"
+	DomainDeviceDiskDriverNamePhy  DomainDeviceDiskDriverName = "phy"
+	DomainDeviceDiskDriverNameFile DomainDeviceDiskDriverName = "file"
+	DomainDeviceDiskDriverNameQemu DomainDeviceDiskDriverName = "qemu"
+)
+
+type DomainDeviceDiskDriverType string
+
+const (
+	DomainDeviceDiskDriverTypeAio   DomainDeviceDiskDriverType = "aio"
+	DomainDeviceDiskDriverTypeRaw   DomainDeviceDiskDriverType = "raw"
+	DomainDeviceDiskDriverTypeBochs DomainDeviceDiskDriverType = "bochs"
+	DomainDeviceDiskDriverTypeQcow2 DomainDeviceDiskDriverType = "qcow2"
+	DomainDeviceDiskDriverTypeQed   DomainDeviceDiskDriverType = "qed"
+)
+
+type DomainDeviceDiskDriverCache string
+
+const (
+	DomainDeviceDiskDriverTypeNone         DomainDeviceDiskDriverType = "none"
+	DomainDeviceDiskDriverTypeDefault      DomainDeviceDiskDriverType = "default"
+	DomainDeviceDiskDriverTypeWriteThrough DomainDeviceDiskDriverType = "writethroug"
+	DomainDeviceDiskDriverTypeWriteBack    DomainDeviceDiskDriverType = "writeback"
+	DomainDeviceDiskDriverTypeDirectSync   DomainDeviceDiskDriverType = "directsync"
+)
+
+type DomainDeviceDiskDriverErrorPolicy string
+
+const (
+	DomainDeviceDiskDriverErrorPolicyStop     DomainDeviceDiskDriverErrorPolicy = "stop"
+	DomainDeviceDiskDriverErrorPolicyReport   DomainDeviceDiskDriverErrorPolicy = "report"
+	DomainDeviceDiskDriverErrorPolicyIgnore   DomainDeviceDiskDriverErrorPolicy = "ignore"
+	DomainDeviceDiskDriverErrorPolicyEnospace DomainDeviceDiskDriverErrorPolicy = "enospace"
+)
+
+type DomainDeviceDiskDriverIO string
+
+const (
+	DomainDeviceDiskDriverIOThreads DomainDeviceDiskDriverIO = "threads"
+	DomainDeviceDiskDriverIONative  DomainDeviceDiskDriverIO = "native"
+	DomainDeviceDiskDriverIOIOUring DomainDeviceDiskDriverIO = "io_uring"
+)
+
+type DomainDeviceDiskDriverDiscard string
+
+const (
+	DomainDeviceDiskDriverDiscardUnmap  DomainDeviceDiskDriverDiscard = "unmap"
+	DomainDeviceDiskDriverDiscardIgnore DomainDeviceDiskDriverDiscard = "ignore"
+)
+
+type DomainDeviceDiskDriverDetectZeroes string
+
+const (
+	DomainDeviceDiskDriverDetectZeroesOn    DomainDeviceDiskDriverDetectZeroes = "on"
+	DomainDeviceDiskDriverDetectZeroesOff   DomainDeviceDiskDriverDetectZeroes = "off"
+	DomainDeviceDiskDriverDetectZeroesUnmap DomainDeviceDiskDriverDetectZeroes = "unmap"
+)
+
+type DomainDeviceDiskDriver struct {
+	// If the hypervisor supports multiple backend drivers, then the name attribute selects the primary backend
+	// driver name, while the optional type attribute provides the sub-type. For example, xen supports a name of
+	// "tap", "tap2", "phy", or "file", with a type of "aio", while qemu only supports a name of "qemu", but
+	// multiple types including "raw", "bochs", "qcow2", and "qed".
+	Name DomainDeviceDiskDriverName `xml:"name,attr,omitempty" json:"name,omitempty"`
+	Type DomainDeviceDiskDriverType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	// The optional cache attribute controls the cache mechanism, possible values are "default", "none",
+	// "writethrough", "writeback", "directsync" (like "writethrough", but it bypasses the host page cache)
+	// and "unsafe" (host may cache all disk io, and sync requests from guest are ignored). Since 0.6.0,
+	// "directsync" since 0.9.5, "unsafe" since 0.9.7
+	Cache DomainDeviceDiskDriverCache `xml:"cache,attr,omitempty" json:"cache,omitempty"`
+
+	// The optional error_policy attribute controls how the hypervisor will behave on a disk read or write error,
+	// possible values are "stop", "report", "ignore", and "enospace". Since 0.8.0, "report" since 0.9.7 The default
+	// is left to the discretion of the hypervisor. There is also an optional rerror_policy that controls behavior for
+	// read errors only. Since 0.9.7 . If no rerror_policy is given, error_policy is used for both read and write errors.
+	// rerror_policy is given, it overrides the error_policy for read errors. Also note that "enospace" is not a valid
+	// policy for read errors, so if error_policy is set to "enospace" and no rerror_policy is given, the read error
+	// policy will be left at its default.
+	ErrorPolicy  DomainDeviceDiskDriverErrorPolicy `xml:"error_policy,attr,omitempty" json:"errorPolicy,omitempty"`
+	RErrorPolicy DomainDeviceDiskDriverErrorPolicy `xml:"rerror_policy,attr,omitempty" json:"rerrorPolicy,omitempty"`
+
+	// The optional io attribute controls specific policies on I/O; qemu guests support "threads" and "native"
+	// Since 0.8.8 , io_uring Since 6.3.0 (QEMU 5.0) .
+	IO DomainDeviceDiskDriverIO `xml:"io,attr,omitempty" json:"io,omitempty"`
+
+	// The optional ioeventfd attribute allows users to set domain I/O asynchronous handling for disk device.
+	// The default is left to the discretion of the hypervisor. Accepted values are "on" and "off". Enabling
+	// this allows qemu to execute VM while a separate thread handles I/O. Typically guests experiencing high
+	// system CPU utilization during I/O will benefit from this. On the other hand, on overloaded host it
+	// could increase guest I/O latency. Since 0.9.3 (QEMU and KVM only) In general you should leave this
+	// option alone, unless you are very certain you know what you are doing.
+	IOEventFd TurnState `xml:"ioeventfd,attr,omitempty" json:"ioeventfd,omitempty"`
+
+	// The optional event_idx attribute controls some aspects of device event processing. The value can be
+	// either 'on' or 'off' - if it is on, it will reduce the number of interrupts and exits for the guest.
+	// The default is determined by QEMU; usually if the feature is supported, default is on. In case there
+	// is a situation where this behavior is suboptimal, this attribute provides a way to force the feature
+	// off. Since 0.9.5 (QEMU and KVM only) In general you should leave this option alone, unless you are
+	// very certain you know what you are doing.
+	EventIdx TurnState `xml:"event_idx,attr,omitempty" json:"eventIdx,omitempty"`
+
+	// The optional copy_on_read attribute controls whether to copy read backing file into the image file.
+	// The value can be either "on" or "off". Copy-on-read avoids accessing the same backing file sectors
+	// repeatedly and is useful when the backing file is over a slow network. By default copy-on-read is off.
+	// Since 0.9.10 (QEMU and KVM only)
+	CopyOnRead TurnState `xml:"copy_on_read,attr,omitempty" json:"copyOnRead,omitempty"`
+
+	// The optional discard attribute controls whether discard requests (also known as "trim" or "unmap")
+	// are ignored or passed to the filesystem. The value can be either "unmap" (allow the discard request
+	// to be passed) or "ignore" (ignore the discard request). Since 1.0.6 (QEMU and KVM only)
+	Discard DomainDeviceDiskDriverDiscard `xml:"discard,attr,omitempty" json:"discard,omitempty"`
+
+	// The optional detect_zeroes attribute controls whether to detect zero write requests. The value
+	// can be "off", "on" or "unmap". First two values turn the detection off and on, respectively.
+	// The third value ("unmap") turns the detection on and additionally tries to discard such areas
+	// from the image based on the value of discard above (it will act as "on" if discard is set to
+	// "ignore"). NB enabling the detection is a compute intensive operation, but can save file space
+	// and/or time on slow media. Since 2.0.0
+	DetectZeroes DomainDeviceDiskDriverDetectZeroes `xml:"detect_zeroes,attr,omitempty" json:"detectZeroes,omitempty"`
+
+	// The optional iothread attribute assigns the disk to an IOThread as defined by the range for the domain iothreads
+	// value. Multiple disks may be assigned to the same IOThread and are numbered from 1 to the domain iothreads value.
+	// Available for a disk device target configured to use "virtio" bus and "pci" or "ccw" address types.
+	// Since 1.2.8 (QEMU 2.1)
+	IOThread int32 `xml:"iothread,attr,omitempty" json:"iothread,omitempty"`
+
+	// The optional queues attribute specifies the number of virt queues for virtio-blk. ( Since 3.9.0 )
+	Queues int32 `xml:"queues,attr,omitempty" json:"queues,omitempty"`
+
+	// The optional metadata_cache subelement controls aspects related to the format specific caching of
+	// storage image metadata. Note that this setting applies only on the top level image; the identically
+	// named subelement of backingStore's format element can be used to specify cache settings for the backing image.
+	//
+	// Since 7.0.0 the maximum size of the metadata cache of qcow2 format driver of the qemu hypervisor can be
+	// controlled via the max_size subelement (see example below).
+	//
+	//In the majority of cases the default configuration used by the hypervisor is sufficient so modifying this
+	// setting should not be necessary. For specifics on how the metadata cache of qcow2 in qemu behaves refer
+	// to the qemu qcow2 cache docs
+	MetadataCache *DomainDeviceDiskDriverMeta `xml:"metadata_cache,omitempty" json:"metadataCache,omitempty"`
+}
+
+type DomainDeviceDiskDriverMeta struct {
+	MaxSize Size `xml:"max_size,omitempty" json:"max_size,omitempty"`
+}
+
+type DomainDeviceDiskSourceProtocol string
+
+const (
+	DomainDeviceDiskSourceProtocolNbd      DomainDeviceDiskSourceProtocol = "nbd"
+	DomainDeviceDiskSourceProtocolIscsi    DomainDeviceDiskSourceProtocol = "iscsi"
+	DomainDeviceDiskSourceProtocolRbd      DomainDeviceDiskSourceProtocol = "rbd"
+	DomainDeviceDiskSourceProtocolSheepDog DomainDeviceDiskSourceProtocol = "sheepdog"
+	DomainDeviceDiskSourceProtocolGluster  DomainDeviceDiskSourceProtocol = "gluster"
+	DomainDeviceDiskSourceProtocolVxhs     DomainDeviceDiskSourceProtocol = "vxhs"
+	DomainDeviceDiskSourceProtocolNfs      DomainDeviceDiskSourceProtocol = "nfs"
+	DomainDeviceDiskSourceProtocolHttp     DomainDeviceDiskSourceProtocol = "http"
+	DomainDeviceDiskSourceProtocolHttps    DomainDeviceDiskSourceProtocol = "https"
+	DomainDeviceDiskSourceProtocolFtp      DomainDeviceDiskSourceProtocol = "ftp"
+	DomainDeviceDiskSourceProtocolFtps     DomainDeviceDiskSourceProtocol = "ftps"
+	DomainDeviceDiskSourceProtocolTftp     DomainDeviceDiskSourceProtocol = "tftp"
+)
+
+type DomainDeviceDiskSourceMode string
+
+const (
+	DomainDeviceDiskSourceModeHost   DomainDeviceDiskSourceMode = "host"
+	DomainDeviceDiskSourceModeDirect DomainDeviceDiskSourceMode = "direct"
+)
+
+type DomainDeviceDiskSourceType string
+
+const (
+	DomainDeviceDiskSourceTypePCI  DomainDeviceDiskSourceType = "pci"
+	DomainDeviceDiskSourceTypeUnit DomainDeviceDiskSourceType = "unix"
+)
+
+type DomainDeviceDiskSourceStartupPolicy string
+
+const (
+	DomainDeviceDiskSourceStartupPolicyMandatory DomainDeviceDiskSourceStartupPolicy = "mandatory"
+	DomainDeviceDiskSourceStartupPolicyRequisite DomainDeviceDiskSourceStartupPolicy = "requisite"
+	DomainDeviceDiskSourceStartupPolicyOptional  DomainDeviceDiskSourceStartupPolicy = "optional"
+)
+
+type DomainDeviceDiskSource struct {
+	// (type=file) The file attribute specifies the fully-qualified path to the file holding the disk. Since 0.0.3
+	File string `xml:"file,attr,omitempty" json:"file,omitempty"`
+
+	// (type=block)The dev attribute specifies the fully-qualified path to the host device to serve as the disk. Since 0.0.3
+	Block string `xml:"block,attr,omitempty" json:"block,omitempty"`
+
+	// (type=dir) The dir attribute specifies the fully-qualified path to the directory to use as the disk. Since 0.7.5
+	Dir string `xml:"dir,attr,omitempty" json:"dir,omitempty"`
+
+	// (type=network) The protocol attribute specifies the protocol to access to the requested image.
+	// Possible values are "nbd", "iscsi", "rbd", "sheepdog", "gluster", "vxhs", "nfs", "http", "https", "ftp",
+	// ftps", or "tftp".
+	//
+	// For any protocol other than nbd an additional attribute name is mandatory to specify which volume/image
+	// will be used.
+	//
+	// For "nbd", the name attribute is optional. TLS transport for NBD can be enabled by setting the tls attribute
+	// to yes. For the QEMU hypervisor, usage of a TLS environment can also be globally controlled on the host by
+	// the nbd_tls and nbd_tls_x509_cert_dir in /etc/libvirt/qemu.conf. ('tls' Since 4.5.0 )
+	//
+	// For protocols http and https an optional attribute query specifies the query string. ( Since 6.2.0 )
+	//
+	// For "iscsi" ( since 1.0.4 ), the name attribute may include a logical unit number, separated from the target's
+	// name by a slash (e.g., iqn.2013-07.com.example:iscsi-pool/1). If not specified, the default LUN is zero.
+	//
+	// For "vxhs" ( since 3.8.0 ), the name is the UUID of the volume, assigned by the HyperScale server. Additionally,
+	// an optional attribute tls (QEMU only) can be used to control whether a VxHS block device would utilize a
+	// hypervisor configured TLS X.509 certificate environment in order to encrypt the data channel. For the QEMU
+	// hypervisor, usage of a TLS environment can also be globally controlled on the host by the vxhs_tls and
+	// vxhs_tls_x509_cert_dir or default_tls_x509_cert_dir settings in the file /etc/libvirt/qemu.conf. If vxhs_tls
+	// is enabled, then unless the domain tls attribute is set to "no", libvirt will use the host configured TLS
+	// environment. If the tls attribute is set to "yes", then regardless of the qemu.conf setting, TLS authentication
+	// will be attempted.
+	Protocol DomainDeviceDiskSourceProtocol `xml:"protocol,attr,omitempty" json:"protocol,omitempty"`
+	Name     string                         `xml:"name,attr,omitempty" json:"name,omitempty"`
+
+	Query string `xml:"query,attr,omitempty" json:"query,omitempty"`
+
+	// (type=volume) The underlying disk source is represented by attributes pool and volume. Attribute pool specifies the name
+	// of the storage pool (managed by libvirt) where the disk source resides. Attribute volume specifies the name
+	// of storage volume (managed by libvirt) used as the disk source. The value for the volume attribute will be
+	// the output from the "Name" column of a virsh vol-list [pool-name] command.
+	//
+	// Use the attribute mode ( since 1.1.1 ) to indicate how to represent the LUN as the disk source. Valid values
+	// are "direct" and "host". If mode is not specified, the default is to use "host". Using "direct" as the mode
+	// value indicates to use the storage pool's source element host attribute as the disk source to generate the
+	// libiscsi URI (e.g. 'file=iscsi://example.com:3260/iqn.2013-07.com.example:iscsi-pool/1'). Using "host" as
+	// the mode value indicates to use the LUN's path as it shows up on host
+	// (e.g. 'file=/dev/disk/by-path/ip-example.com:3260-iscsi-iqn.2013-07.com.example:iscsi-pool-lun-1').
+	// Using a LUN from an iSCSI source pool provides the same features as a disk configured using type 'block'
+	// or 'network' and device of 'lun' with respect to how the LUN is presented to and may be used by the guest.
+	// Since 1.0.5
+	Pool   string                     `xml:"pool,attr,omitempty" json:"pool,omitempty"`
+	Volume string                     `xml:"volume,attr,omitempty" json:"volume,omitempty"`
+	Mode   DomainDeviceDiskSourceMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+
+	// pci or unix
+	Type string `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	// (type=nvme) To specify disk source for NVMe disk the source element has the following attributes:
+	// The type of address specified in address sub-element. Currently, only pci value is accepted.
+	// The difference between <disk type='nvme'> and <hostdev/> is that the latter is plain host device
+	// assignment with all its limitations (e.g. no live migration), while the former makes hypervisor to
+	// run the NVMe disk through hypervisor's block layer thus enabling all features provided by the layer
+	// (e.g. snapshots, domain migration, etc.). Moreover, since the NVMe disk is unbinded from its PCI driver,
+	// the host kernel storage stack is not involved (compared to passing say /dev/nvme0n1 via <disk type='block'>
+	// and therefore lower latencies can be achieved.
+	//
+	// This attribute instructs libvirt to detach NVMe controller automatically on domain startup (yes) or
+	// expect the controller to be detached by system administrator (no).
+	Managed ButtonState `xml:"managed,attr,omitempty" json:"managed,omitempty"`
+	// The namespace ID which should be assigned to the domain. According to NVMe standard, namespace numbers
+	// start from 1, including.
+	Namespace int32    `xml:"namespace,attr,omitempty" json:"namespace,omitempty"`
+	Address   *Address `xml:"address,attr,omitempty" json:"address,omitempty"`
+
+	// (type=vhostuser) Enables the hypervisor to connect to another process using vhost-user protocol.
+	// Requires shared memory configured for the VM, for more details see access mode for memoryBacking element.
+	// The source element has following mandatory attributes:
+	// Type: The type of char device. Currently only unix type is supported.
+	// Path to the unix socket to be used as disk source.
+	Path string `xml:"path,attr,omitempty" json:"path,omitempty"`
+
+	// For a "file" or "volume" disk type which represents a cdrom or floppy (the device attribute), it is possible
+	// to define policy what to do with the disk if the source file is not accessible. (NB, startupPolicy is not
+	// valid for "volume" disk unless the specified storage volume is of "file" type). This is done by the
+	// startupPolicy attribute ( since 0.9.7 ), accepting these values:
+	//  mandatory  : fail if missing for any reason (the default)
+	//  requisite  : fail if missing on boot up, drop if missing on migrate/restore/revert
+	//  optional   : drop if missing at any start attempt
+	//
+	// Since 1.1.2 the startupPolicy is extended to support hard disks besides cdrom and floppy. On guest cold
+	// bootup, if a certain disk is not accessible or its disk chain is broken, with startupPolicy 'optional'
+	// the guest will drop this disk. This feature doesn't support migration currently.
+	StartupPolicy DomainDeviceDiskSourceStartupPolicy `xml:"startupPolicy,attr,omitempty" json:"startupPolicy,omitempty"`
+
+	// When the disk type is "network", the source may have zero or more host sub-elements used to specify the
+	// hosts to connect. The host element supports 4 attributes, viz. "name", "port", "transport" and "socket",
+	// which specify the hostname, the port number, transport type and path to socket, respectively.
+	Host *DomainDeviceDiskSourceHost `xml:"host,omitempty" json:"host,omitempty"`
+
+	// The name attribute of snapshot element can optionally specify an internal snapshot name to be used
+	// as the source for storage protocols. Supported for 'rbd' since 1.2.11 (QEMU only).
+	Snapshot *DomainDeviceDiskSourceSnapshot `xml:"snapshot,omitempty" json:"snapshot,omitempty"`
+
+	// The file attribute for the config element provides a fully qualified path to a configuration file to
+	// be provided as a parameter to the client of a networked storage protocol.
+	// Supported for 'rbd' since 1.2.11 (QEMU only).
+	Config *DomainDeviceDiskSourceConfig `xml:"config,omitempty" json:"config,omitempty"`
+
+	// Since libvirt 3.9.0 , the auth element is supported for a disk type "network" that is using a source
+	// element with the protocol attributes "rbd" or "iscsi". If present, the auth element provides the
+	// authentication credentials needed to access the source. It includes a mandatory attribute username,
+	// which identifies the username to use during authentication, as well as a sub-element secret with mandatory
+	// attribute type, to tie back to a libvirt secret object that holds the actual password or other credentials
+	// (the domain XML intentionally does not expose the password, only the reference to the object that does manage
+	// the password). Known secret types are "ceph" for Ceph RBD network sources and "iscsi" for CHAP authentication
+	// of iSCSI targets. Both will require either a uuid attribute with the UUID of the secret object or a usage
+	// attribute matching the key that was specified in the secret object.
+	Auth *DomainDeviceDiskSourceAuth `xml:"auth,attr,omitempty" json:"auth,omitempty"`
+
+	// Since libvirt 3.9.0 , the encryption can be a sub-element of the source element for encrypted storage sources.
+	// If present, specifies how the storage source is encrypted See the Storage Encryption page for more information.
+	// Note that the 'qcow' format of encryption is broken and thus is no longer supported for use with disk images.
+	// ( Since libvirt 4.5.0 )
+	Encryption *StorageEncryption `xml:"encryption,omitempty" json:"encryption,omitempty"`
+
+	// Since libvirt 4.4.0 , the reservations can be a sub-element of the source element for storage sources
+	// (QEMU driver only). If present it enables persistent reservations for SCSI based disks. The element has
+	// one mandatory attribute managed with accepted values yes and no. If managed is enabled libvirt prepares
+	// and manages any resources needed. When the persistent reservations are unmanaged, then the hypervisor
+	// acts as a client and the path to the server socket must be provided in the child element source, which
+	// currently accepts only the following attributes: type with one value unix, path path to the socket, and
+	// finally mode which accepts one value client specifying the role of hypervisor. It's recommended to allow
+	// libvirt manage the persistent reservations.
+	Reservations *DomainDeviceDiskSourceReservations `xml:"reservations,omitempty" json:"reservations,omitempty"`
+
+	// Since libvirt 4.7.0 , the initiator element is supported for a disk type "network" that is using a source
+	// element with the protocol attribute "iscsi". If present, the initiator element provides the initiator IQN
+	// needed to access the source via mandatory attribute name.
+	Initiator *DomainDeviceDiskSourceInitiator `xml:"initiator,omitempty" json:"initiator,omitempty"`
+
+	// The slices element using its slice sub-elements allows configuring offset and size of either the location
+	// of the image format (slice type='storage') inside the storage source or the guest data inside the image
+	// format container (future expansion). The offset and size values are in bytes. Since 6.1.0
+	Slice []*DomainDeviceDiskSourceSlice `xml:"slice,omitempty" json:"slice,omitempty"`
+
+	// For https and ftps accessed storage it's possible to tweak the SSL transport parameters with this element.
+	// The verify attribute allows to turn on or off SSL certificate validation. Supported values are yes and no.
+	// Since 6.2.0
+	SSL *DomainDeviceDiskSourceSSL `xml:"ssl,omitempty" json:"ssl,omitempty"`
+
+	// For http and https accessed storage it's possible to pass one or more cookies. The cookie name and value
+	// must conform to the HTTP specification. Since 6.2.0
+	Cookies []*DomainDeviceDiskSourceCookie `xml:"cookies,omitempty" json:"cookies,omitempty"`
+
+	// Specifies the size of the readahead buffer for protocols which support it. (all 'curl' based drivers in qemu).
+	// The size is in bytes. Note that '0' is considered as if the value is not provided. Since 6.2.0
+	Readahead *DomainDeviceDiskSourceReadahead `xml:"readahead,omitempty" json:"readahead,omitempty"`
+
+	// Specifies the connection timeout for protocols which support it. Note that '0' is considered as if the
+	// value is not provided. Since 6.2.0
+	Timeout *DomainDeviceDiskSourceTimeout `xml:"timeout,omitempty" json:"timeout,omitempty"`
+
+	// When using an nfs protocol, this is used to provide information on the configuration of the user and group.
+	// The element has two attributes, user and group. The user can provide these elements as user or group strings,
+	// or as user and group ID numbers directly if the string is formatted using a "+" at the beginning of the ID
+	// number. If either of these attributes is omitted, then that field is assumed to be the default value for the
+	// current system. If both user and group are intended to be default, then the entire element may be omitted.
+	Identity *DomainDeviceDiskSourceIdentity `xml:"identity,omitempty" json:"identity,omitempty"`
+
+	// For disk type vhostuser configures reconnect timeout if the connection is lost.
+	Reconnect *DomainDeviceDiskSourceReconnect `xml:"reconnect,omitempty" json:"reconnect,omitempty"`
+}
+
+type DomainDeviceDiskSourceHostTransport string
+
+const (
+	DomainDeviceDiskSourceHostTransportTcp  DomainDeviceDiskSourceHostTransport = "tcp"
+	DomainDeviceDiskSourceHostTransportRdma DomainDeviceDiskSourceHostTransport = "rdma"
+	DomainDeviceDiskSourceHostTransportUnix DomainDeviceDiskSourceHostTransport = "unix"
+)
+
+type DomainDeviceDiskSourceHostSocket string
+
+const (
+	DomainDeviceDiskSourceHostTransportAFUNIX DomainDeviceDiskSourceHostTransport = "AF_UNIX"
+)
+
+type DomainDeviceDiskSourceHost struct {
+	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
+	Port int32  `xml:"port,attr,omitempty" json:"port,omitempty"`
+	// gluster supports "tcp", "rdma", "unix" as valid values for the transport attribute. nbd supports
+	// "tcp" and "unix". Others only support "tcp". If nothing is specified, "tcp" is assumed. If the
+	// transport is "unix"
+	Transport DomainDeviceDiskSourceHostTransport `xml:"transport,attr,omitempty" json:"transport,omitempty"`
+	// the socket attribute specifies the path to an AF_UNIX socket. nfs only supports the use of a "tcp" transport,
+	// and does not support using a port at all so it must be omitted.
+	Socket DomainDeviceDiskSourceHostSocket `xml:"socket,attr,omitempty" json:"socket,omitempty"`
+}
+
+type DomainDeviceDiskSourceSnapshot struct {
+	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
+}
+
+type DomainDeviceDiskSourceConfig struct {
+	File string `xml:"file,attr,omitempty" json:"file,omitempty"`
+}
+
+type DomainDeviceDiskSourceAuth struct {
+	Username string `xml:"username,attr,omitempty" json:"usernamem,omitempty"`
+
+	Secret *DomainDeviceDiskSourceAuthSecret `xml:"secret,attr,omitempty" json:"secret,omitempty"`
+}
+
+type DomainDeviceDiskSourceAuthSecretType string
+
+const (
+	DomainDeviceDiskSourceAuthSecretTypeCeph  DomainDeviceDiskSourceAuthSecretType = "ceph"
+	DomainDeviceDiskSourceAuthSecretTypeIscsi DomainDeviceDiskSourceAuthSecretType = "iscsi"
+)
+
+type DomainDeviceDiskSourceAuthSecret struct {
+	Type  DomainDeviceDiskSourceAuthSecretType `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Usage string                               `xml:"usage,attr,omitempty" json:"usage,omitempty"`
+}
+
+type DomainDeviceDiskSourceReservations struct {
+	Managed ButtonState                               `xml:"managed,attr,omitempty" json:"managed,omitempty"`
+	Source  *DomainDeviceDiskSourceReservationsSource `xml:"source,omitempty" json:"source,omitempty"`
+}
+
+type DomainDeviceDiskSourceReservationsSource struct {
+	Type string `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Path string `xml:"path,attr,omitempty" json:"path,omitempty"`
+	Mode string `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+}
+
+type DomainDeviceDiskSourceInitiator struct {
+	Iqn *DomainDeviceDiskSourceIqn `xml:"iqn,omitempty" json:"iqn,omitempty"`
+}
+
+type DomainDeviceDiskSourceIqn struct {
+	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
+}
+
+type DomainDeviceDiskSourceSliceType string
+
+const (
+	DomainDeviceDiskSourceSliceTypeStorage DomainDeviceDiskSourceSliceType = "storage"
+)
+
+type DomainDeviceDiskSourceSlice struct {
+	Type   DomainDeviceDiskSourceSliceType `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Offset int32                           `xml:"offset,attr,omitempty" json:"offset,omitempty"`
+	Size   int64                           `xml:"size,attr,omitempty" json:"size,omitempty"`
+}
+
+type DomainDeviceDiskSourceSSL struct {
+	Verify ButtonState `xml:"verify,attr,omitempty" json:"verify,omitempty"`
+}
+
+type DomainDeviceDiskSourceCookie struct {
+	Name  string `xml:"name,attr,omitempty" json:"name,omitempty"`
+	Value string `xml:",chardata" json:"value"`
+}
+
+type DomainDeviceDiskSourceReadahead struct {
+	Size int64 `xml:"size,attr" json:"size"`
+}
+
+type DomainDeviceDiskSourceTimeout struct {
+	Seconds int64 `xml:"seconds,attr" json:"seconds"`
+}
+
+type DomainDeviceDiskSourceIdentity struct {
+	User  string `xml:"user,attr,omitempty" json:"user,omitempty"`
+	Group string `xml:"group,attr,omitempty" json:"group,omitempty"`
+}
+
+type DomainDeviceDiskSourceReconnect struct {
+	// If the reconnect feature is enabled, accepts yes and no
+	Enable ButtonState `xml:"enable,attr,omitempty" json:"enable,omitempty"`
+	// The amount of seconds after which hypervisor tries to reconnect.
+	Timeout int32 `xml:"timeout,attr,omitempty" json:"timeout,omitempty"`
 }
 
 type DomainDeviceInterfaceType string

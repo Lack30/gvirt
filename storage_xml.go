@@ -199,7 +199,7 @@ type StoragePoolSourceAdapter struct {
 }
 
 type StoragePoolSourceAdapterParentAddr struct {
-	UniqueId string `json:"unique_id,attr,omitempty" json:"uniqueId,omitempty"`
+	UniqueId string `xml:"unique_id,attr,omitempty" json:"uniqueId,omitempty"`
 
 	Address StoragePoolSourceAdapterParentAddress `xml:"address" json:"address"`
 }
@@ -265,17 +265,8 @@ type StorageVolumeTarget struct {
 
 	Permissions *Permissions `xml:"permissions,omitempty" json:"permissions,omitempty"`
 
-	Encryption StorageVolumeTargetEncryption `xml:"encryption,omitempty" json:"encryption,omitempty"`
+	Encryption *StorageEncryption `xml:"encryption,omitempty" json:"encryption,omitempty"`
 }
 
-type StorageVolumeTargetEncryption struct {
-	Format string `xml:"format" json:"format"`
 
-	Secret StoragePoolSourceAuthSecret `xml:"secret" json:"secret"`
-}
 
-type StorageVolumeTargetEncryptionSecret struct {
-	Type string `xml:"type,attr" json:"type"`
-
-	UUID string `xml:"uuid,attr" json:"uuid"`
-}
