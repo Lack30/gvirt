@@ -26,6 +26,7 @@ type Unit string
 
 const (
 	UnitBytes = "bytes"
+	UnitB     = "B"
 	UnitM     = "M"
 	UnitG     = "G"
 	UnitT     = "T"

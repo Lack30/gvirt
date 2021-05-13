@@ -216,6 +216,59 @@ type DomainXml struct {
 	// cgroups directories, in all mounted controllers.
 	// Since 1.0.5
 	Resource *DomainResource `xml:"resource,omitempty" json:"resource,omitempty"`
+
+	// The cpu element is the main container for describing guest CPU requirements. Its match attribute specifies
+	// how strictly the virtual CPU provided to the guest matches these requirements. Since 0.7.6 the match attribute
+	// can be omitted if topology is the only element within cpu.
+	CPU *DomainCPU `xml:"cpu,omitempty" json:"cpu,omitempty"`
+
+	// It is sometimes necessary to override the default actions taken on various events. Not all hypervisors
+	// support all events and actions. The actions may be taken as a result of calls to libvirt APIs
+	// virDomainReboot , virDomainShutdown , or virDomainShutdownFlags .
+	// Using virsh reboot or virsh shutdown would also trigger the event.
+	//
+	// The content of this element specifies the action to take when the guest requests a poweroff.
+	OnPowerOff EventState `xml:"on_poweroff,omitempty" json:"onPoweroff,omitempty"`
+
+	// The content of this element specifies the action to take when the guest requests a reboot.
+	OnRestart EventState `xml:"on_restart,omitempty" json:"onRestart,omitempty"`
+
+	// The content of this element specifies the action to take when the guest crashes.
+	OnCrash EventState `xml:"on_crash,omitempty" json:"onCrash,omitempty"`
+
+	// The on_lockfailure element ( since 1.0.0 ) may be used to configure what action should be taken
+	// when a lock manager loses resource locks. The following actions are recognized by libvirt, although
+	// not all of them need to be supported by individual lock managers. When no action is specified,
+	// each lock manager will take its default action.
+	//  poweroff  : The domain will be forcefully powered off.
+	//  restart   : The domain will be powered off and started up again to reacquire its locks.
+	//  pause     : The domain will be paused so that it can be manually resumed when lock issues are solved.
+	//  ignore    : Keep the domain running as if nothing happened.
+	OnLockFailure EventState `xml:"on_lockfailure,omitempty" json:"onLockfailure,omitempty"`
+
+	// These elements enable ('yes') or disable ('no') BIOS support for S3 (suspend-to-mem) and S4
+	// (suspend-to-disk) ACPI sleep states. If nothing is specified, then the hypervisor will be left
+	// with its default value. Note: This setting cannot prevent the guest OS from performing a suspend
+	// as the guest OS itself can choose to circumvent the unavailability of the sleep states
+	// (e.g. S4 by turning off completely).
+	Pm *DomainPm `xml:"pm,omitempty" json:"pm,omitempty"`
+
+	// Hypervisors may allow certain CPU / machine features to be toggled on/off.
+	Features *DomainFeatures `xml:"features,omitempty" json:"features,omitempty"`
+
+	// The guest clock is typically initialized from the host clock. Most operating systems expect the hardware
+	// clock to be kept in UTC, and this is the default. Windows, however, expects it to be in so called 'localtime'.
+	Clock *DomainClock `xml:"clock,omitempty" json:"clock,omitempty"`
+
+	// Some platforms allow monitoring of performance of the virtual machine and the code executed inside.
+	// To enable the performance monitoring events you can either specify them in the perf element or enable
+	// them via virDomainSetPerfEvents API. The performance values are then retrieved using the
+	// virConnectGetAllDomainStats API. Since 2.0.0
+	Perf *DomainPerformance `xml:"perf,omitempty" json:"perf,omitempty"`
+
+	// The final set of XML elements are all used to describe devices provided to the guest domain.
+	// All devices occur as children of the main devices element. Since 0.1.3
+	Devices []*DomainDevices `xml:"devices,omitempty" json:"devices,omitempty"`
 }
 
 type DomainMetadata struct {
@@ -950,14 +1003,934 @@ type DomainBlkioTune struct {
 }
 
 type DomainBlkioDevice struct {
-	Path         string `xml:"path,omitempty" json:"path,omitempty"`
-	Weight       int64  `xml:"weight,omitempty" json:"weight,omitempty"`
-	ReadBytesSec int64  `xml:"read_bytes_sec,omitempty" json:"read_bytes_sec,omitempty"`
-	WriteByteSec int64  `xml:"write_byte_sec,omitempty" json:"write_byte_sec,omitempty"`
-	ReadIOPSSec  int64  `xml:"read_iops_sec,omitempty" json:"read_iops_sec,omitempty"`
-	WriteIOPSSec int64  `xml:"write_iops_sec,omitempty" json:"write_iops_sec,omitempty"`
+	Path          string `xml:"path,omitempty" json:"path,omitempty"`
+	Weight        int64  `xml:"weight,omitempty" json:"weight,omitempty"`
+	ReadBytesSec  int64  `xml:"read_bytes_sec,omitempty" json:"read_bytes_sec,omitempty"`
+	WriteBytesSec int64  `xml:"write_bytes_sec,omitempty" json:"write_bytes_sec,omitempty"`
+	ReadIOPSSec   int64  `xml:"read_iops_sec,omitempty" json:"read_iops_sec,omitempty"`
+	WriteIOPSSec  int64  `xml:"write_iops_sec,omitempty" json:"write_iops_sec,omitempty"`
 }
 
 type DomainResource struct {
 	Partition string `xml:"partition,omitempty" json:"partition,omitempty"`
+}
+
+type DomainCPUMatch string
+
+const (
+	DomainCPUMatchMinimum DomainCPUMatch = "minimum"
+	DomainCPUMatchExact   DomainCPUMatch = "exact"
+	DomainCPUMatchStrict  DomainCPUMatch = "strict"
+	DomainCPUMatchNone    DomainCPUMatch = "none"
+	DomainCPUMatchPartial DomainCPUMatch = "partial"
+	DomainCPUMatchFull    DomainCPUMatch = "full"
+)
+
+type DomainCPUMode string
+
+const (
+	DomainCPUModeCustom          DomainCPUMode = "custom"
+	DomainCPUModeHostMode        DomainCPUMode = "host-mode"
+	DomainCPUModeHostPassthrough DomainCPUMode = "host-passthrough"
+	DomainCPUModeMaximum         DomainCPUMode = "maximum"
+)
+
+type DomainCPU struct {
+	// Its match attribute specifies how strictly the virtual CPU provided to the guest matches these requirements.
+	// Since 0.7.6 the match attribute can be omitted if topology is the only element within cpu. Possible values
+	// for the match attribute are:
+	//  minimum : The specified CPU model and features describes the minimum requested CPU. A better CPU will be
+	//            provided to the guest if it is possible with the requested hypervisor on the current host. This
+	//            is a constrained host-model mode; the domain will not be created if the provided virtual CPU does
+	//            not meet the requirements.
+	//  exact   : The virtual CPU provided to the guest should exactly match the specification. If such CPU is not
+	//            supported, libvirt will refuse to start the domain.
+	//  strict  : The domain will not be created unless the host CPU exactly matches the specification. This is
+	//            not very useful in practice and should only be used if there is a real reason.
+	//
+	// Since 0.8.5 the match attribute can be omitted and will default to exact. Sometimes the hypervisor is not
+	// able to create a virtual CPU exactly matching the specification passed by libvirt. Since 3.2.0 , an optional
+	// check attribute can be used to request a specific way of checking whether the virtual CPU matches the
+	// specification. It is usually safe to omit this attribute when starting a domain and stick with the default
+	// value. Once the domain starts, libvirt will automatically change the check attribute to the best supported
+	// value to ensure the virtual CPU does not change when the domain is migrated to another host. The following
+	// values can be used:
+	//  none    : Libvirt does no checking and it is up to the hypervisor to refuse to start the domain if it
+	//            cannot provide the requested CPU. With QEMU this means no checking is done at all since the
+	//            default behavior of QEMU is to emit warnings, but start the domain anyway.
+	//  partial : Libvirt will check the guest CPU specification before starting a domain, but the rest is left
+	//            on the hypervisor. It can still provide a different virtual CPU.
+	//  full    : The virtual CPU created by the hypervisor will be checked against the CPU specification and
+	//            the domain will not be started unless the two CPUs match.
+	Match DomainCPUMatch `xml:"match,attr,omitempty" json:"match,omitempty"`
+
+	// Since 0.9.10 , an optional mode attribute may be used to make it easier to configure a guest CPU to be as
+	// close to host CPU as possible. Possible values for the mode attribute are:
+	//  custom          : In this mode, the cpu element describes the CPU that should be presented to the guest.
+	//                    This is the default when no mode attribute is specified. This mode makes it so that a persistent
+	//                    guest will see the same hardware no matter what host the guest is booted on.
+	//  host-model      : The host-model mode is essentially a shortcut to copying host CPU definition from capabilities
+	//                    XML into domain XML. Since the CPU definition is copied just before starting a domain, exactly
+	//                    the same XML can be used on different hosts while still providing the best guest CPU each host
+	//                    supports. The match attribute can't be used in this mode. Specifying CPU model is not supported
+	//                    either, but model's fallback attribute may still be used. Using the feature element, specific
+	//                    flags may be enabled or disabled specifically in addition to the host model. This may be used
+	//                    to fine tune features that can be emulated. (Since 1.1.1) . Libvirt does not model every aspect
+	//                    of each CPU so the guest CPU will not match the host CPU exactly. On the other hand, the ABI provided
+	//                    to the guest is reproducible. During migration, complete CPU model definition is transferred to the
+	//                    destination host so the migrated guest will see exactly the same CPU model for the running instance
+	//                    of the guest, even if the destination host contains more capable CPUs or newer kernel; but shutting
+	//                    down and restarting the guest may present different hardware to the guest according to the capabilities
+	//                    of the new host. Prior to libvirt 3.2.0 and QEMU 2.9.0 detection of the host CPU model via QEMU is
+	//                    not supported. Thus the CPU configuration created using host-model may not work as expected.
+	//                    Since 3.2.0 and QEMU 2.9.0 this mode works the way it was designed and it is indicated by
+	//                    the fallback attribute set to forbid in the host-model CPU definition advertised in domain
+	//                    capabilities XML. When fallback attribute is set to allow in the domain capabilities XML,
+	//                    it is recommended to use custom mode with just the CPU model from the host capabilities XML.
+	//                    Since 1.2.11 PowerISA allows processors to run VMs in binary compatibility mode supporting
+	//                    an older version of ISA. Libvirt on PowerPC architecture uses the host-model to signify
+	//                    a guest mode CPU running in binary compatibility mode. Example: When a user needs a power7 VM
+	//                    to run in compatibility mode on a Power8 host, this can be described in XML as follows :
+	//                    ```
+	//                     <cpu mode='host-model'>
+	//                     <model>power7</model>
+	//                     </cpu>
+	//                    ```
+	//  host-passthrough : With this mode, the CPU visible to the guest should be exactly the same as the host CPU
+	//                     even in the aspects that libvirt does not understand. Though the downside of this mode
+	//                     is that the guest environment cannot be reproduced on different hardware. Thus, if you
+	//                     hit any bugs, you are on your own. Further details of that CPU can be changed using feature
+	//                     elements. Migration of a guest using host-passthrough is dangerous if the source and
+	//                     destination hosts are not identical in both hardware, QEMU version, microcode version
+	//                     and configuration. If such a migration is attempted then the guest may hang or crash
+	//                     upon resuming execution on the destination host. Depending on hypervisor version the
+	//                     virtual CPU may or may not contain features which may block migration even to an identical
+	//                     host. Since 6.5.0 optional migratable attribute may be used to explicitly request such
+	//                     features to be removed from (on) or kept in (off) the virtual CPU. This attribute does
+	//                     not make migration to another host safer: even with migratable='on' migration will be
+	//                     dangerous unless both hosts are identical as described above.
+	//  maximum          : When running a guest with hardware virtualization this CPU model is functionally identical
+	//                     to host-passthrough, so refer to the docs above.
+	//                     When running a guest with CPU emulation, this CPU model will enable the maximum set of
+	//                     features that the emulation engine is able to support. Note that even with migratable='on'
+	//                     migration will be dangerous unless both hosts are running identical versions of the emulation
+	//                     code. Since 7.1.0 with the QEMU driver.
+	//
+	// Both host-model and host-passthrough modes make sense when a domain can run directly on the host CPUs
+	// (for example, domains with type kvm). The actual host CPU is irrelevant for domains with emulated virtual
+	// CPUs (such as domains with type qemu). However, for backward compatibility host-model may be implemented
+	// even for domains running on emulated CPUs in which case the best CPU the hypervisor is able to emulate may
+	// be used rather then trying to mimic the host CPU model.
+	// If an application does not care about a specific CPU, just wants the best featureset without a need for
+	// migration compatibility, the maximum model is a good choice on hypervisors where it is available.
+	Mode DomainCPUMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+
+	//
+	Migratable TurnState `xml:"migratable,attr,omitempty" json:"migratable,omitempty"`
+
+	// The content of the model element specifies CPU model requested by the guest. The list of available CPU
+	// models and their definition can be found in directory cpu_map, installed in libvirt's data directory.
+	// If a hypervisor is not able to use the exact CPU model, libvirt automatically falls back to a closest
+	// model supported by the hypervisor while maintaining the list of CPU features. Since 0.9.10 , an optional
+	// fallback attribute can be used to forbid this behavior, in which case an attempt to start a domain requesting
+	// an unsupported CPU model will fail. Supported values for fallback attribute are: allow (this is the default),
+	// and forbid. The optional vendor_id attribute ( Since 0.10.0 ) can be used to set the vendor id seen by the guest.
+	// It must be exactly 12 characters long. If not set the vendor id of the host is used. Typical possible values are
+	// "AuthenticAMD" and "GenuineIntel".
+	Model *DomainCPUModel `xml:"model,omitempty" json:"model,omitempty"`
+
+	// Since 0.8.3 the content of the vendor element specifies CPU vendor requested by the guest. If this element is
+	// missing, the guest can be run on a CPU matching given features regardless on its vendor. The list of supported
+	// vendors can be found in cpu_map/*_vendors.xml.
+	Vendor string `xml:"vendor,omitempty" json:"vendor,omitempty"`
+
+	// The topology element specifies requested topology of virtual CPU provided to the guest. Four attributes,
+	// sockets, dies, cores, and threads, accept non-zero positive integer values. They refer to the number of
+	// CPU sockets per NUMA node, number of dies per socket, number of cores per die, and number of threads per
+	// core, respectively. The dies attribute is optional and will default to 1 if omitted, while the other
+	// attributes are all mandatory. Hypervisors may require that the maximum number of vCPUs specified by
+	// the cpus element equals to the number of vcpus resulting from the topology.
+	Topology *DomainCPUTopology `xml:"topology,omitempty" json:"topology,omitempty"`
+
+	// Since 3.3.0 the cache element describes the virtual CPU cache. If the element is missing, the hypervisor
+	// will use a sensible default.
+	Cache *DomainCPUCache `xml:"cache,omitempty" json:"cache,omitempty"`
+
+	// The cpu element can contain zero or more feature elements used to fine-tune features provided by
+	// the selected CPU model. The list of known feature names can be found in the same file as CPU models.
+	// The meaning of each feature element depends on its policy attribute, which has to be set to one of
+	// the following values:
+	//  force    : The virtual CPU will claim the feature is supported regardless of it being supported by host CPU.
+	//  require  : Guest creation will fail unless the feature is supported by the host CPU or the hypervisor is able to emulate it.
+	//  optional : The feature will be supported by virtual CPU if and only if it is supported by host CPU.
+	//  disable  : The feature will not be supported by virtual CPU.
+	//  forbid   : Guest creation will fail if the feature is supported by host CPU.
+	//
+	// Since 0.8.5 the policy attribute can be omitted and will default to require. Individual CPU feature names
+	// are specified as part of the name attribute. For example, to explicitly specify the 'pcid' feature with
+	// Intel IvyBridge CPU model:
+	// ```
+	//	...
+	//	<cpu match='exact'>
+	//  	<model fallback='forbid'>IvyBridge</model>
+	//  	<vendor>Intel</vendor>
+	//  	<feature policy='require' name='pcid'/>
+	//	</cpu>
+	//	...
+	// ```
+	Feature []*DomainCPUFeature `xml:"feature,omitempty" json:"feature,omitempty"`
+
+	// Guest NUMA topology can be specified using the numa element.
+	// Since 0.9.8
+	Numa *DomainCPUNuma `xml:"numa,omitempty" json:"numa,omitempty"`
+}
+
+type DomainCPUModelFallback string
+
+const (
+	DomainCPUModelFallbackAllow  DomainCPUModelFallback = "allow"
+	DomainCPUModelFallbackForbid DomainCPUModelFallback = "forbid"
+)
+
+type DomainCPUModel struct {
+	Fallback DomainCPUModelFallback `xml:"fallback,attr,omitempty" json:"fallback,omitempty"`
+	Data     string                 `xml:",chardata" json:"data"`
+}
+
+type DomainCPUTopology struct {
+	Sockets int32 `xml:"sockets,attr,omitempty" json:"sockets,omitempty"`
+	Dies    int32 `xml:"dies,attr,omitempty" json:"dies,omitempty"`
+	Cores   int32 `xml:"cores,attr,omitempty" json:"cores,omitempty"`
+	Threads int32 `xml:"threads,attr,omitempty" json:"threads,omitempty"`
+}
+
+type DomainCPUPolicy string
+
+const (
+	DomainCPUPolicyForce    DomainCPUPolicy = "force"
+	DomainCPUPolicyRequire  DomainCPUPolicy = "require"
+	DomainCPUPolicyOptional DomainCPUPolicy = "optional"
+	DomainCPUPolicyDisable  DomainCPUPolicy = "disable"
+	DomainCPUPolicyForbid   DomainCPUPolicy = "forbid"
+)
+
+type DomainCPUFeature struct {
+	Policy DomainCPUPolicy `xml:"policy,attr,omitempty" json:"policy,omitempty"`
+	Name   string          `xml:"name,attr,omitempty" json:"name,omitempty"`
+}
+
+type DomainCPUCacheMode string
+
+const (
+	DomainCPUCacheModeEmulate     DomainCPUCacheMode = "emulate"
+	DomainCPUCacheModePassthrough DomainCPUCacheMode = "passthrough"
+	DomainCPUCacheModeDisable     DomainCPUCacheMode = "disable"
+)
+
+type DomainCPUCache struct {
+	// This optional attribute specifies which cache level is described by the element. Missing attribute means
+	// the element describes all CPU cache levels at once. Mixing cache elements with the level attribute set
+	// and those without the attribute is forbidden.
+	Level int32 `xml:"level,attr,omitempty" json:"level,omitempty"`
+
+	// The following values are supported:
+	//  emulate     : The hypervisor will provide a fake CPU cache data.
+	//  passthrough : The real CPU cache data reported by the host CPU will be passed through to the virtual CPU.
+	//  disable     : The virtual CPU will report no CPU cache of the specified level (or no cache at all if the
+	//                level attribute is missing).
+	Mode DomainCPUCacheMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+}
+
+type DomainCPUNuma struct {
+	// Each cell element specifies a NUMA cell or a NUMA node. cpus specifies the CPU or range of CPUs that are
+	// part of the node. Since 6.5.0 For the qemu driver, if the emulator binary supports disjointed cpus ranges
+	// in each cell, the sum of all CPUs declared in each cell will be matched with the maximum number of virtual
+	// CPUs declared in the vcpu element. This is done by filling any remaining CPUs into the first NUMA cell.
+	// Users are encouraged to supply a complete NUMA topology, where the sum of the NUMA CPUs matches the maximum
+	// virtual CPUs number declared in vcpus, to make the domain consistent across qemu and libvirt versions.
+	// memory specifies the node memory in kibibytes (i.e. blocks of 1024 bytes). Since 6.6.0 the cpus attribute
+	// is optional and if omitted a CPU-less NUMA node is created. Since 1.2.11 one can use an additional unit
+	// attribute to define units in which memory is specified. Since 1.2.7 all cells should have id attribute in
+	// case referring to some cell is necessary in the code, otherwise the cells are assigned ids in the increasing
+	// order starting from 0. Mixing cells with and without the id attribute is not recommended as it may result in
+	// unwanted behaviour. Since 1.2.9 the optional attribute memAccess can control whether the memory is to be
+	// mapped as "shared" or "private". This is valid only for hugepages-backed memory and nvdimm modules.
+	// Each cell element can have an optional discard attribute which fine tunes the discard feature for given
+	// numa node as described under Memory Backing. Accepted values are yes and no. Since 4.4.0
+	//
+	// This guest NUMA specification is currently available only for QEMU/KVM and Xen.
+	//
+	// A NUMA hardware architecture supports the notion of distances between NUMA cells. Since 3.10.0 it is
+	// possible to define the distance between NUMA cells using the distances element within a NUMA cell description.
+	// The sibling sub-element is used to specify the distance value between sibling NUMA cells. For more details,
+	// ee the chapter explaining the system's SLIT (System Locality Information Table) within the ACPI
+	// (Advanced Configuration and Power Interface) specification.
+	Cell []*DomainCPUNumaCell `xml:"cell,omitempty" json:"cell,omitempty"`
+
+	// The NUMA description has an optional interconnects element that describes the normalized memory read/write
+	// latency, read/write bandwidth between Initiator Proximity Domains (Processor or I/O) and Target Proximity
+	// Domains (Memory).
+	//
+	// The interconnects element can have zero or more latency child elements to describe latency between two
+	// memory nodes and zero or more bandwidth child elements to describe bandwidth between two memory nodes.
+	// Both these have the following mandatory attributes:
+	//
+	// To describe latency from one NUMA node to a cache of another NUMA node the latency element has optional
+	// cache attribute which in combination with target attribute creates full reference to distant NUMA node's
+	// cache level. For instance, target='0' cache='1' refers to the first level cache of NUMA node 0.
+	Interconnects *DomainCPUNumaInterconnects `xml:"interconnects,omitempty" json:"interconnects,omitempty"`
+}
+
+type DomainCPUNumaMemAccess string
+
+const (
+	DomainCPUNumaMemAccessShared  DomainCPUNumaMemAccess = "shared"
+	DomainCPUNumaMemAccessPrivate DomainCPUNumaMemAccess = "private"
+)
+
+type DomainCPUNumaCell struct {
+	Id        int64                  `xml:"id,attr,omitempty" json:"id,omitempty"`
+	Cpus      string                 `xml:"cpus,omitempty" json:"cpus,omitempty"`
+	Memory    int64                  `xml:"memory,omitempty" json:"memory,omitempty"`
+	Unit      Unit                   `xml:"unit,omitempty" json:"unit,omitempty"`
+	Discard   ButtonState            `xml:"discard,omitempty" json:"discard,omitempty"`
+	MemAccess DomainCPUNumaMemAccess `xml:"memaccess,omitempty" json:"memaccess,omitempty"`
+
+	// Describing distances between NUMA cells is currently only supported by Xen and QEMU.
+	// If no distances are given to describe the SLIT data between different cells,
+	// it will default to a scheme using 10 for local and 20 for remote distances.
+	Distances *DomainCPUNumaDistances `xml:"distances,omitempty" json:"distances,omitempty"`
+
+	// Since 6.6.0 the cell element can have a cache child element which describes memory side cache for memory
+	// proximity domains. The cache element has a level attribute describing the cache level and thus the element
+	// can be repeated multiple times to describe different levels of the cache.
+	// The cache element has two mandatory child elements then: size and line which describe cache size and cache
+	// line size. Both elements accept two attributes: value and unit which set the value of corresponding cache
+	// attribute.
+	Cache *DomainCPUCache `xml:"cache,omitempty" json:"cache,omitempty"`
+}
+
+type DomainCPUNumaDistances struct {
+	Sibling []*DomainCPUNumaDistanceSibling `xml:"sibling,omitempty" json:"sibling,omitempty"`
+}
+
+type DomainCPUNumaDistanceSibling struct {
+	Id    int64 `xml:"id,attr,omitempty" json:"id,omitempty"`
+	Value int64 `xml:"value,attr,omitempty" json:"value,omitempty"`
+}
+
+type DomainCPUNumaCacheAssociativity string
+
+const (
+	DomainCPUNumaCacheAssociativityNone   DomainCPUNumaCacheAssociativity = "none"
+	DomainCPUNumaCacheAssociativityDirect DomainCPUNumaCacheAssociativity = "direct"
+	DomainCPUNumaCacheAssociativityFull   DomainCPUNumaCacheAssociativity = "full"
+)
+
+type DomainCPUNumaCachePolicy string
+
+const (
+	DomainCPUNumaCachePolicyNone         DomainCPUNumaCachePolicy = "none"
+	DomainCPUNumaCachePolicyWriteBack    DomainCPUNumaCachePolicy = "writeback"
+	DomainCPUNumaCachePolicyWritethrough DomainCPUNumaCachePolicy = "writethrough"
+)
+
+type DomainCPUNumaCache struct {
+	// Level of the cache this description refers to.
+	Level int32 `xml:"level,attr,omitempty" json:"level,omitempty"`
+
+	// Describes cache associativity (accepted values are none, direct and full).
+	Associativity DomainCPUNumaCacheAssociativity `xml:"associativity,attr,omitempty" json:"associativity,omitempty"`
+
+	// Describes cache write associativity (accepted values are none, writeback and writethrough).
+	Policy DomainCPUNumaCachePolicy `xml:"policy,attr,omitempty" json:"policy,omitempty"`
+
+	Size *DomainCPUNumaCacheSize `xml:"size,omitempty" json:"size,omitempty"`
+	Line *DomainCPUNumaCacheSize `xml:"line,omitempty" json:"line,omitempty"`
+}
+
+type DomainCPUNumaCacheSize struct {
+	Value int64 `xml:"value,attr,omitempty" json:"value,omitempty"`
+	Unit  Unit  `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+}
+
+type DomainCPUNumaInterconnects struct {
+	Latency   []*DomainCPUNumaInterconnect `xml:"latency,omitempty" json:"latency,omitempty"`
+	Bandwidth *DomainCPUNumaInterconnect   `xml:"bandwidth,omitempty" json:"bandwidth,omitempty"`
+}
+
+type DomainCPUNumaInterconnectType string
+
+const (
+	DomainCPUNumaInterconnectTypeAccess DomainCPUNumaInterconnectType = "access"
+	DomainCPUNumaInterconnectTypeRead   DomainCPUNumaInterconnectType = "read"
+	DomainCPUNumaInterconnectTypeWrite  DomainCPUNumaInterconnectType = "write"
+)
+
+type DomainCPUNumaInterconnect struct {
+	// Refers to the source NUMA node
+	Initiator int32 `xml:"initiator,attr,omitempty" json:"initiator,omitempty"`
+
+	// Refers to the target NUMA node
+	Target int32 `xml:"target,attr,omitempty" json:"target,omitempty"`
+
+	Cache int32 `xml:"cache,attr,omitempty" json:"cache,omitempty"`
+
+	// The type of the access. Accepted values: access, read, write
+	Type DomainCPUNumaInterconnectType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	// The actual value. For latency this is delay in nanoseconds, for bandwidth this value is in kibibytes per
+	// second. Use additional unit attribute to change the units.
+	Value int64 `xml:"value,attr,omitempty" json:"value,omitempty"`
+
+	Unit Unit `xml:"unit,omitempty" json:"unit,omitempty"`
+}
+
+type EventState string
+
+const (
+	EventStateDestroy         EventState = "destroy"
+	EventStateRestart         EventState = "restart"
+	EventStatePreserve        EventState = "preserve"
+	EventStateRenameRestart   EventState = "rename-restart"
+	EventStateCoredumpDestroy EventState = "coredump-destroy"
+	EventStateCoredumpRestart EventState = "coredump-restart"
+	EventStatePoweroff        EventState = "poweroff"
+	EventStatePause           EventState = "pause"
+	EventStateIgnore          EventState = "ignore"
+)
+
+type DomainPm struct {
+	SuspendToDisk *DomainPmCase `xml:"suspend-to-disk,omitempty" json:"suspendToDisk,omitempty"`
+	SuspendToMem  *DomainPmCase `xml:"suspend-to-mem,omitempty" json:"suspendToMem,omitempty"`
+}
+
+type DomainPmCase struct {
+	Enabled ButtonState `xml:"enabled,omitempty" json:"enabled,omitempty"`
+}
+
+type DomainFeatures struct {
+	// Physical address extension mode allows 32-bit guests to address more than 4 GB of memory.
+	Pae *Empty `xml:"pae,omitempty" json:"pae,omitempty"`
+
+	// ACPI is useful for power management, for example, with KVM guests it is required for graceful shutdown to work.
+	Acpi *Empty `xml:"acpi,omitempty" json:"acpi,omitempty"`
+
+	// APIC allows the use of programmable IRQ management. Since 0.10.2 (QEMU only) there is an optional
+	// attribute eoi with values on and off which toggles the availability of EOI (End of Interrupt) for the guest.
+	Apic *DomainFeatureApic `xml:"apic,omitempty" json:"apic,omitempty"`
+
+	// Depending on the state attribute (values on, off) enable or disable use of Hardware Assisted Paging.
+	// The default is on if the hypervisor detects availability of Hardware Assisted Paging.
+	Hap *DomainFeatureCase `xml:"hap,omitempty" json:"hap,omitempty"`
+
+	// Enable Viridian hypervisor extensions for paravirtualizing guest operating systems
+	Viridian *Empty `xml:"viridian,omitempty" json:"viridian,omitempty"`
+
+	// Always create a private network namespace. This is automatically set if any interface devices are defined.
+	// This feature is only relevant for container based virtualization drivers, such as LXC.
+	Privnet *Empty `xml:"privnet,omitempty" json:"privnet,omitempty"`
+
+	// Enable various features improving behavior of guests running Microsoft Windows.
+	Hyperv *DomainFeatureHyperv `xml:"hyperv,omitempty" json:"hyperv,omitempty"`
+
+	// Various features to change the behavior of the KVM hypervisor.
+	Kvm *DomainFeatureKVM `xml:"kvm,omitempty" json:"kvm,omitempty"`
+
+	// Various features to change the behavior of the Xen hypervisor.
+	Xen *DomainFeatureXen `xml:"xen,omitempty" json:"xen,omitempty"`
+
+	// Notify the guest that the host supports paravirtual spinlocks for example by exposing the pvticketlocks
+	// mechanism. This feature can be explicitly disabled by using state='off' attribute.
+	Pvspinlock *DomainFeatureCase `xml:"pvspinlock,omitempty" json:"pvspinlock,omitempty"`
+
+	// Depending on the state attribute (values on, off, default on) enable or disable the performance
+	// monitoring unit for the guest. Since 1.2.12
+	Pmu *DomainFeatureCase `xml:"pmu,omitempty" json:"pmu,omitempty"`
+
+	// Depending on the state attribute (values on, off, default on) enable or disable the emulation of
+	// VMware IO port, for vmmouse etc. Since 1.2.16
+	Vmport *DomainFeatureCase `xml:"vmport,omitempty" json:"vmport,omitempty"`
+
+	// Enable for architectures using a General Interrupt Controller instead of APIC in order to handle interrupts.
+	// For example, the 'aarch64' architecture uses gic instead of apic. The optional attribute version specifies
+	// the GIC version; however, it may not be supported by all hypervisors. Accepted values are 2, 3 and host.
+	// Since 1.2.16
+	Gic *DomainFeatureCase `xml:"gic,omitempty" json:"gic,omitempty"`
+
+	// Tune the I/O APIC. Possible values for the driver attribute are: kvm (default for KVM domains) and qemu
+	// which puts I/O APIC in userspace which is also known as a split I/O APIC mode.
+	// Since 3.4.0 (QEMU/KVM only)
+	IOApic *DomainFeatureCase `xml:"ioapic,omitempty" json:"ioapic,omitempty"`
+
+	// Configure the HPT (Hash Page Table) of a pSeries guest. Possible values for the resizing attribute are enabled,
+	// which causes HPT resizing to be enabled if both the guest and the host support it; disabled, which causes HPT
+	// resizing to be disabled regardless of guest and host support; and required, which prevents the guest from
+	// starting unless both the guest and the host support HPT resizing. If the attribute is not defined, the
+	// hypervisor default will be used. Since 3.10.0 (QEMU/KVM only).
+	//
+	// The optional maxpagesize subelement can be used to limit the usable page size for HPT guests. Common values
+	// are 64 KiB, 16 MiB and 16 GiB; when not specified, the hypervisor default will be used.
+	// Since 4.5.0 (QEMU/KVM only).
+	HPT *DomainFeatureHPT `xml:"hpt,omitempty" json:"hpt,omitempty"`
+
+	// Enable QEMU vmcoreinfo device to let the guest kernel save debug details. Since 4.4.0 (QEMU only)
+	VmCoreInfo *DomainFeatureCase `xml:"vmcoreinfo,omitempty" json:"vmcoreinfo,omitempty"`
+
+	// Depending on the state attribute (values on, off, default on) enable or disable System Management Mode.
+	// Since 2.1.0
+	//
+	// Optional sub-element tseg can be used to specify the amount of memory dedicated to SMM's extended TSEG.
+	// That offers a fourth option size apart from the existing ones (1 MiB, 2 MiB and 8 MiB) that the guest
+	// OS (or rather loader) can choose from. The size can be specified as a value of that element, optional
+	// attribute unit can be used to specify the unit of the aforementioned value (defaults to 'MiB'). If set
+	// to 0 the extended size is not advertised and only the default ones (see above) are available.
+	//
+	// If the VM is booting you should leave this option alone, unless you are very certain you know what you are doing.
+	//
+	// This value is configurable due to the fact that the calculation cannot be done right with the guarantee
+	// that it will work correctly. In QEMU, the user-configurable extended TSEG feature was unavailable up to
+	// and including pc-q35-2.9. Starting with pc-q35-2.10 the feature is available, with default size 16 MiB.
+	// That should suffice for up to roughly 272 vCPUs, 5 GiB guest RAM in total, no hotplug memory range, and
+	// 32 GiB of 64-bit PCI MMIO aperture. Or for 48 vCPUs, with 1TB of guest RAM, no hotplug DIMM range, and
+	// 32GB of 64-bit PCI MMIO aperture. The values may also vary based on the loader the VM is using.
+	//
+	// Additional size might be needed for significantly higher vCPU counts or increased address space (that can
+	// be memory, maxMemory, 64-bit PCI MMIO aperture size; roughly 8 MiB of TSEG per 1 TiB of address space) which
+	// can also be rounded up.
+	//
+	// Due to the nature of this setting being similar to "how much RAM should the guest have" users are advised to
+	// either consult the documentation of the guest OS or loader (if there is any), or test this by trial-and-error
+	// changing the value until the VM boots successfully. Yet another guiding value for users might be the fact
+	// that 48 MiB should be enough for pretty large guests (240 vCPUs and 4TB guest RAM), but it is on purpose
+	// not set as default as 48 MiB of unavailable RAM might be too much for small guests (e.g. with 512 MiB of RAM).
+	//
+	// See Memory Allocation for more details about the unit attribute.
+	// Since 4.5.0 (QEMU only)
+	Smm *DomainFeatureSmm `xml:"smm,omitempty" json:"smm,omitempty"`
+
+	// Configure HTM (Hardware Transational Memory) availability for pSeries guests. Possible values for the
+	// state attribute are on and off. If the attribute is not defined, the hypervisor default will be used.
+	// Since 4.6.0 (QEMU/KVM only)
+	HTM *DomainFeatureCase `xml:"htm,omitempty" json:"htm,omitempty"`
+
+	// Configure nested HV availability for pSeries guests. This needs to be enabled from the host (L0) in
+	// order to be effective; having HV support in the (L1) guest is very desiderable if it's planned to run
+	// nested (L2) guests inside it, because it will result in those nested guests having much better performance
+	// than they would when using KVM PR or TCG. Possible values for the state attribute are on and off. If the
+	// attribute is not defined, the hypervisor default will be used. Since 4.10.0 (QEMU/KVM only)
+	NestedHv *DomainFeatureCase `xml:"nested-hv,omitempty" json:"nestedHv,omitempty"`
+
+	// Configure ccf-assist (Count Cache Flush Assist) availability for pSeries guests. Possible values for the
+	// state attribute are on and off. If the attribute is not defined, the hypervisor default will be used.
+	// Since 5.9.0 (QEMU/KVM only)
+	CcfAssist *DomainFeatureCase `xml:"ccf-assist,omitempty" json:"ccfAssist,omitempty"`
+
+	// Some guests might require ignoring unknown Model Specific Registers (MSRs) reads and writes.
+	// It's possible to switch this by setting unknown attribute of msrs to ignore. If the attribute
+	// is not defined, or set to fault, unknown reads and writes will not be ignored.
+	// Since 5.1.0 (bhyve only)
+	Msrs *DomainFeatureMsrs `xml:"msrs,omitempty" json:"msrs,omitempty"`
+
+	// Configure cfpc (Cache Flush on Privilege Change) availability for pSeries guests. Possible values for the
+	// value attribute are broken (no protection), workaround (software workaround available) and fixed (fixed in
+	// hardware). If the attribute is not defined, the hypervisor default will be used.
+	// Since 6.3.0 (QEMU/KVM only)
+	Cfpc *DomainFeatureCfgCase `xml:"cfpc,omitempty" json:"cfpc,omitempty"`
+
+	// Configure sbbc (Speculation Barrier Bounds Checking) availability for pSeries guests. Possible values for
+	// the value attribute are broken (no protection), workaround (software workaround available) and fixed
+	// (fixed in hardware). If the attribute is not defined, the hypervisor default will be used.
+	// Since 6.3.0 (QEMU/KVM only)
+	Sbbc *DomainFeatureCfgCase `xml:"sbbc,omitempty" json:"sbbc,omitempty"`
+
+	// Configure ibs (Indirect Branch Speculation) availability for pSeries guests. Possible values for the
+	// value attribute are broken (no protection), workaround (count cache flush), fixed-ibs (fixed by serializing indirect branches),
+	// fixed-ccd (fixed by disabling the cache count) and fixed-na (fixed in hardware - no longer applicable).
+	// If the attribute is not defined, the hypervisor default will be used.
+	// Since 6.3.0 (QEMU/KVM only)
+	Ibs *DomainFeatureCfgCase `xml:"ibs,omitempty" json:"ibs,omitempty"`
+}
+
+type DomainFeatureApic struct {
+	EOI TurnState `xml:"eoi,omitempty" json:"eoi,omitempty"`
+}
+
+type DomainFeatureHyperv struct {
+	// Relax constraints on timers
+	Relaxed *DomainFeatureCase `xml:"relaxed,omitempty" json:"relaxed,omitempty"`
+
+	// Enable virtual APIC
+	Vapic *DomainFeatureCase `xml:"vapic,omitempty" json:"vapic,omitempty"`
+
+	// Enable spinlock support , retries - at least 4095
+	Spinlocks *DomainFeatureCase `xml:"spinlocks,omitempty" json:"spinlocks,omitempty"`
+
+	// Virtual processor index
+	Vpindex *DomainFeatureCase `xml:"vpindex,omitempty" json:"vpindex,omitempty"`
+
+	// Processor time spent on running guest code and on behalf of guest code
+	Runtime *DomainFeatureCase `xml:"runtime,omitempty" json:"runtime,omitempty"`
+
+	// Enable Synthetic Interrupt Controller (SynIC)
+	Synic *DomainFeatureCase `xml:"synic,omitempty" json:"synic,omitempty"`
+
+	// Enable SynIC timers, optionally with Direct Mode support
+	Stimer *DomainFeatureHypervStimer `xml:"stimer,omitempty" json:"stimer,omitempty"`
+
+	// Enable hypervisor reset
+	Reset *DomainFeatureCase `xml:"reset,omitempty" json:"reset,omitempty"`
+
+	// Set hypervisor vendor id
+	VendorId *DomainFeatureCase `xml:"vendor_id,omitempty" json:"vendor_id,omitempty"`
+
+	// Expose frequency MSRs
+	Frequencies *DomainFeatureCase `xml:"frequencies,omitempty" json:"frequencies,omitempty"`
+
+	// Enable re-enlightenment notification on migration
+	Reenlightenment *DomainFeatureCase `xml:"reenlightenment,omitempty" json:"reenlightenment,omitempty"`
+
+	// Enable PV TLB flush support
+	Tlbflush *DomainFeatureCase `xml:"tlbflush,omitempty" json:"tlbflush,omitempty"`
+
+	// Enable PV IPI support
+	Ipi *DomainFeatureCase `xml:"ipi,omitempty" json:"ipi,omitempty"`
+
+	// Enable Enlightened VMCS
+	Evmcs *DomainFeatures `xml:"evmcs,omitempty" json:"evmcs,omitempty"`
+}
+
+type DomainFeatureHypervStimer struct {
+	State TurnState `xml:"state,attr,omitempty" json:"state,omitempty"`
+
+	//
+	Direct *DomainFeatureCase `xml:"direct,omitempty" json:"direct,omitempty"`
+}
+
+type DomainFeatureKVM struct {
+	// Hide the KVM hypervisor from standard MSR based discovery
+	Hidden *DomainFeatureCase `xml:"hidden,omitempty" json:"hidden,omitempty"`
+
+	// Allows a guest to enable optimizations when running on dedicated vCPUs
+	HintDedicated *DomainFeatureCase `xml:"hint-dedicated,omitempty" json:"hintDedicated,omitempty"`
+
+	// Decrease IO completion latency by introducing a grace period of busy waiting
+	PollControl *DomainFeatureCase `xml:"poll-control,omitempty" json:"pollControl,omitempty"`
+}
+
+type DomainFeatureCaseMode string
+
+const (
+	DomainFeatureCaseModeShare DomainFeatureCaseMode = "share_pt"
+	DomainFeatureCaseModeSync  DomainFeatureCaseMode = "sync_pt"
+)
+
+type DomainFeatureXen struct {
+	// Expose the host e820 to the guest (PV only)
+	E820Host *DomainFeatureCase `xml:"e820_host,omitempty" json:"e820Host,omitempty"`
+
+	// Enable IOMMU mappings allowing PCI passthrough
+	Passthrough *DomainFeatureCase `xml:"passthrough,omitempty" json:"passthrough,omitempty"`
+}
+
+type DomainFeatureHPT struct {
+	Maxpagesize *Size `xml:"maxpagesize,omitempty" json:"maxpagesize,omitempty"`
+}
+
+type DomainFeatureSmm struct {
+	Tseg Size `xml:"tseg,omitempty" json:"tseg,omitempty"`
+}
+
+type DomainFeatureMsrs struct {
+	Unknown string `xml:"unknown,attr,omitempty" json:"unknown,omitempty"`
+}
+
+type DomainFeatureCfg string
+
+const (
+	DomainFeatureCfgBroken     DomainFeatureCfg = "broken"     // no protection
+	DomainFeatureCfgWorkaround DomainFeatureCfg = "workaround" // count cache flush
+	DomainFeatureCfgFixed      DomainFeatureCfg = "fixed"      // fixed in hardware
+	DomainFeatureCfgFixedIbs   DomainFeatureCfg = "fixed-ibs"  // fixed by serializing indirect branches
+	DomainFeatureCfgFixedCcd   DomainFeatureCfg = "fixed-ccd"  // fixed by disabling the cache count
+	DomainFeatureCfgFixedNa    DomainFeatureCfg = "fixed-na"   // fixed in hardware - no longer applicable
+)
+
+type DomainFeatureCfgCase struct {
+	Value DomainFeatureCfg `xml:"value,attr,omitempty" json:"value,omitempty"`
+}
+
+type DomainFeatureCase struct {
+	State   TurnState             `xml:"state,attr,omitempty" json:"state,omitempty"`
+	Retries int64                 `xml:"retries,attr,omitempty" json:"retries,omitempty"`
+	Value   string                `xml:"value,attr,omitempty" json:"value,omitempty"`
+	Mode    DomainFeatureCaseMode `xml:"mode,omitempty" json:"mode,omitempty"`
+}
+
+type DomainClockOffset string
+
+const (
+	// DomainClockOffsetUTC the guest clock will always be synchronized to UTC when booted.
+	// Since 0.9.11 'utc' mode can be converted to 'variable' mode, which can be controlled
+	// by using the adjustment attribute. If the value is 'reset', the conversion is never
+	// done (not all hypervisors can synchronize to UTC on each boot; use of 'reset' will cause
+	// an error on those hypervisors). A numeric value forces the conversion to 'variable' mode
+	// using the value as the initial adjustment. The default adjustment is hypervisor specific.
+	DomainClockOffsetUTC DomainClockOffset = "utc"
+
+	// DomainClockOffsetLocaltime the guest clock will be synchronized to the host's configured
+	// timezone when booted, if any. Since 0.9.11, the adjustment attribute behaves the same as
+	// in 'utc' mode.
+	DomainClockOffsetLocaltime DomainClockOffset = "localtime"
+
+	// DomainClockOffsetTimezone the guest clock will be synchronized to the requested timezone
+	// using the timezone attribute. Since 0.7.7
+	DomainClockOffsetTimezone DomainClockOffset = "timezone"
+
+	// DomainClockOffsetVariable the guest clock will have an arbitrary offset applied relative
+	// to UTC or localtime, depending on the basis attribute. The delta relative to UTC (or localtime)
+	// is specified in seconds, using the adjustment attribute. The guest is free to adjust the RTC over
+	// time and expect that it will be honored at next reboot. This is in contrast to 'utc' and 'localtime'
+	// mode (with the optional attribute adjustment='reset'), where the RTC adjustments are lost at each reboot.
+	// Since 0.7.7 Since 0.9.11 the basis attribute can be either 'utc' (default) or 'localtime'.
+	DomainClockOffsetVariable DomainClockOffset = "variable"
+)
+
+type DomainClock struct {
+	// The offset attribute takes four possible values, allowing fine grained control over how the guest clock
+	// is synchronized to the host. NB, not all hypervisors support all modes.
+	Offset DomainClockOffset `xml:"offset,attr,omitempty" json:"offset,omitempty"`
+
+	// Each timer element requires a name attribute, and has other optional attributes that depend on the name
+	// specified. Various hypervisors support different combinations of attributes.
+	Timer []*DomainClockTimer `xml:"timer,omitempty" json:"timer,omitempty"`
+}
+
+type DomainClockTimerName string
+
+const (
+	DomainClockTimerNamePlatform    DomainClockTimerName = "platform"
+	DomainClockTimerNameHpet        DomainClockTimerName = "hpet"
+	DomainClockTimerNameKvmClock    DomainClockTimerName = "kvmclock"
+	DomainClockTimerNamePit         DomainClockTimerName = "pic"
+	DomainClockTimerNameRtc         DomainClockTimerName = "rtc"
+	DomainClockTimerNameTsc         DomainClockTimerName = "tsc"
+	DomainClockTimerNameHypervClock DomainClockTimerName = "hypervclock"
+	DomainClockTimerNameArmvtimer   DomainClockTimerName = "armvtimer"
+)
+
+type DomainClockTimerTrack string
+
+const (
+	DomainClockTimerTrackBoot     DomainClockTimerTrack = "boot"
+	DomainClockTimerTrackGuest    DomainClockTimerTrack = "guest"
+	DomainClockTimerTrackWall     DomainClockTimerTrack = "wall"
+	DomainClockTimerTrackRealtime DomainClockTimerTrack = "realtime"
+)
+
+type DomainClockTimerTickPolicy string
+
+const (
+	// DomainClockTimerTickPolicyDelay continue to deliver ticks at the normal rate. The guest OS will not notice
+	// anything is amiss, as from its point of view time will have continued to flow normally. The time in the
+	// guest should now be behind the time in the host by exactly the amount of time during which ticks have been missed.
+	DomainClockTimerTickPolicyDelay DomainClockTimerTickPolicy = "delay"
+
+	// DomainClockTimerTickPolicyCatchup deliver ticks at a higher rate to catch up with the missed ticks.
+	// The guest OS will not notice anything is amiss, as from its point of view time will have continued
+	// to flow normally. Once the timer has managed to catch up with all the missing ticks, the time in
+	// the guest and in the host should match.
+	DomainClockTimerTickPolicyCatchup DomainClockTimerTickPolicy = "catchup"
+
+	// DomainClockTimerTickPolicyMerge merge the missed tick(s) into one tick and inject. The guest time
+	// may be delayed, depending on how the OS reacts to the merging of ticks
+	DomainClockTimerTickPolicyMerge DomainClockTimerTickPolicy = "merge"
+
+	// DomainClockTimerTickPolicyDiscard Throw away the missed ticks and continue with future injection normally.
+	// The guest OS will see the timer jump ahead by a potentially quite significant amount all at once, as if the
+	// intervening chunk of time had simply not existed; needless to say, such a sudden jump can easily confuse
+	// a guest OS which is not specifically prepared to deal with it. Assuming the guest OS can deal correctly
+	// with the time jump, the time in the guest and in the host should now match.
+	DomainClockTimerTickPolicyDiscard DomainClockTimerTickPolicy = "discard"
+)
+
+type DomainClockTimerMode string
+
+const (
+	DomainClockTimerModeAuto     DomainClockTimerMode = "auto"
+	DomainClockTimerModeNative   DomainClockTimerMode = "native"
+	DomainClockTimerModeEmulate  DomainClockTimerMode = "emulate"
+	DomainClockTimerModeParaVirt DomainClockTimerMode = "paravirt"
+	DomainClockTimerModeSmpSafe  DomainClockTimerMode = "smpsafe"
+)
+
+type DomainClockTimer struct {
+	// The name attribute selects which timer is being modified, and can be one of "platform" (currently unsupported),
+	// "hpet" (xen, qemu, lxc), "kvmclock" (qemu), "pit" (qemu), "rtc" (qemu, lxc), "tsc" (xen, qemu - since 3.2.0 ),
+	// "hypervclock" (qemu - since 1.2.2 ) or "armvtimer" (qemu - since 6.1.0 ). The hypervclock timer adds support
+	// for the reference time counter and the reference page for iTSC feature for guests running the Microsoft
+	// Windows operating system.
+	Name DomainClockTimerName `xml:"name,attr,omitempty" json:"name,omitempty"`
+
+	// The track attribute specifies what the timer tracks, and can be "boot", "guest", or "wall", or "realtime".
+	// Only valid for name="rtc" or name="platform".
+	Track DomainClockTimerTrack `xml:"track,attr,omitempty" json:"track,omitempty"`
+
+	// The tickpolicy attribute determines what happens when QEMU misses a deadline for injecting a tick to the guest.
+	// This can happen, for example, because the guest was paused.
+	TickPolicy DomainClockTimerTickPolicy `xml:"tickpolicy,attr,omitempty" json:"tickpolicy,omitempty"`
+
+	// If the policy is "catchup", there can be further details in the catchup sub-element.
+	// The catchup element has three optional attributes, each a positive integer. The attributes are
+	// threshold, slew, and limit.
+	Catchup *DomainClockTimerCatchup `xml:"catchup,attr,omitempty" json:"catchup,omitempty"`
+
+	// The frequency attribute is an unsigned integer specifying the frequency at which name="tsc" runs.
+	Frequency uint64 `xml:"frequency,attr,omitempty" json:"frequency,omitempty"`
+
+	// The mode attribute controls how the name="tsc" timer is managed, and can be "auto", "native", "emulate",
+	// "paravirt", or "smpsafe". Other timers are always emulated.
+	Mode DomainClockTimerMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+
+	// The present attribute can be "yes" or "no" to specify whether a particular timer is available to the guest.
+	Present ButtonState `xml:"present,attr,omitempty" json:"present,omitempty"`
+}
+
+type DomainClockTimerCatchup struct {
+	Threshold int32 `xml:"threshold,attr,omitempty" json:"threshold,omitempty"`
+	Slew      int32 `xml:"slew,attr,omitempty" json:"slew,omitempty"`
+	Limit     int32 `xml:"limit,attr,omitempty" json:"limit,omitempty"`
+}
+
+type DomainPerformance struct {
+	Event []*DomainPerformanceEvent `xml:"event,omitempty" json:"event,omitempty"`
+}
+
+type DomainPerformanceEventName string
+
+const (
+	// DomainPerformanceEventNameCmt usage of l3 cache in bytes by applications running on the platform (perf.cmt)
+	DomainPerformanceEventNameCmt DomainPerformanceEventName = "cmt"
+
+	// DomainPerformanceEventNameMbmt total system bandwidth from one level of cache (perf.mbmt)
+	DomainPerformanceEventNameMbmt DomainPerformanceEventName = "mbmt"
+
+	// DomainPerformanceEventNameMbml bandwidth of memory traffic for a memory controller (perf.mbml)
+	DomainPerformanceEventNameMbml DomainPerformanceEventName = "mbml"
+
+	// DomainPerformanceEventNameCpuCycles the count of CPU cycles (total/elapsed) (perf.cpu_cycles)
+	DomainPerformanceEventNameCpuCycles DomainPerformanceEventName = "cpu_cycles"
+
+	// DomainPerformanceEventNameInstructions the count of instructions by applications running on the platform
+	// (perf.instructions)
+	DomainPerformanceEventNameInstructions DomainPerformanceEventName = "instructions"
+
+	// DomainPerformanceEventNameCacheReferences the count of cache hits by applications running on the platform
+	// (perf.cache_references)
+	DomainPerformanceEventNameCacheReferences DomainPerformanceEventName = "cache_references"
+
+	// DomainPerformanceEventNameCacheMisses the count of cache misses by applications running on the platform
+	// (perf.cache_misses)
+	DomainPerformanceEventNameCacheMisses DomainPerformanceEventName = "cache_misses"
+
+	// DomainPerformanceEventNameBranchInstructions the count of branch instructions by applications running on
+	// the platform (perf.branch_instructions)
+	DomainPerformanceEventNameBranchInstructions DomainPerformanceEventName = "branch_instructions"
+
+	// DomainPerformanceEventNameBranchMisses the count of branch misses by applications running on the platform
+	// (perf.branch_misses)
+	DomainPerformanceEventNameBranchMisses DomainPerformanceEventName = "branch_misses"
+
+	// DomainPerformanceEventNameBusCycles the count of bus cycles by applications running on the platform
+	// (perf.bus_cycles)
+	DomainPerformanceEventNameBusCycles DomainPerformanceEventName = "bus_cycles"
+
+	// DomainPerformanceEventNameStalledCyclesFrontend the count of stalled CPU cycles in the frontend of the
+	// instruction processor pipeline by applications running on the platform (perf.stalled_cycles_frontend)
+	DomainPerformanceEventNameStalledCyclesFrontend DomainPerformanceEventName = "stalled_cycles_frontend"
+
+	// DomainPerformanceEventNameStalledCyclesBackend the count of stalled CPU cycles in the backend of the
+	// instruction processor pipeline by applications running on the platform (perf.stalled_cycles_backend)
+	DomainPerformanceEventNameStalledCyclesBackend DomainPerformanceEventName = "stalled_cycles_backend"
+
+	// DomainPerformanceEventNameRefCpuCycles the count of total CPU cycles not affected by CPU frequency scaling
+	// by applications running on the platform (perf.ref_cpu_cycles)
+	DomainPerformanceEventNameRefCpuCycles DomainPerformanceEventName = "ref_cpu_cycles"
+
+	// DomainPerformanceEventNameCpuClock the count of CPU clock time, as measured by a monotonic high-resolution
+	// per-CPU timer, by applications running on the platform (perf.cpu_clock)
+	DomainPerformanceEventNameCpuClock DomainPerformanceEventName = "cpu_clock"
+
+	// DomainPerformanceEventNameTaskClock the count of task clock time, as measured by a monotonic high-resolution
+	// CPU timer, specific to the task that is run by applications running on the platform (perf.task_clock)
+	DomainPerformanceEventNameTaskClock DomainPerformanceEventName = "task_clock"
+
+	// DomainPerformanceEventNamePageFaults the count of page faults by applications running on the platform.
+	// This includes minor, major, invalid and other types of page faults (perf.page_faults)
+	DomainPerformanceEventNamePageFaults DomainPerformanceEventName = "page_faults"
+
+	// DomainPerformanceEventNameContextSwitches the count of context switches by applications running on the platform
+	// (perf.context_switches)
+	DomainPerformanceEventNameContextSwitches DomainPerformanceEventName = "context_switches"
+
+	// DomainPerformanceEventNameCpuMigrations the count of CPU migrations, that is, where the process moved from one
+	// logical processor to another, by applications running on the platform (perf.cpu_migrations)
+	DomainPerformanceEventNameCpuMigrations DomainPerformanceEventName = "cpu_migrations"
+
+	// DomainPerformanceEventNamePageFaultsMin the count of minor page faults, that is, where the page was present in
+	// the page cache, and therefore the fault avoided loading it from storage, by applications running on the platform
+	// (perf.page_faults_min)
+	DomainPerformanceEventNamePageFaultsMin DomainPerformanceEventName = "page_faults_min"
+
+	// DomainPerformanceEventNamePageFaultsMaj the count of major page faults, that is, where the page was not
+	// present in the page cache, and therefore had to be fetched from storage, by applications running on the platform
+	// (perf.page_faults_maj)
+	DomainPerformanceEventNamePageFaultsMaj DomainPerformanceEventName = "page_faults_maj"
+
+	// DomainPerformanceEventNameAlignmentFaults the count of alignment faults, that is when the load or store is
+	// not aligned properly, by applications running on the platform (perf.alignment_faults)
+	DomainPerformanceEventNameAlignmentFaults DomainPerformanceEventName = "alignment_faults"
+
+	// DomainPerformanceEventNameEmulationFaults the count of emulation faults, that is when the kernel traps on
+	// unimplemented instructions and emulates them for user space, by applications running on the platform
+	// (perf.emulation_faults)
+	DomainPerformanceEventNameEmulationFaults DomainPerformanceEventName = "emulation_faults"
+)
+
+type DomainPerformanceEvent struct {
+	Name   DomainPerformanceEventName `xml:"name,attr,omitempty" json:"name,omitempty"`
+	Enable TurnState                  `xml:"enable,attr,omitempty" json:"enablem,omitempty"`
+}
+
+type DomainDevices struct {
+	// The contents of the emulator element specify the fully qualified path to the device model emulator binary.
+	// The capabilities XML specifies the recommended default emulator to use for each particular domain
+	// type / architecture combination.
+	Emulator string `xml:"emulator,omitempty" json:"emulator,omitempty"`
+
+	Disk []*DomainDeviceDisk `xml:"disk,omitempty" json:"disk,omitempty"`
+
+	Interface []*DomainDeviceInterface `xml:"interface,omitempty" json:"interface,omitempty"`
+}
+
+type DomainDeviceDiskType string
+
+const (
+	DomainDeviceTypeFile DomainDeviceDiskType = "file"
+)
+
+type DomainDeviceDisk struct {
+	Type DomainDeviceDiskType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	Alias *DomainDeviceDiskAlias `xml:"alias,omitempty" json:"alias,omitempty"`
+}
+
+type DomainDeviceDiskAlias struct {
+	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
+}
+
+type DomainDeviceInterfaceType string
+
+type DomainDeviceInterface struct {
+	Type DomainDeviceInterfaceType `xml:"type,attr,omitempty" json:"type,omitempty"`
 }
