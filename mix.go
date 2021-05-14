@@ -37,7 +37,7 @@ const (
 )
 
 type Size struct {
-	Unit Unit  `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+	Unit  Unit  `xml:"unit,attr,omitempty" json:"unit,omitempty"`
 	Value int64 `xml:",chardata" json:"value,omitempty"`
 }
 
@@ -63,8 +63,8 @@ const (
 )
 
 type Entry struct {
-	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
-	File string `xml:"file,attr,omitempty" json:"file,omitempty"`
+	Name  string `xml:"name,attr,omitempty" json:"name,omitempty"`
+	File  string `xml:"file,attr,omitempty" json:"file,omitempty"`
 	Value string `xml:",chardata" json:"value"`
 }
 
@@ -73,13 +73,6 @@ type Entries struct {
 }
 
 type Empty struct {
-}
-
-type Address struct {
-	Domain   string `xml:"domain,attr,omitempty" json:"domain,omitempty"`
-	Bus      string `xml:"bus,attr,omitempty" json:"bus,omitempty"`
-	Slot     string `xml:"slot,attr,omitempty" json:"slot,omitempty"`
-	Function string `xml:"function,attr,omitempty" json:"function,omitempty"`
 }
 
 type StorageEncryptionFormat string
