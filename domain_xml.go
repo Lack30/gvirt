@@ -1908,9 +1908,49 @@ type DomainDevices struct {
 	// type / architecture combination.
 	Emulator string `xml:"emulator,omitempty" json:"emulator,omitempty"`
 
+	// Any device that looks like a disk, be it a floppy, harddisk, cdrom, or paravirtualized driver is
+	// specified via the disk element.
 	Disk []*DomainDisk `xml:"disk,omitempty" json:"disk,omitempty"`
 
-	Interface []*DomainDeviceInterface `xml:"interface,omitempty" json:"interface,omitempty"`
+	// A directory on the host that can be accessed directly from the guest. since 0.3.3, since 0.8.5 for QEMU/KVM
+	Filesystem []*DomainFilesystem `xml:"filesystem,omitempty" json:"filesystem,omitempty"`
+
+	// Depending on the guest architecture, some device buses can appear more than once, with a group of virtual
+	// devices tied to a virtual controller. Normally, libvirt can automatically infer such controllers without
+	// requiring explicit XML markup, but sometimes it is necessary to provide an explicit controller element,
+	// notably when planning the PCI topology for guests where device hotplug is expected.
+	//
+	//```
+	//<devices>
+	//  <controller type='ide' index='0'/>
+	//  <controller type='virtio-serial' index='0' ports='16' vectors='4'/>
+	//  <controller type='virtio-serial' index='1'>
+	//    <address type='pci' domain='0x0000' bus='0x00' slot='0x0a' function='0x0'/>
+	//  </controller>
+	//  <controller type='scsi' index='0' model='virtio-scsi'>
+	//    <driver iothread='4'/>
+	//    <address type='pci' domain='0x0000' bus='0x00' slot='0x0b' function='0x0'/>
+	//  </controller>
+	//  <controller type='xenbus' maxGrantFrames='64' maxEventChannels='2047'/>
+	//  ...
+	//</devices>
+	//```
+	// Each controller has a mandatory attribute type, which must be one of 'ide', 'fdc', 'scsi', 'sata', 'usb',
+	// 'ccid', 'virtio-serial' or 'pci', and a mandatory attribute index which is the decimal integer describing
+	// in which order the bus controller is encountered (for use in controller attributes of <address> elements).
+	// Since 1.3.5 the index is optional; if not specified, it will be auto-assigned to be the lowest unused index
+	// for the given controller type.
+	Controller []*DomainController `xml:"controller,omitempty" json:"controller,omitempty"`
+
+	// When using a lock manager, it may be desirable to record device leases against a VM. The lock manager
+	// will ensure the VM won't start unless the leases can be acquired.
+	Lease *DomainLease `xml:"lease,omitempty" json:"lease,omitempty"`
+
+	// USB, PCI and SCSI devices attached to the host can be passed through to the guest using the hostdev element.
+	// since after 0.4.4 for USB, 0.6.0 for PCI (KVM only) and 1.0.6 for SCSI (KVM only)
+	HostDev []*DomainHostDev `xml:"hostdev,omitempty" json:"hostdev,omitempty"`
+
+	Interface []*DomainInterface `xml:"interface,omitempty" json:"interface,omitempty"`
 }
 
 type DomainDiskType string
@@ -2106,7 +2146,7 @@ type DomainDisk struct {
 	// slot, and function must be present, as well as optional domain and multifunction. Multifunction defaults
 	// to 'off'; any other value requires QEMU 0.1.3 and libvirt 0.9.7 . For a "drive" controller, additional
 	// attributes controller, bus, target ( libvirt 0.9.11 ), and unit are available, each defaulting to 0.
-	Address *DomainDiskAddress `xml:"address,omitempty" json:"address,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
 }
 
 type DomainDeviceAlias struct {
@@ -2377,8 +2417,8 @@ type DomainDiskSource struct {
 	Managed ButtonState `xml:"managed,attr,omitempty" json:"managed,omitempty"`
 	// The namespace ID which should be assigned to the domain. According to NVMe standard, namespace numbers
 	// start from 1, including.
-	Namespace int32                    `xml:"namespace,attr,omitempty" json:"namespace,omitempty"`
-	Address   *DomainDiskSourceAddress `xml:"address,attr,omitempty" json:"address,omitempty"`
+	Namespace int32                `xml:"namespace,attr,omitempty" json:"namespace,omitempty"`
+	Address   *DomainDeviceAddress `xml:"address,attr,omitempty" json:"address,omitempty"`
 
 	// (type=vhostuser) Enables the hypervisor to connect to another process using vhost-user protocol.
 	// Requires shared memory configured for the VM, for more details see access mode for memoryBacking element.
@@ -2477,13 +2517,6 @@ type DomainDiskSource struct {
 
 	// For disk type vhostuser configures reconnect timeout if the connection is lost.
 	Reconnect *DomainDiskSourceReconnect `xml:"reconnect,omitempty" json:"reconnect,omitempty"`
-}
-
-type DomainDiskSourceAddress struct {
-	Domain   string `xml:"domain,attr,omitempty" json:"domain,omitempty"`
-	Bus      string `xml:"bus,attr,omitempty" json:"bus,omitempty"`
-	Slot     string `xml:"slot,attr,omitempty" json:"slot,omitempty"`
-	Function string `xml:"function,attr,omitempty" json:"function,omitempty"`
 }
 
 type DomainDiskSourceHostTransport string
@@ -2757,24 +2790,563 @@ type DomainDiskBlockIO struct {
 	PhysicalBlockSize int64 `xml:"physical_block_size,attr,omitempty" json:"physicalBlockSize,omitempty"`
 }
 
-type DomainDiskAddressType string
+type DomainFilesystemType string
 
 const (
-	DomainDiskAddressTypePCI   DomainDiskAddressType = "pci"
-	DomainDiskAddressTypeDrive DomainDiskAddressType = "drive"
+	// DomainFilesystemTypeTemplate A host directory to mount in the guest. Used by LXC, OpenVZ
+	// (since 0.6.2) and QEMU/KVM (since 0.8.5) . This is the default type if one is not specified.
+	// This mode also has an optional sub-element driver, with an attribute type='path' or type='handle'
+	// (since 0.9.7) . The driver block has an optional attribute wrpolicy that further controls interaction
+	// with the host page cache; omitting the attribute gives default behavior, while the value immediate
+	// means that a host writeback is immediately triggered for all pages touched during a guest file write
+	// operation (since 0.9.10) . Since 6.2.0 , type='virtiofs' is also supported. Using virtiofs requires
+	// setting up shared memory, see the guide: Virtio-FS
+	DomainFilesystemTypeTemplate DomainFilesystemType = "template"
+
+	// DomainFilesystemTypeMount OpenVZ filesystem template. Only used by OpenVZ driver.
+	DomainFilesystemTypeMount DomainFilesystemType = "mount"
+
+	// DomainFilesystemTypeFile a host file will be treated as an image and mounted in the guest. The
+	// filesystem format will be autodetected. Only used by LXC driver.
+	DomainFilesystemTypeFile DomainFilesystemType = "file"
+
+	// DomainFilesystemTypeBlock a host block device to mount in the guest. The filesystem format will be
+	// autodetected. Only used by LXC driver (since 0.9.5) .
+	DomainFilesystemTypeBlock DomainFilesystemType = "block"
+
+	// DomainFilesystemTypeRam an in-memory filesystem, using memory from the host OS. The source element
+	// has a single attribute usage which gives the memory usage limit in KiB, unless units are specified
+	// by the units attribute. Only used by LXC driver. (since 0.9.13)
+	DomainFilesystemTypeRam DomainFilesystemType = "ram"
+
+	// DomainFilesystemTypeBind a directory inside the guest will be bound to another directory inside the guest.
+	// Only used by LXC driver (since 0.9.13)
+	DomainFilesystemTypeBind DomainFilesystemType = "bind"
 )
 
-type DomainDiskAddress struct {
-	Type       DomainDiskAddressType `xml:"type,attr,omitempty" json:"type,omitempty"`
-	Controller string                `xml:"controller,attr,omitempty" json:"controller,omitempty"`
-	Bus        string                `xml:"bus,omitempty" json:"bus,omitempty"`
-	Slot       string                `xml:"slot,attr,omitempty" json:"slot,omitempty"`
-	Target     string                `xml:"target,attr,omitempty" json:"target,omitempty"`
-	Unit       string                `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+type DomainFilesystemAccessMode string
+
+const (
+	// DomainFilesystemAccessModePassthrough the source is accessed with the permissions of the user inside the guest.
+	// This is the default accessmode if one is not specified.
+	DomainFilesystemAccessModePassthrough DomainFilesystemAccessMode = "passthrough"
+
+	// DomainFilesystemAccessModeMapped the source is accessed with the permissions of the hypervisor (QEMU process).
+	DomainFilesystemAccessModeMapped DomainFilesystemAccessMode = "mapped"
+
+	// DomainFilesystemAccessModeSquash similar to 'passthrough', the exception is that failure of privileged
+	// operations like 'chown' are ignored. This makes a passthrough-like mode usable for people who run the
+	// hypervisor as non-root.
+	DomainFilesystemAccessModeSquash DomainFilesystemAccessMode = "squash"
+)
+
+type DomainFilesystemMultidevs string
+
+const (
+	// DomainFilesystemMultidevsDefault use QEMU's default setting (which currently is warn).
+	DomainFilesystemMultidevsDefault DomainFilesystemMultidevs = "default"
+
+	// DomainFilesystemMultidevsRemap this setting allows guest to access multiple devices per
+	// export without encountering misbehaviours. Inode numbers from host are automatically remapped
+	// on guest to actively prevent file ID collisions if guest accesses one export containing multiple devices.
+	DomainFilesystemMultidevsRemap DomainFilesystemMultidevs = "remap"
+
+	// DomainFilesystemMultidevsForbid only allow to access one device per export by guest. Attempts to access
+	// additional devices on the same export will cause the individual filesystem access by guest to fail with
+	// an error and being logged (once) as error on host side.
+	DomainFilesystemMultidevsForbid DomainFilesystemMultidevs = "forbid"
+
+	// DomainFilesystemMultidevsWarn this setting resembles the behaviour of 9pfs prior to QEMU 4.2, that is
+	// no action is performed to prevent any potential file ID collisions if an export contains multiple devices,
+	// with the only exception: a warning is logged (once) on host side now. This setting may lead to misbehaviours
+	// on guest side if more than one device is exported per export, due to the potential file ID collisions this may
+	// cause on guest side in that case.
+	DomainFilesystemMultidevsWarn DomainFilesystemMultidevs = "warn"
+)
+
+type DomainFilesystem struct {
+	// The filesystem attribute type specifies the type of the source.
+	Type DomainFilesystemType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	// The filesystem element has an optional attribute accessmode which specifies the security mode for accessing
+	// the source (since 0.8.5) . Currently this only works with type='mount' for the QEMU/KVM driver. For driver
+	// type virtiofs, only passthrough is supported.
+	AccessMode DomainFilesystemAccessMode `xml:"accessmode,attr,omitempty" json:"accessmode,omitempty"`
+
+	// Since 5.2.0 , the filesystem element has an optional attribute model with supported values "virtio-transitional",
+	// "virtio-non-transitional", or "virtio". See Virtio transitional devices for more details.
+	Model DomainVirtioModel `xml:"model,attr,omitempty" json:"model,omitempty"`
+
+	// The filesystem element has optional attributes fmode and dmode. These two attributes control the creation mode
+	// for files and directories when used with the mapped value for accessmode (since 6.10.0, requires QEMU 2.10 ).
+	// If not specified, QEMU creates files with mode 600 and directories with mode 700. The setuid, setgid, and sticky
+	// bit are unsupported.
+	FMode int32 `xml:"fmode,attr,omitempty" json:"fmode,omitempty"`
+	DMode int32 `xml:"dmode,attr,omitempty" json:"dmode,omitempty"`
+
+	// The filesystem element has an optional attribute multidevs which specifies how to deal with a filesystem
+	// export containing more than one device, in order to avoid file ID collisions on guest when using
+	// 9pfs ( since 6.3.0, requires QEMU 4.2 ).
+	Multidevs DomainFilesystemMultidevs `xml:"multidevs,attr,omitempty" json:"multidevs,omitempty"`
+
+	// The optional driver element allows specifying further details related to the hypervisor driver used to provide
+	// the filesystem. Since 1.0.6
+	//
+	// If the hypervisor supports multiple backend drivers, then the type attribute selects the primary backend driver
+	// name, while the format attribute provides the format type. For example, LXC supports a type of "loop", with a
+	// format of "raw" or "nbd" with any format. QEMU supports a type of "path" or "handle", but no formats. Virtuozzo
+	// driver supports a type of "ploop" with a format of "ploop".
+	//
+	// For virtio-backed devices, Virtio-specific options can also be set. ( Since 3.5.0 )
+	//
+	// For virtiofs, the queue attribute can be used to specify the queue size (i.e. how many requests can the
+	// queue fit). ( Since 6.2.0 )
+	Driver *DomainFilesystemDriver `xml:"driver,omitempty" json:"driver,omitempty"`
+
+	// The optional binary element can tune the options for virtiofsd. All of the following attributes and elements
+	// are optional. The attribute path can be used to override the path to the daemon. Attribute xattr enables the
+	// use of filesystem extended attributes. Caching can be tuned via the cache element, possible mode values being
+	// none and always. Locking can be controlled via the lock element - attributes posix and flock both accepting
+	// values on or off. ( Since 6.2.0 ) The sandboxing method used by virtiofsd can be configured with the sandbox
+	// element, possible mode values being namespace and chroot, see the virtiofsd documentation for more details.
+	// ( Since 7.2.0 )
+	Binary *DomainFilesystemBinary `xml:"binary,omitempty" json:"binary,omitempty"`
+
+	// The resource on the host that is being accessed in the guest. The name attribute must be used with
+	// type='template', and the dir attribute must be used with type='mount'. For virtiofs, the socket attribute
+	// can be used to connect to a virtiofsd daemon launched outside of libvirt. In that case, the target element
+	// does not apply and neither do most virtiofs-related options, since they are controlled by virtiofsd, not
+	// libvirtd. The usage attribute is used with type='ram' to set the memory limit in KiB, unless units are
+	// specified by the units attribute.
+	Source *DomainFilesystemSource `xml:"source,omitempty" json:"source,omitempty"`
+
+	// Where the source can be accessed in the guest. For most drivers this is an automatic mount point, but for
+	// QEMU/KVM this is merely an arbitrary string tag that is exported to the guest as a hint for where to mount.
+	Target *DomainFilesystemTarget `xml:"target,omitempty" json:"target,omitempty"`
+
+	// Enables exporting filesystem as a readonly mount for guest, by default read-write access is given (currently
+	// only works for QEMU/KVM driver).
+	Readonly *Empty `xml:"readonly,omitempty" json:"readonly,omitempty"`
+
+	// Maximum space available to this guest's filesystem. Since 0.9.13
+	SpaceHardLimit int64 `xml:"space_hard_limit,omitempty" json:"spaceHardLimit,omitempty"`
+
+	// Maximum space available to this guest's filesystem. The container is permitted to exceed its soft limits
+	// for a grace period of time. Afterwards the hard limit is enforced. Since 0.9.13
+	SpaceSoftLimit int64 `xml:"space_soft_limit,omitempty" json:"spaceSoftLimit,omitempty"`
 }
 
-type DomainDeviceInterfaceType string
+type DomainFilesystemDriverType string
 
-type DomainDeviceInterface struct {
-	Type DomainDeviceInterfaceType `xml:"type,attr,omitempty" json:"type,omitempty"`
+const (
+	DomainFilesystemDriverTypePath     DomainFilesystemDriverType = "path"
+	DomainFilesystemDriverTypeHandle   DomainFilesystemDriverType = "handle"
+	DomainFilesystemDriverTypeLoop     DomainFilesystemDriverType = "loop"
+	DomainFilesystemDriverTypePloop    DomainFilesystemDriverType = "ploop"
+	DomainFilesystemDriverTypeVirtioFS DomainFilesystemDriverType = "virtiofs"
+)
+
+type DomainFilesystemDriverFormat string
+
+const (
+	DomainFilesystemDriverFormatRaw   DomainFilesystemDriverFormat = "raw"
+	DomainFilesystemDriverFormatNbd   DomainFilesystemDriverFormat = "nbd"
+	DomainFilesystemDriverFormatPloop DomainFilesystemDriverFormat = "ploop"
+)
+
+type DomainFilesystemDriverWrpolicy string
+
+const (
+	DomainFilesystemDriverWrpolicyImmediate DomainFilesystemDriverWrpolicy = "immediate"
+)
+
+type DomainFilesystemDriver struct {
+	Type     DomainFilesystemDriverType     `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Format   DomainFilesystemDriverWrpolicy `xml:"format,attr,omitempty" json:"format,omitempty"`
+	Wrpolicy string                         `xml:"wrpolicy,attr,omitempty" json:"wrpolicy,omitempty"`
+	Queue    int32                          `xml:"queue,attr,omitempty" json:"queue,omitempty"`
+}
+
+type DomainFilesystemBinary struct {
+	Path    string                         `xml:"path,attr,omitempty" json:"path,omitempty"`
+	Xattr   TurnState                      `xml:"xattr,attr,omitempty" json:"xattr,omitempty"`
+	Cache   *DomainFilesystemBinaryCache   `xml:"cache,omitempty" json:"cache,omitempty"`
+	Sandbox *DomainFilesystemBinarySandbox `xml:"sandbox,omitempty" json:"sandbox,omitempty"`
+	Lock    *DomainFilesystemBinaryLock    `xml:"lock,omitempty" json:"lock,omitempty"`
+}
+
+type DomainFilesystemBinaryCacheMode string
+
+const (
+	DomainFilesystemBinaryCacheModeNone   DomainFilesystemBinaryCacheMode = "none"
+	DomainFilesystemBinaryCacheModeAlways DomainFilesystemBinaryCacheMode = "always"
+)
+
+type DomainFilesystemBinaryCache struct {
+	Mode DomainFilesystemBinaryCacheMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+}
+
+type DomainFilesystemBinarySandboxMode string
+
+const (
+	DomainFilesystemBinarySandboxModeNamespace DomainFilesystemBinarySandboxMode = "namespace"
+	DomainFilesystemBinarySandboxModeChroot    DomainFilesystemBinarySandboxMode = "chroot"
+)
+
+type DomainFilesystemBinarySandbox struct {
+	Mode DomainFilesystemBinarySandboxMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+}
+
+type DomainFilesystemBinaryLock struct {
+	Posix TurnState `xml:"posix,attr,omitempty" json:"posix,omitempty"`
+	Flock TurnState `xml:"flock,attr,omitempty" json:"flock,omitempty"`
+}
+
+type DomainFilesystemSource struct {
+	Name   string `xml:"name,attr,omitempty" json:"name,omitempty"`
+	Dir    string `xml:"dir,attr,omitempty" json:"dir,omitempty"`
+	Socket string `xml:"socket,attr,omitempty" json:"socket,omitempty"`
+	Target string `xml:"target,attr,omitempty" json:"target,omitempty"`
+}
+
+type DomainFilesystemTarget struct {
+	Dir string `xml:"dir,attr,omitempty" json:"dir,omitempty"`
+}
+
+type DomainControllerType string
+
+const (
+	DomainControllerTypeIde          DomainControllerType = "ide"
+	DomainControllerTypeFdc          DomainControllerType = "fdc"
+	DomainControllerTypeScsi         DomainControllerType = "scsi"
+	DomainControllerTypeSata         DomainControllerType = "sata"
+	DomainControllerTypeUsb          DomainControllerType = "usb"
+	DomainControllerTypeCcid         DomainControllerType = "ccid"
+	DomainControllerTypeVirtioSerial DomainControllerType = "virtio-serial"
+	DomainControllerTypeXenbus       DomainControllerType = "xenbus"
+	DomainControllerTypePci          DomainControllerType = "pci"
+)
+
+type DomainControllerModel string
+
+const (
+	DomainControllerModelAuto                  DomainControllerModel = "auto"                    // scsi model
+	DomainControllerModelBuslogic              DomainControllerModel = "buslogic"                // scsi model
+	DomainControllerModelIbmvscsi              DomainControllerModel = "ibmvscsi"                // scsi model
+	DomainControllerModelIsilogic              DomainControllerModel = "lsilogic"                // scsi model
+	DomainControllerModelIsisas1068            DomainControllerModel = "lsisas1068"              // scsi model
+	DomainControllerModelIsisas1078            DomainControllerModel = "lsisas1078"              // scsi model
+	DomainControllerModelVirtioScsi            DomainControllerModel = "virtio-scsi"             // scsi model
+	DomainControllerModelVmpvscsi              DomainControllerModel = "vmpvscsi"                // scsi model
+	DomainControllerModelVirtioTransitional    DomainControllerModel = "virtio-transitional"     // scsi model
+	DomainControllerModelVirtioNonTransitional DomainControllerModel = "virtio-non-transitional" // scsi model
+	DomainControllerModelNcr53c90              DomainControllerModel = "ncr53c90"                // scsi model
+
+	DomainControllerModelPiix3Uhci     DomainControllerModel = "piix3-uhci"     // usb model
+	DomainControllerModelPii4Uhci      DomainControllerModel = "piix4-uhci"     // usb model
+	DomainControllerModelEhci          DomainControllerModel = "ehci"           // usb model
+	DomainControllerModelIch9Echci1    DomainControllerModel = "ich9-echci1"    // usb model
+	DomainControllerModelIch9Echci2    DomainControllerModel = "ich9-echci2"    // usb model
+	DomainControllerModelIch9Echci3    DomainControllerModel = "ich9-echci3"    // usb model
+	DomainControllerModelVt82c686bUhci DomainControllerModel = "vt82c686b-uhci" // usb model
+	DomainControllerModelPciOhci       DomainControllerModel = "pci-ohci"       // usb model
+	DomainControllerModelNecXhci       DomainControllerModel = "nec-xhci"       // usb model
+	DomainControllerModelQusb1         DomainControllerModel = "qusb1"          // usb model
+	DomainControllerModelQusb2         DomainControllerModel = "qusb2"          // usb model
+	DomainControllerModelQemuXhci      DomainControllerModel = "qemu-xhci"      // usb model
+	DomainControllerModelNone          DomainControllerModel = "none"           // usb model
+
+	DomainControllerModelPiix3 DomainControllerModel = "piix3" // ide model
+	DomainControllerModelPiix4 DomainControllerModel = "piix4" // ide model
+	DomainControllerModelIch6  DomainControllerModel = "ich6"  // ide model
+
+	DomainControllerModelPciRoot                  DomainControllerModel = "pci-root"                    // pci model
+	DomainControllerModelPciBridge                DomainControllerModel = "pci-bridge"                  // pci model
+	DomainControllerModelPcieRoot                 DomainControllerModel = "pcie-root"                   // pci model
+	DomainControllerModelDmiToPciBridge           DomainControllerModel = "dmi-to-pci-bridge"           // pci model
+	DomainControllerModelPcieRootPort             DomainControllerModel = "pcie-root-port"              // pci model
+	DomainControllerModelPcieSwitchUpstreamPort   DomainControllerModel = "pcie-switch-upstream-port"   // pci model
+	DomainControllerModelPcieSwitchDownstreamPort DomainControllerModel = "pcie-switch-downstream-port" // pci model
+	DomainControllerModelPciExpanderBus           DomainControllerModel = "pci-expander-bus"            // pci model
+	DomainControllerModelPcieExpanderBus          DomainControllerModel = "pcie-expander-bus"           // pci model
+	DomainControllerModelPcieToPciBridge          DomainControllerModel = "pcie-to-pci-bridge"          // pci model
+)
+
+type DomainController struct {
+	Type             DomainControllerType  `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Index            int32                 `xml:"index,attr,omitempty" json:"index,omitempty"`
+	Model            DomainControllerModel `xml:"model,attr,omitempty" json:"model,omitempty"`
+	Ports            int32                 `xml:"ports,attr,omitempty" json:"ports,omitempty"`
+	Vectors          int32                 `xml:"vectors,attr,omitempty" json:"vectors,omitempty"`
+	MaxGrantFrames   int64                 `xml:"maxGrantFrames,attr,omitempty" json:"maxGrantFrames,omitempty"`
+	MaxEventChannels int64                 `xml:"maxEventChannels,attr,omitempty" json:"maxEventChannels,omitempty"`
+
+	Alias   *DomainControllerAlias  `xml:"alias,omitempty" json:"alias,omitempty"`
+	Driver  *DomainControllerDriver `xml:"driver,omitempty" json:"driver,omitempty"`
+	Master  *DomainControllerMaster `xml:"master,omitempty" json:"master,omitempty"`
+	Address *DomainDeviceAddress    `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainControllerAlias struct {
+	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
+}
+
+type DomainControllerDriver struct {
+	// The optional queues attribute specifies the number of queues for the controller. For best performance,
+	// it's recommended to specify a value matching the number of vCPUs. Since 1.0.5 (QEMU and KVM only)
+	Queues int32 `xml:"queues,attr,omitempty" json:"queues,omitempty"`
+
+	// The optional cmd_per_lun attribute specifies the maximum number of commands that can be queued on devices
+	// controlled by the host. Since 1.2.7 (QEMU and KVM only)
+	CmdPerLun int32 `xml:"cmd_per_lun,attr,omitempty" json:"cmdPerLun,omitempty"`
+
+	// The optional max_sectors attribute specifies the maximum amount of data in bytes that will be transferred
+	// to or from the device in a single command. The transfer length is measured in sectors, where a sector is
+	// 512 bytes. Since 1.2.7 (QEMU and KVM only)
+	MaxSectors int32 `xml:"max_sectors,omitempty" json:"maxSectors,omitempty"`
+
+	// The optional ioeventfd attribute specifies whether the controller should use I/O asynchronous handling or not.
+	// Accepted values are "on" and "off". Since 1.2.18
+	IOEventFD TurnState `xml:"ioeventfd,attr,omitempty" json:"ioeventfd,omitempty"`
+
+	// Supported for controller type scsi using model virtio-scsi for address types pci and ccw since 1.3.5 (QEMU 2.4) .
+	// The optional iothread attribute assigns the controller to an IOThread as defined by the range for the domain
+	// iothreads value. Each SCSI disk assigned to use the specified controller will utilize the same IOThread.
+	// If a specific IOThread is desired for a specific SCSI disk, then multiple controllers must be defined each
+	// having a specific iothread value. The iothread value must be within the range 1 to the domain iothreads value.
+	IOThread int32 `xml:"iothread,attr,omitempty" json:"iothread,omitempty"`
+}
+
+type DomainControllerMaster struct {
+	StartPort int32 `xml:"startPort,attr,omitempty" json:"startPort,omitempty"`
+}
+
+type DomainLease struct {
+	// This is an arbitrary string, identifying the lockspace within which the key is held. Lock managers
+	// may impose extra restrictions on the format, or length of the lockspace name.
+	LockSpace string `xml:"lockspace,omitempty" json:"lockspace,omitempty"`
+
+	// This is an arbitrary string, uniquely identifying the lease to be acquired. Lock managers may impose
+	// extra restrictions on the format, or length of the key.
+	Key string `xml:"key,omitempty" json:"key,omitempty"`
+
+	// This is the fully qualified path of the file associated with the lockspace. The offset specifies where
+	// the lease is stored within the file. If the lock manager does not require an offset, just pass 0.
+	Target *DomainLeaseTarget `xml:"target,omitempty" json:"target,omitempty"`
+}
+
+type DomainLeaseTarget struct {
+	Path   string `xml:"path,attr,omitempty" json:"path,omitempty"`
+	Offset int32  `xml:"offset,attr,omitempty" json:"offset,omitempty"`
+}
+
+type DomainHostDevMode string
+
+const (
+	DomainHostDevModeSubsystem    DomainHostDevMode = "subsystem"
+	DomainHostDevModeCapabilities DomainHostDevMode = "capabilities"
+)
+
+type DomainHostDevType string
+
+const (
+	DomainHostDevTypeUsb      DomainHostDevType = "usb"
+	DomainHostDevTypePci      DomainHostDevType = "pci"
+	DomainHostDevTypeScsi     DomainHostDevType = "scsi"
+	DomainHostDevTypeScsiHost DomainHostDevType = "scsi_host"
+	DomainHostDevTypeMdev     DomainHostDevType = "mdev"
+
+	DomainHostDevTypeStorage DomainHostDevType = "storage"
+	DomainHostDevTypeMisc    DomainHostDevType = "misc"
+	DomainHostDevTypeNet     DomainHostDevType = "net"
+)
+
+type DomainHostDevModel string
+
+const (
+	DomainHostDevModelVirtioTransitional DomainHostDevModel = "virtio-transitional"
+)
+
+type DomainHostDev struct {
+	// the mode is always "subsystem"
+	Mode DomainHostDevMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+
+	// the type is one of the following values with additional attributes noted.
+	//  usb 	: USB devices are detached from the host on guest startup and reattached after the guest exits
+	//            or the device is hot-unplugged.
+
+	//  pci 	: For PCI devices, when managed is "yes" it is detached from the host before being passed on to
+	//            the guest and reattached to the host after the guest exits. If managed is omitted or "no", the
+	//            user is responsible to call virNodeDeviceDetachFlags (or virsh nodedev-detach before starting
+	//            the guest or hot-plugging the device and virNodeDeviceReAttach (or virsh nodedev-reattach) after
+	//            hot-unplug or stopping the guest.
+
+	//  scsi 	: For SCSI devices, user is responsible to make sure the device is not used by host. If supported
+	//            by the hypervisor and OS, the optional sgio ( since 1.0.6 ) attribute indicates whether unprivileged
+	//            SG_IO commands are filtered for the disk. Valid settings are "filtered" or "unfiltered", where the
+	//            default is "filtered". The optional rawio ( since 1.2.9 ) attribute indicates whether the lun needs
+	//            the rawio capability. Valid settings are "yes" or "no". See the rawio description within the disk
+	//            section. If a disk lun in the domain already has the rawio capability, then this setting not
+	//            required.
+	//
+	// scsi_host: since 2.5.0 For SCSI devices, user is responsible to make sure the device is not used by host.
+	//            This type passes all LUNs presented by a single HBA to the guest. Since 5.2.0, the model attribute
+	//            can be specified further with "virtio-transitional", "virtio-non-transitional", or "virtio". See
+	//            Virtio transitional devices for more details.
+
+	// mdev 	: For mediated devices ( Since 3.2.0 ) the model attribute specifies the device API which determines
+	//            how the host's vfio driver will expose the device to the guest. Currently, model='vfio-pci',
+	//            model='vfio-ccw' ( Since 4.4.0 ) and model='vfio-ap' ( Since 4.9.0 ) is supported. MDEV section
+	//            provides more information about mediated devices as well as how to create mediated devices on the
+	//            host. Since 4.6.0 (QEMU 2.12) an optional display attribute may be used to enable or disable support
+	//            for an accelerated remote desktop backed by a mediated device (such as NVIDIA vGPU or Intel GVT-g)
+	//            as an alternative to emulated video devices. This attribute is limited to model='vfio-pci' only.
+	//            Supported values are either on or off (default is 'off'). It is required to use a graphical
+	//            framebuffer in order to use this attribute, currently only supported with VNC, Spice and egl-headless
+	//            graphics devices. Since version 5.10.0 , there is an optional ramfb attribute for devices with
+	//            model='vfio-pci'. Supported values are either on or off (default is 'off'). When enabled, this
+	//            attribute provides a memory framebuffer device to the guest. This framebuffer will be used as a boot
+	//            display when a vgpu device is the primary display.
+	//
+	// Note: There are also some implications on the usage of guest's address type depending on the model attribute,
+	// see the address element below.
+	Type DomainHostDevType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	// Note: The managed attribute is only used with type='pci' and is ignored by all the other device types,
+	// thus setting managed explicitly with other than a PCI device has the same effect as omitting it. Similarly,
+	// model attribute is only supported by mediated devices and ignored by all other device types.
+	Manged ButtonState `xml:"manged,attr,omitempty" json:"manged,omitempty"`
+
+	SgIO  DomainDiskSgio `xml:"sgio,attr,omitempty" json:"sgio,omitempty"`
+	RawIO ButtonState    `xml:"rawio,attr,omitempty" json:"rawio,omitempty"`
+
+	Model *DomainHostDevModel `xml:"model,attr,omitempty" json:"model,omitempty"`
+
+	Display TurnState `xml:"display,attr,omitempty" json:"display,omitempty"`
+	RamFb   TurnState `xml:"ramfb,attr,omitempty" json:"ramfb,omitempty"`
+
+	Source *DomainHostDevSource `xml:"source,omitempty" json:"source,omitempty"`
+
+	// Indicates that the device is readonly, only supported by SCSI host device now. Since 1.0.6 (QEMU and KVM only)
+	Readonly *Empty `xml:"readonly,omitempty" json:"readonly,omitempty"`
+
+	// If present, this indicates the device is expected to be shared between domains (assuming the hypervisor
+	// and OS support this). Only supported by SCSI host device. Since 1.0.6
+	Shareable *Empty `xml:"shareable,omitempty" json:"shareable,omitempty"`
+
+	// Specifies that the device is bootable. The order attribute determines the order in which devices will
+	// be tried during boot sequence. The per-device boot elements cannot be used together with general boot
+	// elements in BIOS bootloader section. Since 0.8.8 for PCI devices, Since 1.0.1 for USB devices.
+	Boot *DomainHostDevBoot `xml:"boot,omitempty" json:"boot,omitempty"`
+
+	// The rom element is used to change how a PCI device's ROM is presented to the guest. The optional bar
+	// attribute can be set to "on" or "off", and determines whether or not the device's ROM will be visible
+	// in the guest's memory map. (In PCI documentation, the "rombar" setting controls the presence of the
+	// Base Address Register for the ROM). If no rom bar is specified, the qemu default will be used (older
+	// versions of qemu used a default of "off", while newer qemus have a default of "on"). Since 0.9.7 (QEMU
+	// and KVM only) . The optional file attribute contains an absolute path to a binary file to be presented
+	// to the guest as the device's ROM BIOS. This can be useful, for example, to provide a PXE boot ROM for
+	// a virtual function of an sr-iov capable ethernet device (which has no boot ROMs for the VFs). Since
+	// 0.9.10 (QEMU and KVM only) . The optional enabled attribute can be set to no to disable PCI ROM loading
+	// completely for the device; if PCI ROM loading is disabled through this attribute, attempts to tweak the
+	// loading process further using the bar or file attributes will be rejected. Since 4.3.0 (QEMU and KVM only).
+	Rom *DomainHostDevRom `xml:"rom,omitempty" json:"rom,omitempty"`
+
+	// PCI devices can have an optional driver subelement that specifies which backend driver to use for PCI
+	// device assignment. Use the name attribute to select either "vfio" (for the new VFIO device assignment
+	// backend, which is compatible with UEFI SecureBoot) or "kvm" (the legacy device assignment handled directly
+	// by the KVM kernel module) Since 1.0.5 (QEMU and KVM only, requires kernel 3.6 or newer) . When specified,
+	// device assignment will fail if the requested method of device assignment isn't available on the host. When
+	// not specified, the default is "vfio" on systems where the VFIO driver is available and loaded, and "kvm"
+	// on older systems, or those where the VFIO driver hasn't been loaded Since 1.1.3 (prior to that the default
+	// was always "kvm").
+	Driver *DomainHostDevDriver `xml:"driver,omitempty" json:"driver,omitempty"`
+
+	// The address element for USB devices has a bus and device attribute to specify the USB bus and device number
+	// the device appears at on the host. The values of these attributes can be given in decimal, hexadecimal
+	// (starting with 0x) or octal (starting with 0) form. For PCI devices the element carries 4 attributes allowing
+	// to designate the device as can be found with the lspci or with virsh nodedev-list. For SCSI devices a 'drive'
+	// address type must be used. For mediated devices, which are software-only devices defining an allocation of
+	// resources on the physical parent device, the address type used must conform to the model attribute of element
+	// hostdev, e.g. any address type other than PCI for vfio-pci device API or any address type other than CCW for
+	// vfio-ccw device API will result in an error. See above for more details on the address element.
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainHostDevSourceStartupPolicy string
+
+const (
+	DomainHostDevSourceStartupPolicyMandatory DomainHostDevSourceStartupPolicy = "mandatory"
+	DomainHostDevSourceStartupPolicyRequisite DomainHostDevSourceStartupPolicy = "requisite"
+	DomainHostDevSourceStartupPolicyOptional  DomainHostDevSourceStartupPolicy = "optional"
+)
+
+type DomainHostDevSourceProtocol string
+
+const (
+	DomainHostDevSourceProtocolIscsi DomainHostDevSourceProtocol = "iscsi"
+	DomainHostDevSourceProtocolVhost DomainHostDevSourceProtocol = "vhost"
+)
+
+type DomainHostDevSource struct {
+	StartupPolicy DomainHostDevSourceStartupPolicy `xml:"startupPolicy,attr,omitempty" json:"startupPolicy,omitempty"`
+	Vendor        *DomainHostDevSourceVendor       `xml:"vendor,omitempty" json:"vendor,omitempty"`
+	Product       *DomainHostDevSourceProduct      `xml:"product,omitempty" json:"product,omitempty"`
+
+	WriteFiltering ButtonState          `xml:"writeFiltering,attr,omitempty" json:"writeFiltering,omitempty"`
+	Address        *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+
+	Protocol DomainHostDevSourceProtocol `xml:"protocol,attr,omitempty" json:"protocol,omitempty"`
+	Name     string                      `xml:"name,attr,omitempty" json:"name,omitempty"`
+
+	Host      *DomainDiskSourceHost      `xml:"host,omitempty" json:"host,omitempty"`
+	Auth      *DomainDiskSourceAuth      `xml:"auth,omitempty" json:"auth,omitempty"`
+	Initiator *DomainDiskSourceInitiator `xml:"initiator,omitempty" json:"initiator,omitempty"`
+
+	Wwpn string `xml:"wwpn,attr,omitempty" json:"wwpn,omitempty"`
+
+	// The hostdev element is the main container for describing host devices. For block/character device passthrough
+	// mode is always "capabilities" and type is "storage" for a block device, "misc" for a character device and "net"
+	// for a host network interface.
+	//
+	// The source element describes the device as seen from the host. For block devices, the path to the block device
+	// in the host OS is provided in the nested "block" element, while for character devices the "char" element is used.
+	// For network interfaces, the name of the interface is provided in the "interface" element.
+	Block     string `xml:"block,omitempty" json:"block,omitempty"`
+	Char      string `xml:"char,omitempty" json:"char,omitempty"`
+	Interface string `xml:"interface,omitempty" json:"interface,omitempty"`
+}
+
+type DomainHostDevSourceVendor struct {
+	ID string `xml:"id,attr,omitempty" json:"id,omitempty"`
+}
+
+type DomainHostDevSourceProduct struct {
+	ID string `xml:"id,attr,omitempty" json:"id,omitempty"`
+}
+
+type DomainHostDevBoot struct {
+	Order int32 `xml:"order,attr,omitempty" json:"order,omitempty"`
+}
+
+type DomainHostDevRom struct {
+	Bar  TurnState `xml:"bar,attr,omitempty" json:"bar,omitempty"`
+	File string    `xml:"file,attr,omitempty" json:"file,omitempty"`
+}
+
+type DomainHostDevDriverName string
+
+const (
+	DomainHostDevDriverNameVfio DomainHostDevDriverName = "vfio"
+	DomainHostDevDriverNameKVM  DomainHostDevDriverName = "kvm"
+)
+
+type DomainHostDevDriver struct {
+	Name DomainHostDevDriverName `xml:"name,attr,omitempty" json:"name,omitempty"`
+}
+
+type DomainInterfaceType string
+
+type DomainInterface struct {
+	Type DomainInterfaceType `xml:"type,attr,omitempty" json:"type,omitempty"`
 }

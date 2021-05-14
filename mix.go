@@ -168,3 +168,126 @@ type StorageEncryptionIvgen struct {
 	// algorithm is hypervisor dependent.
 	Hash StorageEncryptionHash `xml:"hash,attr,omitempty" json:"hash,omitempty"`
 }
+
+type DomainVirtioModel string
+
+const (
+	// DomainVirtioModelTransitional this device can work both with virtio 0.9 and virtio 1.0 guest drivers,
+	// so it's the best choice when compatibility with older guest operating systems is desired. libvirt
+	// will plug the device into a conventional PCI slot.
+	DomainVirtioModelTransitional DomainVirtioModel = "virtio-transitional"
+
+	// DomainVirtioModelNonTransitional this device can only work with virtio 1.0 guest drivers, and
+	// it's the recommended option unless compatibility with older guest operating systems is necessary.
+	// libvirt will plug the device into either a PCI Express slot or a conventional PCI slot based on
+	// the machine type, resulting in a more optimized PCI topology.
+	DomainVirtioModelNonTransitional DomainVirtioModel = "virtio-non-transitional"
+
+	// DomainVirtioModelVirtio this device will work like a virtio-non-transitional device when plugged
+	// into a PCI Express slot, and like a virtio-transitional device otherwise; libvirt will pick one
+	// or the other based on the machine type. This is the best choice when compatibility with libvirt
+	// versions older than 5.2.0 is necessary, but it's otherwise not recommended to use it.
+	DomainVirtioModelVirtio DomainVirtioModel = "virtio"
+)
+
+type DomainDeviceAddressType string
+
+const (
+	DomainDeviceAddressTypePCI          DomainDeviceAddressType = "pci"
+	DomainDeviceAddressTypeDrive        DomainDeviceAddressType = "drive"
+	DomainDeviceAddressTypeVirtioSerial DomainDeviceAddressType = "virtio-serial"
+	DomainDeviceAddressTypeCcid         DomainDeviceAddressType = "ccid"
+	DomainDeviceAddressTypeUSB          DomainDeviceAddressType = "usb"
+	DomainDeviceAddressTypeSpaprVio     DomainDeviceAddressType = "spapr-vio"
+	DomainDeviceAddressTypeCcw          DomainDeviceAddressType = "ccw"
+	DomainDeviceAddressTypeVirtioMmio   DomainDeviceAddressType = "virtio-mmio"
+	DomainDeviceAddressTypeISA          DomainDeviceAddressType = "isa"
+	DomainDeviceAddressTypeUnassigned   DomainDeviceAddressType = "unassigened"
+)
+
+// DomainDeviceAddress many devices have an optional <address> sub-element to describe where the device is placed
+// on the virtual bus presented to the guest. If an address (or any optional attribute within an address) is omitted
+// on input, libvirt will generate an appropriate address; but an explicit address is required if more control over
+// layout is required. See below for device examples including an address element.
+//
+// Every address has a mandatory attribute type that describes which bus the device is on. The choice of which
+// address to use for a given device is constrained in part by the device and the architecture of the guest.
+// For example, a <disk> device uses type='drive', while a <console> device would use type='pci' on i686 or
+// x86_64 guests, or type='spapr-vio' on PowerPC64 pseries guests. Each address type has further optional
+// attributes that control where on the bus the device will be placed:
+//
+//  pci  	: PCI addresses have the following additional attributes: domain (a 2-byte hex integer, not currently
+//            used by qemu), bus (a hex value between 0 and 0xff, inclusive), slot (a hex value between 0x0 and 0x1f,
+//            inclusive), and function (a value between 0 and 7, inclusive). Also available is the multifunction
+//            attribute, which controls turning on the multifunction bit for a particular slot/function in the PCI
+//            control register ( since 0.9.7, requires QEMU 0.13 ). multifunction defaults to 'off', but should be
+//            set to 'on' for function 0 of a slot that will have multiple functions used. ( Since 4.10.0 ), PCI
+//            address extensions depending on the architecture are supported. For example, PCI addresses for S390
+//            guests will have a zpci child element, with two attributes: uid (a hex value between 0x0001 and 0xffff,
+//            inclusive), and fid (a hex value between 0x00000000 and 0xffffffff, inclusive) used by PCI devices on
+//            S390 for User-defined Identifiers and Function Identifiers. Since 1.3.5 , some hypervisor drivers may
+//            accept an <address type='pci'/> element with no other attributes as an explicit request to assign a PCI
+//            address for the device rather than some other type of address that may also be appropriate for that same
+//            device (e.g. virtio-mmio). The relationship between the PCI addresses configured in the domain XML and
+//            those seen by the guest OS can sometime seem confusing: a separate document describes how PCI addresses
+//            work in more detail.
+//
+//  drive	: Drive addresses have the following additional attributes: controller (a 2-digit controller number),
+//            bus (a 2-digit bus number), target (a 2-digit target number), and unit (a 2-digit unit number on the bus).
+//
+//  virtio-serial	: Each virtio-serial address has the following additional attributes: controller (a 2-digit
+//                    controller number), bus (a 2-digit bus number), and slot (a 2-digit slot within the bus).
+//
+//  ccid 	: A CCID address, for smart-cards, has the following additional attributes: bus (a 2-digit bus number),
+//            and slot attribute (a 2-digit slot within the bus). Since 0.8.8.
+//
+//  usb	: USB addresses have the following additional attributes: bus (a hex value between 0 and 0xfff, inclusive),
+//        and port (a dotted notation of up to four octets, such as 1.2 or 2.1.3.1).
+//
+//  spapr-vio	: On PowerPC pseries guests, devices can be assigned to the SPAPR-VIO bus. It has a flat 32-bit
+//                address space; by convention, devices are generally assigned at a non-zero multiple of 0x00001000,
+//                but other addresses are valid and permitted by libvirt. Each address has the following additional
+//                attribute: reg (the hex value address of the starting register). Since 0.9.9.
+//
+//  ccw	: S390 guests with a machine value of s390-ccw-virtio use the native CCW bus for I/O devices. CCW bus addresses
+//        have the following additional attributes: cssid (a hex value between 0 and 0xfe, inclusive), ssid (a value
+//        between 0 and 3, inclusive) and devno (a hex value between 0 and 0xffff, inclusive). Partially specified bus
+//        addresses are not allowed. If omitted, libvirt will assign a free bus address with cssid=0xfe and ssid=0.
+//        Virtio-ccw devices must have their cssid set to 0xfe. Since 1.0.4
+//
+//  virtio-mmio	: This places the device on the virtio-mmio transport, which is currently only available for some
+//                armv7l and aarch64 virtual machines. virtio-mmio addresses do not have any additional attributes.
+//                Since 1.1.3 If the guest architecture is aarch64 and the machine type is virt, libvirt will
+//                automatically assign PCI addresses to devices; however, the presence of a single device with
+//                virtio-mmio address in the guest configuration will cause libvirt to assign virtio-mmio
+//                addresses to all further devices. Since 3.0.0
+//
+//  isa	: ISA addresses have the following additional attributes: iobase and irq. Since 1.2.1
+//
+//  unassigned	: For PCI hostdevs, <address type='unassigned'/> allows the admin to include a PCI hostdev in the
+//                domain XML definition, without making it available for the guest. This allows for configurations
+//                in which Libvirt manages the device as a regular PCI hostdev, regardless of whether the guest will
+//                have access to it. <address type='unassigned'/> is an invalid address type for all other device types.
+//                Since 6.0.0
+type DomainDeviceAddress struct {
+	Type DomainDeviceAddressType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	Domain        string    `xml:"domain,attr,omitempty" json:"domain,omitempty"`
+	Bus           string    `xml:"bus,omitempty" json:"bus,omitempty"`
+	Slot          string    `xml:"slot,attr,omitempty" json:"slot,omitempty"`
+	Function      string    `xml:"function,omitempty" json:"function,omitempty"`
+	Multifunction TurnState `xml:"multifunction,attr,omitempty" json:"multifunction,omitempty"`
+	Controller    string    `xml:"controller,attr,omitempty" json:"controller,omitempty"`
+	Target        string    `xml:"target,attr,omitempty" json:"target,omitempty"`
+	Unit          string    `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+	Port          string    `xml:"port,attr,omitempty" json:"port,omitempty"`
+
+	IOBase string `xml:"iobase,attr,omitempty" json:"iobase,omitempty"`
+	Irq    string `xml:"irq,attr,omitempty" json:"irq,omitempty"`
+
+	Cssid string `xml:"cssid,attr,omitempty" json:"cssid,omitempty"`
+	Ssid  string `xml:"ssid,attr,omitempty" json:"ssid,omitempty"`
+	Devno string `xml:"devno,attr,omitempty" json:"devno,omitempty"`
+
+	UUID string `xml:"uuid,attr,omitempty" json:"uuid,omitempty"`
+}
