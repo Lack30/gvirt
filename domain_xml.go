@@ -1950,7 +1950,54 @@ type DomainDevices struct {
 	// since after 0.4.4 for USB, 0.6.0 for PCI (KVM only) and 1.0.6 for SCSI (KVM only)
 	HostDev []*DomainHostDev `xml:"hostdev,omitempty" json:"hostdev,omitempty"`
 
+	// USB device redirection through a character device is supported since after 0.9.5 (KVM only) :
+	ReDirDev []*DomainReDirDev `xml:"redirdev,omitempty" json:"redirdev,omitempty"`
+
+	// Theredirfilterelement is used for creating the filter rule to filter out certain devices from redirection.
+	// It uses sub-element <usbdev> to define each filter rule. class attribute is the USB Class code, for example,
+	// 0x08 represents mass storage devices. The USB device can be addressed by vendor / product id using the vendor
+	// and product attributes. version is the device revision from the bcdDevice field (not the version of the
+	// USB protocol). These four attributes are optional and -1 can be used to allow any value for them. allow
+	// attribute is mandatory, 'yes' means allow, 'no' for deny.
+	ReDirFilter []*DomainReDirFilter `xml:"redirfilter,omitempty" json:"redirfilter,omitempty"`
+
+	// A virtual smartcard device can be supplied to the guest via the smartcard element. A USB smartcard reader
+	// device on the host cannot be used on a guest with simple device passthrough, since it will then not be
+	// available on the host, possibly locking the host computer when it is "removed". Therefore, some hypervisors
+	// provide a specialized virtual device that can present a smartcard interface to the guest, with several modes
+	// for describing how credentials are obtained from the host or even a from a channel created to a third-party
+	// smartcard provider. Since 0.8.8
+	SmartCard []*DomainSmartCard `xml:"smartcard,omitempty" json:"smartcard,omitempty"`
+
 	Interface []*DomainInterface `xml:"interface,omitempty" json:"interface,omitempty"`
+
+	// Input devices allow interaction with the graphical framebuffer in the guest virtual machine. When enabling
+	// the framebuffer, an input device is automatically provided.
+	Input []*DomainInput `xml:"input,omitempty" json:"input,omitempty"`
+
+	// A hub is a device that expands a single port into several so that there are more ports available to
+	// connect devices to a host system.
+	Hub []*DomainHub `xml:"hub,omitempty" json:"hub,omitempty"`
+
+	// A graphics device allows for graphical interaction with the guest OS. A guest will typically have either
+	// a framebuffer or a text console configured to allow interaction with the admin.
+	Graphics []*DomainGraphics `xml:"graphics,omitempty" json:"graphics,omitempty"`
+
+	// The video element is the container for describing video devices. For backwards compatibility, if no video
+	// is set but there is a graphics in domain xml, then libvirt will add a default video according to the guest
+	// type.
+	//
+	// For a guest of type "kvm", the default video is: type with value "cirrus", vram with value "16384" and heads
+	// with value "1". By default, the first video device in domain xml is the primary one, but the optional attribute
+	// primary ( since 1.0.2 ) with value 'yes' can be used to mark the primary in cases of multiple video device.
+	// The non-primary must be type of "qxl" or ( since 2.4.0 ) "virtio".
+	Video []*DomainVideo `xml:"vidio,omitempty" json:"vidio,omitempty"`
+
+	//
+	Parallel []*DomainParallel `xml:"parallel,omitempty" json:"parallel,omitempty"`
+	Serial   []*DomainSerial   `xml:"serial,omitempty" json:"serial,omitempty"`
+	Console  []*DomainConsole  `xml:"console,omitempty" json:"console,omitempty"`
+	Channel  []*DomainChannel  `xml:"channel,omitempty" json:"channel,omitempty"`
 }
 
 type DomainDiskType string
@@ -2034,7 +2081,7 @@ type DomainDisk struct {
 
 	// The optional driver element allows specifying further details related to the hypervisor driver
 	// used to provide the disk
-	Driver *DomainDiskDriver `xml:"driver,attr,omitempty" json:"driver,omitempty"`
+	Driver *DomainDriver `xml:"driver,attr,omitempty" json:"driver,omitempty"`
 
 	// Representation of the disk source depends on the disk type
 	Source *DomainDiskSource `xml:"source,omitempty" json:"source,omitempty"`
@@ -2052,7 +2099,7 @@ type DomainDisk struct {
 
 	// The optional backenddomain element allows specifying a backend domain (aka driver domain) hosting the disk.
 	// Use the name attribute to specify the backend domain name. Since 1.2.13 (Xen only)
-	BackendDomain *DomainDiskBackendDomain `xml:"backenddomain,omitempty" json:"backenddomain,omitempty"`
+	BackendDomain *DomainBackendDomain `xml:"backenddomain,omitempty" json:"backenddomain,omitempty"`
 
 	Geometry *DomainDiskGeometry `xml:"geometry,omitempty" json:"geometry,omitempty"`
 
@@ -2138,7 +2185,7 @@ type DomainDisk struct {
 	// elements cannot be used together with general boot elements in BIOS bootloader section. Since 0.8.8
 	Boot *DomainDiskBoot `xml:"boot,omitempty" json:"boot,omitempty"`
 
-	Alias *DomainDeviceAlias `xml:"alias,omitempty" json:"alias,omitempty"`
+	Alias *DomainAlias `xml:"alias,omitempty" json:"alias,omitempty"`
 
 	// If present, the address element ties the disk to a given slot of a controller (the actual <controller>
 	// device can often be inferred by libvirt, although it can be explicitly specified). The type attribute is
@@ -2149,85 +2196,91 @@ type DomainDisk struct {
 	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
 }
 
-type DomainDeviceAlias struct {
+type DomainAlias struct {
 	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 }
 
-type DomainDiskDriverName string
+type DomainDeviceACPI struct {
+	Index uint `xml:"index,attr,omitempty"`
+}
+
+type DomainDriverName string
 
 const (
-	DomainDiskDriverNameTap  DomainDiskDriverName = "tap"
-	DomainDiskDriverNameTap2 DomainDiskDriverName = "tap2"
-	DomainDiskDriverNamePhy  DomainDiskDriverName = "phy"
-	DomainDiskDriverNameFile DomainDiskDriverName = "file"
-	DomainDiskDriverNameQemu DomainDiskDriverName = "qemu"
+	DomainDriverNameTap       DomainDriverName = "tap"
+	DomainDriverNameTap2      DomainDriverName = "tap2"
+	DomainDriverNamePhy       DomainDriverName = "phy"
+	DomainDriverNameFile      DomainDriverName = "file"
+	DomainDriverNameQemu      DomainDriverName = "qemu"
+	DomainDriverNameVhost     DomainDriverName = "vhost"
+	DomainDriverNameVhostUser DomainDriverName = "vhostuser"
 )
 
-type DomainDiskDriverType string
+type DomainDriverType string
 
 const (
-	DomainDiskDriverTypeAio   DomainDiskDriverType = "aio"
-	DomainDiskDriverTypeRaw   DomainDiskDriverType = "raw"
-	DomainDiskDriverTypeBochs DomainDiskDriverType = "bochs"
-	DomainDiskDriverTypeQcow2 DomainDiskDriverType = "qcow2"
-	DomainDiskDriverTypeQed   DomainDiskDriverType = "qed"
+	DomainDiskDriverTypeAio   DomainDriverType = "aio"
+	DomainDiskDriverTypeRaw   DomainDriverType = "raw"
+	DomainDiskDriverTypeBochs DomainDriverType = "bochs"
+	DomainDiskDriverTypeQcow2 DomainDriverType = "qcow2"
+	DomainDiskDriverTypeQed   DomainDriverType = "qed"
 )
 
-type DomainDiskDriverCache string
+type DomainDriverCache string
 
 const (
-	DomainDiskDriverTypeNone         DomainDiskDriverType = "none"
-	DomainDiskDriverTypeDefault      DomainDiskDriverType = "default"
-	DomainDiskDriverTypeWriteThrough DomainDiskDriverType = "writethroug"
-	DomainDiskDriverTypeWriteBack    DomainDiskDriverType = "writeback"
-	DomainDiskDriverTypeDirectSync   DomainDiskDriverType = "directsync"
+	DomainDriverTypeNone         DomainDriverType = "none"
+	DomainDriverTypeDefault      DomainDriverType = "default"
+	DomainDriverTypeWriteThrough DomainDriverType = "writethroug"
+	DomainDriverTypeWriteBack    DomainDriverType = "writeback"
+	DomainDriverTypeDirectSync   DomainDriverType = "directsync"
 )
 
-type DomainDiskDriverErrorPolicy string
+type DomainDriverErrorPolicy string
 
 const (
-	DomainDiskDriverErrorPolicyStop     DomainDiskDriverErrorPolicy = "stop"
-	DomainDiskDriverErrorPolicyReport   DomainDiskDriverErrorPolicy = "report"
-	DomainDiskDriverErrorPolicyIgnore   DomainDiskDriverErrorPolicy = "ignore"
-	DomainDiskDriverErrorPolicyEnospace DomainDiskDriverErrorPolicy = "enospace"
+	DomainDriverErrorPolicyStop     DomainDriverErrorPolicy = "stop"
+	DomainDriverErrorPolicyReport   DomainDriverErrorPolicy = "report"
+	DomainDriverErrorPolicyIgnore   DomainDriverErrorPolicy = "ignore"
+	DomainDriverErrorPolicyEnospace DomainDriverErrorPolicy = "enospace"
 )
 
-type DomainDiskDriverIO string
+type DomainDriverIO string
 
 const (
-	DomainDiskDriverIOThreads DomainDiskDriverIO = "threads"
-	DomainDiskDriverIONative  DomainDiskDriverIO = "native"
-	DomainDiskDriverIOIOUring DomainDiskDriverIO = "io_uring"
+	DomainDriverIOThreads DomainDriverIO = "threads"
+	DomainDriverIONative  DomainDriverIO = "native"
+	DomainDriverIOIOUring DomainDriverIO = "io_uring"
 )
 
-type DomainDiskDriverDiscard string
+type DomainDriverDiscard string
 
 const (
-	DomainDiskDriverDiscardUnmap  DomainDiskDriverDiscard = "unmap"
-	DomainDiskDriverDiscardIgnore DomainDiskDriverDiscard = "ignore"
+	DomainDriverDiscardUnmap  DomainDriverDiscard = "unmap"
+	DomainDriverDiscardIgnore DomainDriverDiscard = "ignore"
 )
 
-type DomainDiskDriverDetectZeroes string
+type DomainDriverDetectZeroes string
 
 const (
-	DomainDiskDriverDetectZeroesOn    DomainDiskDriverDetectZeroes = "on"
-	DomainDiskDriverDetectZeroesOff   DomainDiskDriverDetectZeroes = "off"
-	DomainDiskDriverDetectZeroesUnmap DomainDiskDriverDetectZeroes = "unmap"
+	DomainDriverDetectZeroesOn    DomainDriverDetectZeroes = "on"
+	DomainDriverDetectZeroesOff   DomainDriverDetectZeroes = "off"
+	DomainDriverDetectZeroesUnmap DomainDriverDetectZeroes = "unmap"
 )
 
-type DomainDiskDriver struct {
+type DomainDriver struct {
 	// If the hypervisor supports multiple backend drivers, then the name attribute selects the primary backend
 	// driver name, while the optional type attribute provides the sub-type. For example, xen supports a name of
 	// "tap", "tap2", "phy", or "file", with a type of "aio", while qemu only supports a name of "qemu", but
 	// multiple types including "raw", "bochs", "qcow2", and "qed".
-	Name DomainDiskDriverName `xml:"name,attr,omitempty" json:"name,omitempty"`
-	Type DomainDiskDriverType `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Name DomainDriverName `xml:"name,attr,omitempty" json:"name,omitempty"`
+	Type DomainDriverType `xml:"type,attr,omitempty" json:"type,omitempty"`
 
 	// The optional cache attribute controls the cache mechanism, possible values are "default", "none",
 	// "writethrough", "writeback", "directsync" (like "writethrough", but it bypasses the host page cache)
 	// and "unsafe" (host may cache all disk io, and sync requests from guest are ignored). Since 0.6.0,
 	// "directsync" since 0.9.5, "unsafe" since 0.9.7
-	Cache DomainDiskDriverCache `xml:"cache,attr,omitempty" json:"cache,omitempty"`
+	Cache DomainDriverCache `xml:"cache,attr,omitempty" json:"cache,omitempty"`
 
 	// The optional error_policy attribute controls how the hypervisor will behave on a disk read or write error,
 	// possible values are "stop", "report", "ignore", and "enospace". Since 0.8.0, "report" since 0.9.7 The default
@@ -2236,12 +2289,12 @@ type DomainDiskDriver struct {
 	// rerror_policy is given, it overrides the error_policy for read errors. Also note that "enospace" is not a valid
 	// policy for read errors, so if error_policy is set to "enospace" and no rerror_policy is given, the read error
 	// policy will be left at its default.
-	ErrorPolicy  DomainDiskDriverErrorPolicy `xml:"error_policy,attr,omitempty" json:"errorPolicy,omitempty"`
-	RErrorPolicy DomainDiskDriverErrorPolicy `xml:"rerror_policy,attr,omitempty" json:"rerrorPolicy,omitempty"`
+	ErrorPolicy  DomainDriverErrorPolicy `xml:"error_policy,attr,omitempty" json:"errorPolicy,omitempty"`
+	RErrorPolicy DomainDriverErrorPolicy `xml:"rerror_policy,attr,omitempty" json:"rerrorPolicy,omitempty"`
 
 	// The optional io attribute controls specific policies on I/O; qemu guests support "threads" and "native"
 	// Since 0.8.8 , io_uring Since 6.3.0 (QEMU 5.0) .
-	IO DomainDiskDriverIO `xml:"io,attr,omitempty" json:"io,omitempty"`
+	IO DomainDriverIO `xml:"io,attr,omitempty" json:"io,omitempty"`
 
 	// The optional ioeventfd attribute allows users to set domain I/O asynchronous handling for disk device.
 	// The default is left to the discretion of the hypervisor. Accepted values are "on" and "off". Enabling
@@ -2268,7 +2321,7 @@ type DomainDiskDriver struct {
 	// The optional discard attribute controls whether discard requests (also known as "trim" or "unmap")
 	// are ignored or passed to the filesystem. The value can be either "unmap" (allow the discard request
 	// to be passed) or "ignore" (ignore the discard request). Since 1.0.6 (QEMU and KVM only)
-	Discard DomainDiskDriverDiscard `xml:"discard,attr,omitempty" json:"discard,omitempty"`
+	Discard DomainDriverDiscard `xml:"discard,attr,omitempty" json:"discard,omitempty"`
 
 	// The optional detect_zeroes attribute controls whether to detect zero write requests. The value
 	// can be "off", "on" or "unmap". First two values turn the detection off and on, respectively.
@@ -2276,7 +2329,7 @@ type DomainDiskDriver struct {
 	// from the image based on the value of discard above (it will act as "on" if discard is set to
 	// "ignore"). NB enabling the detection is a compute intensive operation, but can save file space
 	// and/or time on slow media. Since 2.0.0
-	DetectZeroes DomainDiskDriverDetectZeroes `xml:"detect_zeroes,attr,omitempty" json:"detectZeroes,omitempty"`
+	DetectZeroes DomainDriverDetectZeroes `xml:"detect_zeroes,attr,omitempty" json:"detectZeroes,omitempty"`
 
 	// The optional iothread attribute assigns the disk to an IOThread as defined by the range for the domain iothreads
 	// value. Multiple disks may be assigned to the same IOThread and are numbered from 1 to the domain iothreads value.
@@ -2297,11 +2350,54 @@ type DomainDiskDriver struct {
 	//In the majority of cases the default configuration used by the hypervisor is sufficient so modifying this
 	// setting should not be necessary. For specifics on how the metadata cache of qcow2 in qemu behaves refer
 	// to the qemu qcow2 cache docs
-	MetadataCache *DomainDiskDriverMetadataCache `xml:"metadata_cache,omitempty" json:"metadataCache,omitempty"`
+	MetadataCache *DomainDriverMetadataCache `xml:"metadata_cache,omitempty" json:"metadataCache,omitempty"`
+
+	// The optional rx_queue_size attribute controls the size of virtio ring for each queue as described above.
+	// The default value is hypervisor dependent and may change across its releases. Moreover, some hypervisors
+	// may pose some restrictions on actual value. For instance, latest QEMU (as of 2016-09-01) requires value
+	// to be a power of two from [256, 1024] range. Since 2.3.0 (QEMU and KVM only) In general you should leave
+	// this option alone, unless you are very certain you know what you are doing.
+	RxQueueSize int64 `xml:"rx_queue_size,attr,omitempty" json:"rxQueueSize,omitempty"`
+
+	// The optional tx_queue_size attribute controls the size of virtio ring for each queue as described above.
+	// The default value is hypervisor dependent and may change across its releases. Moreover, some hypervisors
+	// may pose some restrictions on actual value. For instance, QEMU v2.9 requires value to be a power of two
+	// from [256, 1024] range. In addition to that, this may work only for a subset of interface types, e.g.
+	// aforementioned QEMU enables this option only for vhostuser type. Since 3.7.0 (QEMU and KVM only) In general
+	// you should leave this option alone, unless you are very certain you know what you are doing.
+	TxQueueSize int64 `xml:"txQueueSize,omitempty" json:"txQueueSize,omitempty"`
+
+	// The csum, gso, tso4, tso6, ecn and ufo attributes with possible values on and off can be used to turn
+	// off host offloading options. By default, the supported offloads are enabled by QEMU. Since 1.2.9 (QEMU
+	// only) The mrg_rxbuf attribute can be used to control mergeable rx buffers on the host side. Possible
+	// values are on (default) and off. Since 1.2.13 (QEMU only)
+	Host *DomainDriverHost `xml:"host,omitempty" json:"host,omitempty"`
+
+	// The csum, tso4, tso6, ecn and ufo attributes with possible values on and off can be used to turn off guest
+	// offloading options. By default, the supported offloads are enabled by QEMU. Since 1.2.9 (QEMU only)
+	Guest *DomainDriverGuest `xml:"guest,omitempty" json:"guest,omitempty"`
 }
 
-type DomainDiskDriverMetadataCache struct {
+type DomainDriverMetadataCache struct {
 	MaxSize Size `xml:"max_size,omitempty" json:"max_size,omitempty"`
+}
+
+type DomainDriverHost struct {
+	Csum TurnState `xml:"csum,attr,omitempty" json:"csum,omitempty"`
+	Gso  TurnState `xml:"gso,attr,omitempty" json:"gso,omitempty"`
+	Tso4 TurnState `xml:"tso4,attr,omitempty" json:"tso4,omitempty"`
+	Tso6 TurnState `xml:"tso6,attr,omitempty" json:"tso6,omitempty"`
+	Ecn  TurnState `xml:"ecn,attr,omitempty" json:"ecn,omitempty"`
+	Ufo  TurnState `xml:"ufo,attr,omitempty" json:"ufo,omitempty"`
+}
+
+type DomainDriverGuest struct {
+	Csum TurnState `xml:"csum,attr,omitempty" json:"csum,omitempty"`
+	Gso  TurnState `xml:"gso,attr,omitempty" json:"gso,omitempty"`
+	Tso4 TurnState `xml:"tso4,attr,omitempty" json:"tso4,omitempty"`
+	Tso6 TurnState `xml:"tso6,attr,omitempty" json:"tso6,omitempty"`
+	Ecn  TurnState `xml:"ecn,attr,omitempty" json:"ecn,omitempty"`
+	Ufo  TurnState `xml:"ufo,attr,omitempty" json:"ufo,omitempty"`
 }
 
 type DomainDiskSourceProtocol string
@@ -2672,7 +2768,7 @@ const (
 
 type DomainDiskFormat struct {
 	Type          DomainDiskBackingStoreFormatType `xml:"type,attr,omitempty" json:"type,omitempty"`
-	MetadataCache *DomainDiskDriverMetadataCache   `xml:"metadata_cache,omitempty" json:"metadataCache,omitempty"`
+	MetadataCache *DomainDriverMetadataCache       `xml:"metadata_cache,omitempty" json:"metadataCache,omitempty"`
 }
 
 type DomainDiskBackingStoreSource struct {
@@ -2694,7 +2790,7 @@ const (
 	DomainDiskTargetBusScsi   DomainDiskTargetBus = "scsi"
 	DomainDiskTargetBusVirtio DomainDiskTargetBus = "virtio"
 	DomainDiskTargetBusXen    DomainDiskTargetBus = "xen"
-	DomainDiskTargetBusUsb    DomainDiskTargetBus = "usb"
+	DomainDiskTargetBusUSB    DomainDiskTargetBus = "usb"
 	DomainDiskTargetBusSata   DomainDiskTargetBus = "sata"
 	DomainDiskTargetBusSd     DomainDiskTargetBus = "sd"
 )
@@ -2769,7 +2865,7 @@ type DomainDiskIOTune struct {
 	WriteIOPSSecMaxLength int64 `xml:"write_iops_sec_max_length,omitempty" json:"writeIopsSecMaxLength,omitempty"`
 }
 
-type DomainDiskBackendDomain struct {
+type DomainBackendDomain struct {
 	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 }
 
@@ -3020,7 +3116,7 @@ const (
 	DomainControllerTypeFdc          DomainControllerType = "fdc"
 	DomainControllerTypeScsi         DomainControllerType = "scsi"
 	DomainControllerTypeSata         DomainControllerType = "sata"
-	DomainControllerTypeUsb          DomainControllerType = "usb"
+	DomainControllerTypeUSB          DomainControllerType = "usb"
 	DomainControllerTypeCcid         DomainControllerType = "ccid"
 	DomainControllerTypeVirtioSerial DomainControllerType = "virtio-serial"
 	DomainControllerTypeXenbus       DomainControllerType = "xenbus"
@@ -3150,7 +3246,7 @@ const (
 type DomainHostDevType string
 
 const (
-	DomainHostDevTypeUsb      DomainHostDevType = "usb"
+	DomainHostDevTypeUSB      DomainHostDevType = "usb"
 	DomainHostDevTypePci      DomainHostDevType = "pci"
 	DomainHostDevTypeScsi     DomainHostDevType = "scsi"
 	DomainHostDevTypeScsiHost DomainHostDevType = "scsi_host"
@@ -3164,7 +3260,10 @@ const (
 type DomainHostDevModel string
 
 const (
-	DomainHostDevModelVirtioTransitional DomainHostDevModel = "virtio-transitional"
+	DomainHostDevModelVirtioTransitional    DomainHostDevModel = "virtio-transitional"
+	DomainHostDevModelVirtioNonTransitional DomainHostDevModel = "virtio-non-transitional"
+	DomainHostDevModelVirtio                DomainHostDevModel = "virtio"
+	DomainHostDevModelCapabilities          DomainHostDevModel = "capabilities"
 )
 
 type DomainHostDev struct {
@@ -3237,7 +3336,7 @@ type DomainHostDev struct {
 	// Specifies that the device is bootable. The order attribute determines the order in which devices will
 	// be tried during boot sequence. The per-device boot elements cannot be used together with general boot
 	// elements in BIOS bootloader section. Since 0.8.8 for PCI devices, Since 1.0.1 for USB devices.
-	Boot *DomainHostDevBoot `xml:"boot,omitempty" json:"boot,omitempty"`
+	Boot *DomainDeviceBoot `xml:"boot,omitempty" json:"boot,omitempty"`
 
 	// The rom element is used to change how a PCI device's ROM is presented to the guest. The optional bar
 	// attribute can be set to "on" or "off", and determines whether or not the device's ROM will be visible
@@ -3250,7 +3349,7 @@ type DomainHostDev struct {
 	// 0.9.10 (QEMU and KVM only) . The optional enabled attribute can be set to no to disable PCI ROM loading
 	// completely for the device; if PCI ROM loading is disabled through this attribute, attempts to tweak the
 	// loading process further using the bar or file attributes will be rejected. Since 4.3.0 (QEMU and KVM only).
-	Rom *DomainHostDevRom `xml:"rom,omitempty" json:"rom,omitempty"`
+	Rom *DomainDeviceRom `xml:"rom,omitempty" json:"rom,omitempty"`
 
 	// PCI devices can have an optional driver subelement that specifies which backend driver to use for PCI
 	// device assignment. Use the name attribute to select either "vfio" (for the new VFIO device assignment
@@ -3271,6 +3370,9 @@ type DomainHostDev struct {
 	// hostdev, e.g. any address type other than PCI for vfio-pci device API or any address type other than CCW for
 	// vfio-ccw device API will result in an error. See above for more details on the address element.
 	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+
+	IP    []*DomainInterfaceIP    `xml:"ip,omitempty" json:"ip,omitempty"`
+	Route []*DomainInterfaceRoute `xml:"route,omitempty" json:"route,omitempty"`
 }
 
 type DomainHostDevSourceStartupPolicy string
@@ -3325,11 +3427,11 @@ type DomainHostDevSourceProduct struct {
 	ID string `xml:"id,attr,omitempty" json:"id,omitempty"`
 }
 
-type DomainHostDevBoot struct {
+type DomainDeviceBoot struct {
 	Order int32 `xml:"order,attr,omitempty" json:"order,omitempty"`
 }
 
-type DomainHostDevRom struct {
+type DomainDeviceRom struct {
 	Bar  TurnState `xml:"bar,attr,omitempty" json:"bar,omitempty"`
 	File string    `xml:"file,attr,omitempty" json:"file,omitempty"`
 }
@@ -3345,8 +3447,748 @@ type DomainHostDevDriver struct {
 	Name DomainHostDevDriverName `xml:"name,attr,omitempty" json:"name,omitempty"`
 }
 
+type DomainReDirDevBus string
+
+const (
+	DomainReDirDevBusTCP      DomainReDirDevBus = "tcp"
+	DomainReDirDevBusSpiceVmc DomainReDirDevBus = "spicevmc"
+)
+
+// DomainReDirDev the redirdev element is the main container for describing redirected devices. bus must be "usb"
+// for a USB device. An additional attribute type is required, matching one of the supported serial device types,
+// to describe the host side of the tunnel; type='tcp' or type='spicevmc' (which uses the usbredir channel of a
+// SPICE graphics device) are typical. The redirdev element has an optional sub-element <address> which can tie
+// the device to a particular controller. Further sub-elements, such as <source>, may be required according to the
+// given type, although a <target> sub-element is not required (since the consumer of the character device is the
+// hypervisor itself, rather than a device visible in the guest).
+type DomainReDirDev struct {
+	Bus DomainReDirDevBus `xml:"bus,attr,omitempty" json:"bus,omitempty"`
+
+	Source *DomainReDirDevSource `xml:"source,omitempty" json:"source,omitempty"`
+
+	// Specifies that the device is bootable. The order attribute determines the order in which devices will
+	// be tried during boot sequence. The per-device boot elements cannot be used together with general boot
+	// elements in BIOS bootloader section. ( Since 1.0.1 )
+	Boot *DomainReDirDevBoot `xml:"boot,omitempty" json:"boot,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainReDirDevSourceMode string
+
+const (
+	DomainReDirDevSourceModeConnect DomainReDirDevSourceMode = "connect"
+)
+
+type DomainReDirDevSource struct {
+	Mode    DomainReDirDevSourceMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+	Host    string                   `xml:"host,attr,omitempty" json:"host,omitempty"`
+	Service int32                    `xml:"service,attr,omitempty" json:"service,omitempty"`
+}
+
+type DomainReDirDevBoot struct {
+	Order int32 `xml:"order,attr,omitempty" json:"order,omitempty"`
+}
+
+type DomainReDirFilter struct {
+	UsbDev []*DomainReDirFilterUsbDev `xml:"usbdev,omitempty" json:"usbdev,omitempty"`
+}
+
+type DomainReDirFilterUsbDev struct {
+	Class   string      `xml:"class,attr,omitempty" json:"class,omitempty"`
+	Vendor  string      `xml:"vendor,attr,omitempty" json:"vendor,omitempty"`
+	Product string      `xml:"product,attr,omitempty" json:"product,omitempty"`
+	Version string      `xml:"version,attr,omitempty" json:"version,omitempty"`
+	Allow   ButtonState `xml:"allow,attr,omitempty" json:"allow,omitempty"`
+}
+
+type DomainSmartCardMode string
+
+const (
+	DomainSmartCardModeHost             DomainSmartCardMode = "host"
+	DomainSmartCardModeHostCertificates DomainSmartCardMode = "host-certificates"
+	DomainSmartCardModePassthrough      DomainSmartCardMode = "passthrough"
+)
+
+type DomainSmartCardType string
+
+const (
+	DomainSmartCardTypeTCP      DomainSmartCardType = "tcp"
+	DomainSmartCardTypeSpiceVmc DomainSmartCardType = "spicevmc"
+)
+
+// DomainSmartCard the <smartcard> element has a mandatory attribute mode. The following modes are supported;
+// in each mode, the guest sees a device on its USB bus that behaves like a physical USB CCID (Chip/Smart Card
+// Interface Device) card.
+// 	host : The simplest operation, where the hypervisor relays all requests from the guest into direct access to
+//	       the host's smartcard via NSS. No other attributes or sub-elements are required. See below about the use
+//	       of an optional <address> sub-element.
+//
+//  host-certificates : Rather than requiring a smartcard to be plugged into the host, it is possible to provide
+//                      three NSS certificate names residing in a database on the host. These certificates can be
+//                      generated via the command certutil -d /etc/pki/nssdb -x -t CT,CT,CT -S -s CN=cert1 -n cert1,
+//                      and the resulting three certificate names must be supplied as the content of each of three
+//                      <certificate> sub-elements. An additional sub-element <database> can specify the absolute
+//                      path to an alternate directory (matching the -d option of the certutil command when creating
+//                      the certificates); if not present, it defaults to /etc/pki/nssdb.
+//
+//  passthrough : Rather than having the hypervisor directly communicate with the host, it is possible to tunnel
+//                all requests through a secondary character device to a third-party provider (which may in turn be
+//                talking to a smartcard or using three certificate files). In this mode of operation, an additional
+//                attribute type is required, matching one of the supported serial device types, to describe the host
+//                side of the tunnel; type='tcp' or type='spicevmc' (which uses the smartcard channel of a SPICE
+//                graphics device) are typical. Further sub-elements, such as <source>, may be required according to
+//                the given type, although a <target> sub-element is not required (since the consumer of the character
+//                device is the hypervisor itself, rather than a device visible in the guest).
+//
+// Each mode supports an optional sub-element <address>, which fine-tunes the correlation between the smartcard and
+// a ccid bus controller, documented above. For now, qemu only supports at most one smartcard, with an address of
+// bus=0 slot=0.
+type DomainSmartCard struct {
+	Mode DomainSmartCardMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+	Type DomainSmartCardType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	Certificate []string `xml:"certificate,omitempty" json:"certificate,omitempty"`
+
+	Database string `xml:"database,omitempty" json:"database,omitempty"`
+
+	Source *DomainSmartCardSource `xml:"source,omitempty" json:"source,omitempty"`
+
+	Protocol *DomainSmartCardProtocol `xml:"protocol,omitempty" json:"protocol,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainSmartCardSourceMode string
+
+const (
+	DomainSmartCardSourceBind DomainSmartCardSourceMode = "bind"
+)
+
+type DomainSmartCardSource struct {
+	Mode    DomainSmartCardSourceMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+	Host    string                    `xml:"host,attr,omitempty" json:"host,omitempty"`
+	Service int32                     `xml:"service,attr,omitempty" json:"service,omitempty"`
+}
+
+type DomainSmartCardProtocolType string
+
+const (
+	DomainSmartCardProtocolTypeRaw DomainSmartCardProtocolType = "raw"
+)
+
+type DomainSmartCardProtocol struct {
+	Type DomainSmartCardProtocolType `xml:"type,attr,omitempty" json:"type,omitempty"`
+}
+
 type DomainInterfaceType string
+
+const (
+	DomainInterfaceTypeDirect    DomainInterfaceType = "direct"
+	DomainInterfaceTypeNetwork   DomainInterfaceType = "network"
+	DomainInterfaceTypeBridge    DomainInterfaceType = "bridge"
+	DomainInterfaceTypeUser      DomainInterfaceType = "user"
+	DomainInterfaceTypeEthernet  DomainInterfaceType = "ethernet"
+	DomainInterfaceTypeHostDev   DomainInterfaceType = "hostdev"
+	DomainInterfaceTypeVdpa      DomainInterfaceType = "vdpa"
+	DomainInterfaceTypeMcast     DomainInterfaceType = "mcast"
+	DomainInterfaceTypeServer    DomainInterfaceType = "server"
+	DomainInterfaceTypeClient    DomainInterfaceType = "client"
+	DomainInterfaceTypeUDP       DomainInterfaceType = "udp"
+	DomainInterfaceTypeVHostUser DomainInterfaceType = "vhostuser"
+)
 
 type DomainInterface struct {
 	Type DomainInterfaceType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	TrustGuestRxFilters ButtonState `xml:"trustGuestRxFilters,attr,omitempty" json:"trustGuestRxFilters,omitempty"`
+
+	Driver *DomainDriver `xml:"driver,omitempty" json:"driver,omitempty"`
+
+	Source  *DomainInterfaceSource  `xml:"source,omitempty" json:"source,omitempty"`
+	Mac     *DomainInterfaceMac     `xml:"mac,omitempty" json:"mac,omitempty"`
+	Teaming *DomainInterfaceTeaming `xml:"teaming,omitempty" json:"teaming,omitempty"`
+
+	VirtualPort *DomainInterfaceMacVirtualPort `xml:"virtualport,omitempty" json:"virtualport,omitempty"`
+
+	IP    []*DomainInterfaceIP    `xml:"ip,omitempty" json:"ip,omitempty"`
+	Route []*DomainInterfaceRoute `xml:"route,omitempty" json:"route,omitempty"`
+
+	Scripts     *DomainInterfaceScripts     `xml:"scripts,omitempty" json:"scripts,omitempty"`
+	DownScripts *DomainInterfaceDownScripts `xml:"downscripts,omitempty" json:"downscripts,omitempty"`
+
+	Target *DomainInterfaceTarget `xml:"target,omitempty" json:"target,omitempty"`
+	Model  *DomainInterfaceModel  `xml:"model,omitempty" json:"model,omitempty"`
+
+	Backend *DomainInterfaceBackend `xml:"backend,omitempty" json:"backend,omitempty"`
+	Tune    *DomainInterfaceTune    `xml:"tune,omitempty" json:"tune,omitempty"`
+
+	Guest *DomainInterfaceGuest `xml:"guest,omitempty" json:"guest,omitempty"`
+
+	Boot *DomainBoot       `xml:"boot,omitempty" json:"boot,omitempty"`
+	Rom  *DomainDeviceRom  `xml:"rom,omitempty" json:"rom,omitempty"`
+	ACPI *DomainDeviceACPI `xml:"acpi,omitempty" json:"acpi,omitempty"`
+
+	BackendDomain *DomainBackendDomain      `xml:"backenddomain,omitempty" json:"backenddomain,omitempty"`
+	Bandwidth     *DomainInterfaceBandwidth `xml:"bandwidth,omitempty" json:"bandwidth,omitempty"`
+	Vlan          *DomainInterfaceVlan      `xml:"vlan,omitempty" json:"vlan,omitempty"`
+
+	Port *DomainInterfacePort `xml:"port,omitempty" json:"port,omitempty"`
+
+	Link *DomainInterfaceLink `xml:"link,omitempty" json:"link,omitempty"`
+
+	Mtu *DomainInterfaceMtu `xml:"mtu,omitempty" json:"mtu,omitempty"`
+
+	Coalesce *DomainInterfaceCoalesce `xml:"coalesce,omitempty" json:"coalesce,omitempty"`
+
+	FilterRef []*DomainFilterRef `xml:"filterref,omitempty" json:"filterRef,omitempty"`
+}
+
+type DomainInterfaceDriverName string
+
+const (
+	DomainInterfaceDriverNameVfio DomainInterfaceDriverName = "vfio"
+	DomainInterfaceDriverNameKVM  DomainInterfaceDriverName = "kvm"
+)
+
+type DomainInterfaceDriver struct {
+	Name DomainInterfaceDriverName `xml:"name,attr,omitempty" json:"name,omitempty"`
+}
+
+type DomainInterfaceSourceNetwork string
+
+const (
+	DomainInterfaceSourceNetworkDefault DomainInterfaceSourceNetwork = "default"
+)
+
+type DomainInterfaceSourceMode string
+
+const (
+	// DomainInterfaceSourceModeVepa all VMs' packets are sent to the external bridge. Packets whose destination
+	// is a VM on the same host as where the packet originates from are sent back to the host by the VEPA capable
+	// bridge (today's bridges are typically not VEPA capable).
+	DomainInterfaceSourceModeVepa DomainInterfaceSourceMode = "vepa"
+
+	// DomainInterfaceSourceModeBridge packets whose destination is on the same host as where they originate
+	// from are directly delivered to the target macvtap device. Both origin and destination devices need to
+	// be in bridge mode for direct delivery. If either one of them is in vepa mode, a VEPA capable bridge
+	// is required.
+	DomainInterfaceSourceModeBridge DomainInterfaceSourceMode = "bridge"
+
+	// DomainInterfaceSourceModePrivate all packets are sent to the external bridge and will only be delivered
+	// to a target VM on the same host if they are sent through an external router or gateway and that device
+	// sends them back to the host. This procedure is followed if either the source or destination device is
+	// in private mode.
+	DomainInterfaceSourceModePrivate DomainInterfaceSourceMode = "private"
+
+	// DomainInterfaceSourceModePassthrough this feature attaches a virtual function of a SRIOV capable NIC
+	// directly to a VM without losing the migration capability. All packets are sent to the VF/IF of the
+	// configured network device. Depending on the capabilities of the device additional prerequisites or
+	// limitations may apply; for example, on Linux this requires kernel 2.6.38 or newer. Since 0.9.2
+	DomainInterfaceSourceModePassthrough DomainInterfaceSourceMode = "passthrough"
+
+	DomainInterfaceSourceModeNe2kPCI DomainInterfaceSourceMode = "ne2k_pci"
+)
+
+type DomainInterfaceSource struct {
+	Dev       string                       `xml:"dev,attr,omitempty" json:"dev,omitempty"`
+	Network   DomainInterfaceSourceNetwork `xml:"network,attr,omitempty" json:"network,omitempty"`
+	PostGroup string                       `xml:"postgroup,attr,omitempty" json:"postgroup,omitempty"`
+	Path      string                       `xml:"path,attr,omitempty" json:"path,omitempty"`
+	Mode      DomainInterfaceSourceMode    `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+
+	AddressAttr string `xml:"address,attr,omitempty" json:"addressAttr,omitempty"`
+	Port        int32  `xml:"port,attr,omitempty" json:"port,omitempty"`
+
+	Local *DomainInterfaceSourceLocal `xml:"local,omitempty" json:"local,omitempty"`
+
+	Reconnect *DomainInterfaceSourceReconnect `xml:"reconnect,omitempty" json:"reconnect,omitempty"`
+}
+
+type DomainInterfaceSourceLocal struct {
+	AddressAttr string `xml:"address,attr,omitempty" json:"addressAttr,omitempty"`
+	Port        int32  `xml:"port,attr,omitempty" json:"port,omitempty"`
+}
+
+type DomainInterfaceSourceReconnect struct {
+	Enabled ButtonState `xml:"enabled,attr,omitempty" json:"enabled,omitempty"`
+	Timeout int32       `xml:"timeout,attr,omitempty" json:"timeout,omitempty"`
+}
+
+type DomainInterfaceMac struct {
+	Address string `xml:"address,attr,omitempty" json:"address,omitempty"`
+}
+
+type DomainInterfaceTeamingType string
+
+const (
+	DomainInterfaceTeamingTypeTransient  DomainInterfaceTeamingType = "transient"
+	DomainInterfaceTeamingTypePersistent DomainInterfaceTeamingType = "persistent"
+)
+
+type DomainInterfaceTeaming struct {
+	Type       DomainInterfaceTeamingType `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Persistent string                     `xml:"persistent,attr,omitempty" json:"persistent,omitempty"`
+}
+
+type DomainInterfaceMacVirtualPortType string
+
+const (
+	DomainInterfaceMacVirtualPortTypeOpenVSwitch DomainInterfaceMacVirtualPortType = "openvswitch"
+	DomainInterfaceMacVirtualPortTypeMidonet     DomainInterfaceMacVirtualPortType = "midonet"
+)
+
+type DomainInterfaceMacVirtualPort struct {
+	Type       DomainInterfaceMacVirtualPortType   `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Parameters *DomainInterfaceMacVirtualPortParam `xml:"parameters,omitempty" json:"parameters,omitempty"`
+}
+
+type DomainInterfaceMacVirtualPortParamProfileId string
+
+const (
+	DomainInterfaceMacVirtualPortParamProfileIdMenial  DomainInterfaceMacVirtualPortParamProfileId = "menial"
+	DomainInterfaceMacVirtualPortParamProfileIdFinance DomainInterfaceMacVirtualPortParamProfileId = "finance"
+)
+
+type DomainInterfaceMacVirtualPortParam struct {
+	ProfileId DomainInterfaceMacVirtualPortParamProfileId `xml:"profileid,attr,omitempty" json:"profileid,omitempty"`
+
+	InstanceId string `xml:"instanceid,attr,omitempty" json:"instanceid,omitempty"`
+
+	// Please note that IEEE 802.1Qbg requires a non-zero value for the VLAN ID.
+	//
+	// The VSI Manager ID identifies the database containing the VSI type and instance definitions.
+	// This is an integer value and the value 0 is reserved.
+	ManagerId int32 `xml:"managerid,attr,omitempty" json:"managerid,omitempty"`
+
+	// The VSI Type ID identifies a VSI type characterizing the network access. VSI types are typically
+	// managed by network administrator. This is an integer value.
+	TypeId int64 `xml:"typeid,attr,omitempty" json:"typeid,omitempty"`
+
+	// The VSI Type Version allows multiple versions of a VSI Type. This is an integer value.
+	TypeIdVersion int32 `xml:"typeidversion,attr,omitempty" json:"typeidversion,omitempty"`
+
+	// The VSI Instance ID Identifier is generated when a VSI instance (i.e. a virtual interface of
+	// a virtual machine) is created. This is a globally unique identifier.
+	// InstanceId string `xml:"instanceid,attr,omitempty" json:"instanceid,omitempty"`
+}
+
+type DomainInterfaceIPFamily string
+
+const (
+	DomainInterfaceIPFamilyIPV4 DomainInterfaceIPFamily = "ipv4"
+	DomainInterfaceIPFamilyIPV6 DomainInterfaceIPFamily = "ipv6"
+)
+
+type DomainInterfaceIP struct {
+	Family  DomainInterfaceIPFamily `xml:"family,attr,omitempty" json:"family,omitempty"`
+	Address string                  `xml:"address,attr,omitempty" json:"address,omitempty"`
+	Prefix  int32                   `xml:"prefix,attr,omitempty" json:"prefix,omitempty"`
+	Peer    string                  `xml:"peer,attr,omitempty" json:"peer,omitempty"`
+}
+
+type DomainInterfaceRoute struct {
+	Family  DomainInterfaceIPFamily `xml:"family,attr,omitempty" json:"family,omitempty"`
+	Address string                  `xml:"address,attr,omitempty" json:"address,omitempty"`
+	Prefix  int32                   `xml:"prefix,attr,omitempty" json:"prefix,omitempty"`
+	Peer    string                  `xml:"peer,attr,omitempty" json:"peer,omitempty"`
+	Gateway string                  `xml:"gateway,attr,omitempty" json:"gateway,omitempty"`
+}
+
+type DomainInterfaceScripts struct {
+	Path string `xml:"path,attr,omitempty" json:"path,omitempty"`
+}
+
+type DomainInterfaceDownScripts struct {
+	Path string `xml:"path,attr,omitempty" json:"path,omitempty"`
+}
+
+type DomainInterfaceTarget struct {
+	Dev     string      `xml:"dev,attr,omitempty" json:"dev,omitempty"`
+	Managed ButtonState `xml:"managed,attr,omitempty" json:"managed,omitempty"`
+}
+
+type DomainInterfaceModelType string
+
+const (
+	DomainInterfaceModelTypeVirtio  DomainInterfaceModelType = "virtio"
+	DomainInterfaceModelType8021Qbg DomainInterfaceModelType = "802.1Qbg"
+	DomainInterfaceModelType8021Qbh DomainInterfaceModelType = "802.1Qbh"
+)
+
+type DomainInterfaceModel struct {
+	Type DomainInterfaceModelType `xml:"type,attr,omitempty" json:"type,omitempty"`
+}
+
+type DomainInterfaceBackend struct {
+	Tap   string `xml:"tap,attr,omitempty" json:"tap,omitempty"`
+	Vhost string `xml:"vhost,attr,omitempty" json:"vhost,omitempty"`
+}
+
+type DomainInterfaceTune struct {
+	Sndbuf int64 `xml:"sndbuf,omitempty" json:"sndbuf,omitempty"`
+}
+
+type DomainInterfaceGuest struct {
+	Dev string `xml:"dev,attr,omitempty" json:"dev,omitempty"`
+}
+
+type DomainInterfaceBandwidth struct {
+	Inbound  *DomainQos `xml:"inbound,omitempty" json:"inbound,omitempty"`
+	Outbound *DomainQos `xml:"outbound,omitempty" json:"outbound,omitempty"`
+}
+
+type DomainInterfaceVlan struct {
+	Trunk *ButtonState `xml:"trunk,attr,omitempty" json:"trunk,omitempty"`
+
+	Tag []*DomainInterfaceVlanTag `xml:"tag,omitempty" json:"tag,omitempty"`
+}
+
+type DomainInterfacePort struct {
+	Isolated ButtonState `xml:"isolated,attr,omitempty" json:"isolated,omitempty"`
+}
+
+type DomainInterfaceLinkState string
+
+const (
+	DomainInterfaceLinkStateUP   DomainInterfaceLinkState = "up"
+	DomainInterfaceLinkStateDown DomainInterfaceLinkState = "down"
+)
+
+type DomainInterfaceLink struct {
+	State DomainInterfaceLinkState `xml:"state,attr,omitempty" json:"state,omitempty"`
+}
+
+type DomainInterfaceMtu struct {
+	Size int32 `xml:"size,attr,omitempty" json:"size,omitempty"`
+}
+
+type DomainInterfaceCoalesce struct {
+	Tx *DomainInterfaceCoalesceTx `xml:"tx,omitempty" json:"tx,omitempty"`
+}
+
+type DomainInterfaceCoalesceTx struct {
+	Frames *DomainInterfaceCoalesceTxFrames `xml:"frames,omitempty" json:"frames,omitempty"`
+}
+
+type DomainInterfaceCoalesceTxFrames struct {
+	Max int32 `xml:"max,attr,omitempty" json:"max,omitempty"`
+}
+
+type DomainInterfaceVlanTagMode string
+
+const (
+	DomainInterfaceVlanTagModeTagged   DomainInterfaceVlanTagMode = "tagged"
+	DomainInterfaceVlanTagModeUnTagged DomainInterfaceVlanTagMode = "untagged"
+)
+
+type DomainInterfaceVlanTag struct {
+	Id int32 `xml:"id,attr,omitempty" json:"id,omitempty"`
+
+	NativeMode DomainInterfaceVlanTagMode `xml:"nativeMode,attr,omitempty" json:"nativeMode,omitempty"`
+}
+
+type DomainQos struct {
+	Average int64 `xml:"average,attr,omitempty" json:"average,omitempty"`
+	Peak    int64 `xml:"peak,attr,omitempty" json:"peak,omitempty"`
+	Floor   int64 `xml:"floor,attr,omitempty" json:"floor,omitempty"`
+	Burst   int64 `xml:"burst,attr,omitempty" json:"burst,omitempty"`
+}
+
+type DomainFilterRefFilter string
+
+const (
+	DomainFilterRefFilterBridge   DomainFilterRefFilter = "bridge"
+	DomainFilterRefFilterNetwork  DomainFilterRefFilter = "network"
+	DomainFilterRefFilterEthernet DomainFilterRefFilter = "ethernet"
+)
+
+type DomainFilterRef struct {
+	Filter    DomainFilterRefFilter   `xml:"filter,attr,omitempty" json:"filter,omitempty"`
+	Parameter []*DomainFilterRefParam `xml:"parameter,omitempty" json:"parameter,omitempty"`
+}
+
+type DomainFilterRefParamName string
+
+const (
+	DomainFilterRefParamNameIP      DomainFilterRefParamName = "IP"
+	DomainFilterRefParamNameIP6Addr DomainFilterRefParamName = "IP6_ADDR"
+	DomainFilterRefParamNameIP6Mask DomainFilterRefParamName = "IP6_MASK"
+)
+
+type DomainFilterRefParam struct {
+	Name  DomainFilterRefParamName `xml:"name,attr,omitempty" json:"name,omitempty"`
+	Value string                   `xml:"value,attr,omitempty" json:"value,omitempty"`
+}
+
+type DomainInputType string
+
+const (
+	DomainInputTypeMouse       DomainInputType = "mouse"
+	DomainInputTypeKeyBoard    DomainInputType = "keyboard"
+	DomainInputTypeTablet      DomainInputType = "tablet"
+	DomainInputTypePassthrough DomainInputType = "passthrough"
+)
+
+type DomainInputBus string
+
+const (
+	DomainInputBusVirtio DomainInputBus = "virtio"
+	DomainInputBusUSB    DomainInputBus = "usb"
+)
+
+type DomainInput struct {
+	Type DomainInputType `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Bus  DomainInputBus  `xml:"bus,attr,omitempty" json:"bus,omitempty"`
+
+	Source *DomainInputSource `xml:"source,omitempty" json:"source,omitempty"`
+	Driver *DomainDriver      `xml:"driver,omitempty" json:"driver,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainInputSource struct {
+	EvDev string `xml:"evdev,attr,omitempty" json:"evdev,omitempty"`
+}
+
+type DomainHubType string
+
+const (
+	DomainHubTypeUSB DomainHubType = "usb"
+)
+
+type DomainHub struct {
+	Type DomainHubType `xml:"type,attr,omitempty" json:"type,omitempty"`
+}
+
+type DomainGraphicsType string
+
+const (
+	DomainGraphicsTypeSDL         DomainGraphicsType = "sdl"
+	DomainGraphicsTypeVNC         DomainGraphicsType = "vnc"
+	DomainGraphicsTypeSpice       DomainGraphicsType = "spice"
+	DomainGraphicsTypeRdp         DomainGraphicsType = "rdp"
+	DomainGraphicsTypeDesktop     DomainGraphicsType = "desktop"
+	DomainGraphicsTypeEglHeadless DomainGraphicsType = "egl-headless"
+)
+
+type DomainGraphicsSharePolicy string
+
+const (
+	DomainGraphicsSharePolicyAllowExclusive DomainGraphicsSharePolicy = "allow-exclusive"
+	DomainGraphicsSharePolicyForceShare     DomainGraphicsSharePolicy = "force-share"
+	DomainGraphicsSharePolicyIgnore         DomainGraphicsSharePolicy = "ignore"
+)
+
+type DomainGraphics struct {
+	Type    DomainGraphicsType `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Display string             `xml:"display,attr,omitempty" json:"display,omitempty"`
+
+	AutoPort    ButtonState               `xml:"autoport,attr,omitempty" json:"autoport,omitempty"`
+	Port        int32                     `xml:"port,attr,omitempty" json:"port,omitempty"`
+	TlsPort     int32                     `xml:"tlsPort,attr,omitempty" json:"tlsPort,omitempty"`
+	SharePolicy DomainGraphicsSharePolicy `xml:"sharePolicy,attr,omitempty" json:"sharePolicy,omitempty"`
+	Listen      *DomainGraphicsListen     `xml:"listen,omitempty" json:"listen,omitempty"`
+
+	Passwd string `xml:"passwd,attr,omitempty" json:"passwd,omitempty"`
+
+	MultiUser ButtonState `xml:"multiUser,attr,omitempty" json:"multiUser,omitempty"`
+
+	FullScreen ButtonState `xml:"fullScreen,attr,omitempty" json:"fullScreen,omitempty"`
+
+	Channel      []*DomainGraphicsChannel    `xml:"channel,omitempty" json:"channel,omitempty"`
+	Image        *DomainGraphicsImage        `xml:"image,omitempty" json:"image,omitempty"`
+	Streaming    *DomainGraphicsStreaming    `xml:"streaming,omitempty" json:"streaming,omitempty"`
+	Clipboard    *DomainGraphicsClipboard    `xml:"clipboard,omitempty" json:"clipboard,omitempty"`
+	Mouse        *DomainGraphicsMouse        `xml:"mouse,omitempty" json:"mouse,omitempty"`
+	FileTransfer *DomainGraphicsFileTransfer `xml:"filetransfer,omitempty" json:"filetransfer,omitempty"`
+
+	GL *DomainGraphicsGL `xml:"gl,omitempty" json:"gl,omitempty"`
+}
+
+type DomainGraphicsListenType string
+
+const (
+	DomainGraphicsListenTypeAddress DomainGraphicsListenType = "address"
+	DomainGraphicsListenTypeNetwork DomainGraphicsListenType = "network"
+	DomainGraphicsListenTypeSocket  DomainGraphicsListenType = "socket"
+	DomainGraphicsListenTypeNone    DomainGraphicsListenType = "none"
+)
+
+type DomainGraphicsListen struct {
+	Type    DomainGraphicsListenType `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Address string                   `xml:"address,attr,omitempty" json:"address,omitempty"`
+	Network string                   `xml:"network,attr,omitempty" json:"network,omitempty"`
+	Socket  string                   `xml:"socket,attr,omitempty" json:"socket,omitempty"`
+}
+
+type DomainGraphicsChannelName string
+
+const (
+	DomainGraphicsChannelNameMain      DomainGraphicsChannelName = "main"
+	DomainGraphicsChannelNameDisplay   DomainGraphicsChannelName = "display"
+	DomainGraphicsChannelNameInputs    DomainGraphicsChannelName = "inputs"
+	DomainGraphicsChannelNameCursor    DomainGraphicsChannelName = "cursor"
+	DomainGraphicsChannelNamePlayBack  DomainGraphicsChannelName = "playback"
+	DomainGraphicsChannelNameRecord    DomainGraphicsChannelName = "record"
+	DomainGraphicsChannelNameSmartCard DomainGraphicsChannelName = "smartcard"
+	DomainGraphicsChannelNameUsbReDir  DomainGraphicsChannelName = "usbredir"
+)
+
+type DomainGraphicsChannelMode string
+
+const (
+	DomainGraphicsChannelModeSecure   DomainGraphicsChannelMode = "secure"
+	DomainGraphicsChannelModeInsecure DomainGraphicsChannelMode = "insecure"
+)
+
+type DomainGraphicsChannel struct {
+	Name DomainGraphicsChannelName `xml:"name,attr,omitempty" json:"name,omitempty"`
+	Mode DomainGraphicsChannelMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+}
+
+type DomainGraphicsImageCompression string
+
+const (
+	DomainGraphicsImageCompressionAutoGLZ DomainGraphicsImageCompression = "auto_glz"
+	DomainGraphicsImageCompressionAutoLZ  DomainGraphicsImageCompression = "auto_lz"
+	DomainGraphicsImageCompressionQuic    DomainGraphicsImageCompression = "quic"
+	DomainGraphicsImageCompressionGLZ     DomainGraphicsImageCompression = "glz"
+	DomainGraphicsImageCompressionLZ      DomainGraphicsImageCompression = "lz"
+)
+
+type DomainGraphicsImage struct {
+	Compression DomainGraphicsImageCompression `xml:"compression,attr,omitempty" json:"compression,omitempty"`
+}
+
+type DomainGraphicsStreamingMode string
+
+const (
+	DomainGraphicsStreamingModeFilter DomainGraphicsStreamingMode = "filter"
+	DomainGraphicsStreamingModeAll    DomainGraphicsStreamingMode = "all"
+	DomainGraphicsStreamingModeOff    DomainGraphicsStreamingMode = "off"
+)
+
+type DomainGraphicsStreaming struct {
+	// Streaming mode is set by the streaming element, settings its mode attribute to one of filter, all or off.
+	// Since 0.9.2
+	Mode DomainGraphicsStreamingMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+}
+
+type DomainGraphicsClipboard struct {
+	CopyPaste ButtonState `xml:"copypaste,attr,omitempty" json:"copypaste,omitempty"`
+}
+
+type DomainGraphicsMouseMode string
+
+const (
+	DomainGraphicsMouseModeClient DomainGraphicsMouseMode = "client"
+	DomainGraphicsMouseModeServer DomainGraphicsMouseMode = "server"
+)
+
+type DomainGraphicsMouse struct {
+	// Mouse mode is set by the mouse element, setting its mode attribute to one of server or client.
+	// If no mode is specified, the qemu default will be used (client mode). Since 0.9.11
+	Mode DomainGraphicsMouseMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+}
+
+type DomainGraphicsFileTransfer struct {
+	// File transfer functionality (via Spice agent) is set using the filetransfer element. It is enabled
+	// by default, and can be disabled by setting the enable property to no. Since 1.2.2
+	Enable ButtonState `xml:"enable,attr,omitempty" json:"enable,omitempty"`
+}
+
+type DomainGraphicsGL struct {
+	Enable     ButtonState `xml:"enable,attr,omitempty" json:"enable,omitempty"`
+	RenderNode string      `xml:"rendernode,attr,omitempty" json:"rendernode,omitempty"`
+}
+
+type DomainVideo struct {
+	// The model element has a mandatory type attribute which takes the value "vga", "cirrus", "vmvga", "xen", "vbox",
+	// "qxl" ( since 0.8.6 ), "virtio" ( since 1.3.0 ), "gop" ( since 3.2.0 ), "bochs" ( since 5.6.0 ), "ramfb"
+	// ( since 5.9.0 ), or "none" ( since 4.6.0 ), depending on the hypervisor features available.
+	//
+	// Note: The purpose of the type none is to instruct libvirt not to add a default video device in the guest
+	// (see the video element description above), since such behaviour is inconvenient in cases where GPU mediated
+	// devices are meant to be the only rendering device within a guest. If this is your use case specify a none type
+	// video device in the XML to stop the default behaviour. Refer to Host device assignment to see how to add a
+	// mediated device into a guest.
+	//
+	// You can provide the amount of video memory in kibibytes (blocks of 1024 bytes) using vram. This is supported
+	// only for guest type of "vz", "qemu", "vbox", "vmx" and "xen". If no value is provided the default is used.
+	// If the size is not a power of two it will be rounded to closest one.
+	//
+	// The number of screen can be set using heads. This is supported only for guests type of "vz", "kvm",
+	// "vbox" and "vmx".
+	//
+	// For guest type of "kvm" or "qemu" and model type "qxl" there are optional attributes. Attribute ram ( since 1.0.2 )
+	// specifies the size of the primary bar, while the attribute vram specifies the secondary bar size. If ram or
+	// vram are not supplied a default value is used. The ram should also be rounded to power of two as vram. There
+	// is also optional attribute vgamem ( since 1.2.11 ) to set the size of VGA framebuffer for fallback mode of QXL
+	// device. Attribute vram64 ( since 1.3.3 ) extends secondary bar and makes it addressable as 64bit memory.
+	//
+	// Since 5.9.0 , the model element may also have an optional resolution sub-element. The resolution element has
+	// attributes x and y to set the minimum resolution for the video device. This sub-element is valid for model types
+	// "vga", "qxl", "bochs", "gop", and "virtio".
+	Model *DomainVideoModel `xml:"model,omitempty" json:"model,omitempty"`
+
+	Acceleration *DomainVideoAcceleration `xml:"acceleration,omitempty" json:"acceleration,omitempty"`
+
+	Alias   *DomainAlias         `xml:"alias,attr,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+	Driver  *DomainVideoDriver   `xml:"driver,omitempty" json:"driver,omitempty"`
+}
+
+type DomainVideoModelType string
+
+const (
+	DomainVideoModelTypeVga    DomainVideoModelType = "vga"
+	DomainVideoModelTypeCirrus DomainVideoModelType = "cirrus"
+	DomainVideoModelTypeVmvga  DomainVideoModelType = "vmvga"
+	DomainVideoModelTypeXen    DomainVideoModelType = "xen"
+	DomainVideoModelTypeVbox   DomainVideoModelType = "vbox"
+	DomainVideoModelTypeQxl    DomainVideoModelType = "qxl"
+	DomainVideoModelTypeVirtio DomainVideoModelType = "virtio"
+	DomainVideoModelTypeGop    DomainVideoModelType = "gop"
+	DomainVideoModelTypeBochs  DomainVideoModelType = "bochs"
+	DomainVideoModelTypeRamfb  DomainVideoModelType = "ramfb"
+)
+
+type DomainVideoModel struct {
+	Type  DomainVideoModelType `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Vram  int64                `xml:"vram,attr,omitempty" json:"vram,omitempty"`
+	Heads int32                `xml:"heads,attr,omitempty" json:"heads,omitempty"`
+}
+
+type DomainVideoAccelerationRenderNode string
+
+const (
+	DomainVideoAccelerationRenderNodeVHostUser DomainVideoAccelerationRenderNode = "vhostuser"
+)
+
+type DomainVideoAcceleration struct {
+	Accel2d    ButtonState                       `xml:"accel2d,attr,omitempty" json:"accel2d,omitempty"`
+	Accel3d    ButtonState                       `xml:"accel3d,attr,omitempty" json:"accel3d,omitempty"`
+	RenderNode DomainVideoAccelerationRenderNode `xml:"rendernode,attr,omitempty" json:"rendernode,omitempty"`
+}
+
+type DomainVideoDriverVgaConf string
+
+const (
+	DomainVideoDriverVgaConfIO  DomainVideoDriverVgaConf = "io"
+	DomainVideoDriverVgaConfOn  DomainVideoDriverVgaConf = "on"
+	DomainVideoDriverVgaConfOff DomainVideoDriverVgaConf = "off"
+)
+
+type DomainVideoDriver struct {
+	Name    DomainDriverName         `xml:"name,attr,omitempty" json:"name,omitempty"`
+	VgaConf DomainVideoDriverVgaConf `xml:"vgaconf,attr,omitempty" json:"vgaconf,omitempty"`
 }
