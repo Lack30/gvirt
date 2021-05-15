@@ -3,36 +3,36 @@ package spec
 import "encoding/xml"
 
 type DomainSnapshotDisk struct {
-	Name     string            `xml:"name,attr"`
-	Snapshot string            `xml:"snapshot,attr,omitempty"`
-	Driver   *DomainDiskDriver `xml:"driver"`
-	Source   *DomainDiskSource `xml:"source"`
+	Name     string            `xml:"name,attr" json:"name,omitempty"`
+	Snapshot string            `xml:"snapshot,attr,omitempty" json:"snapshot,omitempty"`
+	Driver   *DomainDiskDriver `xml:"driver" json:"driver,omitempty"`
+	Source   *DomainDiskSource `xml:"source" json:"source,omitempty"`
 }
 
 type DomainSnapshotDisks struct {
-	Disks []DomainSnapshotDisk `xml:"disk"`
+	Disks []DomainSnapshotDisk `xml:"disk" json:"disks"`
 }
 
 type DomainSnapshotMemory struct {
-	Snapshot string `xml:"snapshot,attr"`
-	File     string `xml:"file,attr,omitempty"`
+	Snapshot string `xml:"snapshot,attr" json:"snapshot"`
+	File     string `xml:"file,attr,omitempty" json:"file,omitempty"`
 }
 
 type DomainSnapshotParent struct {
-	Name string `xml:"name"`
+	Name string `xml:"name" json:"name"`
 }
 
 type DomainSnapshot struct {
-	XMLName      xml.Name              `xml:"domainsnapshot"`
-	Name         string                `xml:"name,omitempty"`
-	Description  string                `xml:"description,omitempty"`
-	State        string                `xml:"state,omitempty"`
-	CreationTime string                `xml:"creationTime,omitempty"`
-	Parent       *DomainSnapshotParent `xml:"parent"`
-	Memory       *DomainSnapshotMemory `xml:"memory"`
-	Disks        *DomainSnapshotDisks  `xml:"disks"`
-	Domain       *Domain               `xml:"domain"`
-	Active       *uint                 `xml:"active"`
+	XMLName      xml.Name              `xml:"domainsnapshot" json:"-"`
+	Name         string                `xml:"name,omitempty" json:"name,omitempty"`
+	Description  string                `xml:"description,omitempty" json:"description,omitempty"`
+	State        string                `xml:"state,omitempty" json:"state,omitempty"`
+	CreationTime string                `xml:"creationTime,omitempty" json:"creationTime,omitempty"`
+	Parent       *DomainSnapshotParent `xml:"parent" json:"parent,omitempty"`
+	Memory       *DomainSnapshotMemory `xml:"memory" json:"memory,omitempty"`
+	Disks        *DomainSnapshotDisks  `xml:"disks" json:"disks,omitempty"`
+	Domain       *Domain               `xml:"domain" json:"domain,omitempty"`
+	Active       *uint                 `xml:"active" json:"active,omitempty"`
 }
 
 type domainSnapshotDisk DomainSnapshotDisk

@@ -3,58 +3,58 @@ package spec
 import "encoding/xml"
 
 type StorageVolumeSize struct {
-	Unit  string `xml:"unit,attr,omitempty"`
-	Value uint64 `xml:",chardata"`
+	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty"`
+	Value uint64 `xml:",chardata" json:"value"`
 }
 
 type StorageVolumeTargetPermissions struct {
-	Owner string `xml:"owner,omitempty"`
-	Group string `xml:"group,omitempty"`
-	Mode  string `xml:"mode,omitempty"`
-	Label string `xml:"label,omitempty"`
+	Owner string `xml:"owner,omitempty" json:"owner,omitempty"`
+	Group string `xml:"group,omitempty" json:"group,omitempty"`
+	Mode  string `xml:"mode,omitempty" json:"mode,omitempty"`
+	Label string `xml:"label,omitempty" json:"label,omitempty"`
 }
 
 type StorageVolumeTargetFeature struct {
-	LazyRefcounts *struct{} `xml:"lazy_refcounts"`
+	LazyRefcounts *struct{} `xml:"lazy_refcounts" json:"lazyRefcounts,omitempty"`
 }
 
 type StorageVolumeTargetFormat struct {
-	Type string `xml:"type,attr"`
+	Type string `xml:"type,attr" json:"type"`
 }
 
 type StorageVolumeTargetTimestamps struct {
-	Atime string `xml:"atime"`
-	Mtime string `xml:"mtime"`
-	Ctime string `xml:"ctime"`
+	Atime string `xml:"atime" json:"atime"`
+	Mtime string `xml:"mtime" json:"mtime"`
+	Ctime string `xml:"ctime" json:"ctime"`
 }
 
 type StorageVolumeTarget struct {
-	Path        string                          `xml:"path,omitempty"`
-	Format      *StorageVolumeTargetFormat      `xml:"format"`
-	Permissions *StorageVolumeTargetPermissions `xml:"permissions"`
-	Timestamps  *StorageVolumeTargetTimestamps  `xml:"timestamps"`
-	Compat      string                          `xml:"compat,omitempty"`
-	NoCOW       *struct{}                       `xml:"nocow"`
-	Features    []StorageVolumeTargetFeature    `xml:"features"`
-	Encryption  *StorageEncryption              `xml:"encryption"`
+	Path        string                          `xml:"path,omitempty" json:"path"`
+	Format      *StorageVolumeTargetFormat      `xml:"format" json:"format,omitempty"`
+	Permissions *StorageVolumeTargetPermissions `xml:"permissions" json:"permissions,omitempty"`
+	Timestamps  *StorageVolumeTargetTimestamps  `xml:"timestamps" json:"timestamps,omitempty"`
+	Compat      string                          `xml:"compat,omitempty" json:"compat,omitempty"`
+	NoCOW       *struct{}                       `xml:"nocow" json:"nocow,omitempty"`
+	Features    []StorageVolumeTargetFeature    `xml:"features" json:"features"`
+	Encryption  *StorageEncryption              `xml:"encryption" json:"encryption,omitempty"`
 }
 
 type StorageVolumeBackingStore struct {
-	Path        string                          `xml:"path"`
-	Format      *StorageVolumeTargetFormat      `xml:"format"`
-	Permissions *StorageVolumeTargetPermissions `xml:"permissions"`
+	Path        string                          `xml:"path" json:"path"`
+	Format      *StorageVolumeTargetFormat      `xml:"format" json:"format,omitempty"`
+	Permissions *StorageVolumeTargetPermissions `xml:"permissions" json:"permissions,omitempty"`
 }
 
 type StorageVolume struct {
-	XMLName      xml.Name                   `xml:"volume"`
-	Type         string                     `xml:"type,attr,omitempty"`
-	Name         string                     `xml:"name"`
-	Key          string                     `xml:"key,omitempty"`
-	Allocation   *StorageVolumeSize         `xml:"allocation"`
-	Capacity     *StorageVolumeSize         `xml:"capacity"`
-	Physical     *StorageVolumeSize         `xml:"physical"`
-	Target       *StorageVolumeTarget       `xml:"target"`
-	BackingStore *StorageVolumeBackingStore `xml:"backingStore"`
+	XMLName      xml.Name                   `xml:"volume" json:"-"`
+	Type         string                     `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Name         string                     `xml:"name" json:"name"`
+	Key          string                     `xml:"key,omitempty" json:"key"`
+	Allocation   *StorageVolumeSize         `xml:"allocation" json:"allocation,omitempty"`
+	Capacity     *StorageVolumeSize         `xml:"capacity" json:"capacity,omitempty"`
+	Physical     *StorageVolumeSize         `xml:"physical" json:"physical,omitempty"`
+	Target       *StorageVolumeTarget       `xml:"target" json:"target,omitempty"`
+	BackingStore *StorageVolumeBackingStore `xml:"backingStore" json:"backingStore,omitempty"`
 }
 
 func (s *StorageVolume) Unmarshal(doc string) error {

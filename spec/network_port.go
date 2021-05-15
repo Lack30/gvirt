@@ -6,83 +6,83 @@ import (
 )
 
 type NetworkPort struct {
-	XMLName     xml.Name                `xml:"networkport"`
-	UUID        string                  `xml:"uuid,omitempty"`
-	Owner       *NetworkPortOwner       `xml:"owner",`
-	MAC         *NetworkPortMAC         `xml:"mac"`
-	Group       string                  `xml:"group,omitempty"`
-	Bandwidth   *NetworkBandwidth       `xml:"bandwidth"`
-	VLAN        *NetworkPortVLAN        `xml:"vlan"`
-	PortOptions *NetworkPortPortOptions `xml:"port"`
-	VirtualPort *NetworkVirtualPort     `xml:"virtualport"`
-	RXFilters   *NetworkPortRXFilters   `xml:"rxfilters"`
-	Plug        *NetworkPortPlug        `xml:"plug"`
+	XMLName     xml.Name                `xml:"networkport" json:"-"`
+	UUID        string                  `xml:"uuid,omitempty" json:"uuid"`
+	Owner       *NetworkPortOwner       `xml:"owner" json:"owner,omitempty"`
+	MAC         *NetworkPortMAC         `xml:"mac" json:"mac,omitempty"`
+	Group       string                  `xml:"group,omitempty" json:"group,omitempty"`
+	Bandwidth   *NetworkBandwidth       `xml:"bandwidth" json:"bandwidth,omitempty"`
+	VLAN        *NetworkPortVLAN        `xml:"vlan" json:"vlan,omitempty"`
+	PortOptions *NetworkPortPortOptions `xml:"port" json:"portOptions,omitempty"`
+	VirtualPort *NetworkVirtualPort     `xml:"virtualport" json:"virtualPort,omitempty"`
+	RXFilters   *NetworkPortRXFilters   `xml:"rxfilters" json:"rxFilters,omitempty"`
+	Plug        *NetworkPortPlug        `xml:"plug" json:"plug,omitempty"`
 }
 
 type NetworkPortPortOptions struct {
-	Isolated string `xml:"isolated,attr,omitempty"`
+	Isolated string `xml:"isolated,attr,omitempty" json:"isolated,omitempty"`
 }
 
 type NetworkPortVLAN struct {
-	Trunk string               `xml:"trunk,attr,omitempty"`
-	Tags  []NetworkPortVLANTag `xml:"tag"`
+	Trunk string               `xml:"trunk,attr,omitempty" json:"trunk,omitempty"`
+	Tags  []NetworkPortVLANTag `xml:"tag" json:"tags"`
 }
 
 type NetworkPortVLANTag struct {
-	ID         uint   `xml:"id,attr"`
-	NativeMode string `xml:"nativeMode,attr,omitempty"`
+	ID         uint   `xml:"id,attr" json:"id"`
+	NativeMode string `xml:"nativeMode,attr,omitempty" json:"nativeMode,omitempty"`
 }
 
 type NetworkPortOwner struct {
-	UUID string `xml:"uuid,omitempty"`
-	Name string `xml:"name,omitempty"`
+	UUID string `xml:"uuid,omitempty" json:"uuid,omitempty"`
+	Name string `xml:"name,omitempty" json:"name,omitempty"`
 }
 
 type NetworkPortMAC struct {
-	Address string `xml:"address,attr"`
+	Address string `xml:"address,attr" json:"address"`
 }
 
 type NetworkPortRXFilters struct {
-	TrustGuest string `xml:"trustGuest,attr"`
+	TrustGuest string `xml:"trustGuest,attr" json:"trustGuest"`
 }
 
 type NetworkPortPlug struct {
-	Bridge     *NetworkPortPlugBridge     `xml:"-"`
-	Network    *NetworkPortPlugNetwork    `xml:"-"`
-	Direct     *NetworkPortPlugDirect     `xml:"-"`
-	HostDevPCI *NetworkPortPlugHostDevPCI `xml:"-"`
+	Bridge     *NetworkPortPlugBridge     `xml:"-" json:"bridge,omitempty"`
+	Network    *NetworkPortPlugNetwork    `xml:"-" json:"network,omitempty"`
+	Direct     *NetworkPortPlugDirect     `xml:"-" json:"direct,omitempty"`
+	HostDevPCI *NetworkPortPlugHostDevPCI `xml:"-" json:"hostDevPCI,omitempty"`
 }
 
 type NetworkPortPlugBridge struct {
-	Bridge          string `xml:"bridge,attr"`
-	MacTableManager string `xml:"macTableManager,attr,omitempty"`
+	Bridge          string `xml:"bridge,attr" json:"bridge"`
+	MacTableManager string `xml:"macTableManager,attr,omitempty" json:"macTableManager,omitempty"`
 }
 
 type NetworkPortPlugNetwork struct {
-	Bridge          string `xml:"bridge,attr"`
-	MacTableManager string `xml:"macTableManager,attr,omitempty"`
+	Bridge          string `xml:"bridge,attr" json:"bridge"`
+	MacTableManager string `xml:"macTableManager,attr,omitempty" json:"macTableManager,omitempty"`
 }
 
 type NetworkPortPlugDirect struct {
-	Dev  string `xml:"dev,attr"`
-	Mode string `xml:"mode,attr"`
+	Dev  string `xml:"dev,attr" json:"dev"`
+	Mode string `xml:"mode,attr" json:"mode"`
 }
 
 type NetworkPortPlugHostDevPCI struct {
-	Managed string                            `xml:"managed,attr,omitempty"`
-	Driver  *NetworkPortPlugHostDevPCIDriver  `xml:"driver"`
-	Address *NetworkPortPlugHostDevPCIAddress `xml:"address"`
+	Managed string                            `xml:"managed,attr,omitempty" json:"managed,omitempty"`
+	Driver  *NetworkPortPlugHostDevPCIDriver  `xml:"driver" json:"driver,omitempty"`
+	Address *NetworkPortPlugHostDevPCIAddress `xml:"address" json:"address,omitempty"`
 }
 
 type NetworkPortPlugHostDevPCIDriver struct {
-	Name string `xml:"name,attr"`
+	Name string `xml:"name,attr" json:"name"`
 }
 
 type NetworkPortPlugHostDevPCIAddress struct {
-	Domain   *uint `xml:"domain,attr"`
-	Bus      *uint `xml:"bus,attr"`
-	Slot     *uint `xml:"slot,attr"`
-	Function *uint `xml:"function,attr"`
+	Domain   *uint `xml:"domain,attr" json:"domain"`
+	Bus      *uint `xml:"bus,attr" json:"bus"`
+	Slot     *uint `xml:"slot,attr" json:"slot"`
+	Function *uint `xml:"function,attr" json:"function"`
 }
 
 func (a *NetworkPortPlugHostDevPCIAddress) MarshalXML(e *xml.Encoder, start xml.StartElement) error {

@@ -3,223 +3,223 @@ package spec
 import "encoding/xml"
 
 type CapsHostCPUTopology struct {
-	Sockets int `xml:"sockets,attr"`
-	Cores   int `xml:"cores,attr"`
-	Threads int `xml:"threads,attr"`
+	Sockets int32 `xml:"sockets,attr" json:"sockets"`
+	Cores   int32 `xml:"cores,attr" json:"cores"`
+	Threads int32 `xml:"threads,attr" json:"threads"`
 }
 
 type CapsHostCPUFeatureFlag struct {
-	Name string `xml:"name,attr"`
+	Name string `xml:"name,attr" json:"name"`
 }
 
 type CapsHostCPUPageSize struct {
-	Size int    `xml:"size,attr"`
-	Unit string `xml:"unit,attr"`
+	Size int32  `xml:"size,attr" json:"size"`
+	Unit string `xml:"unit,attr" json:"unit"`
 }
 
 type CapsHostCPUMicrocode struct {
-	Version int `xml:"version,attr"`
+	Version int32 `xml:"version,attr" json:"version"`
 }
 
 type CapsHostCPU struct {
-	XMLName      xml.Name                 `xml:"cpu"`
-	Arch         string                   `xml:"arch,omitempty"`
-	Model        string                   `xml:"model,omitempty"`
-	Vendor       string                   `xml:"vendor,omitempty"`
-	Topology     *CapsHostCPUTopology     `xml:"topology"`
-	FeatureFlags []CapsHostCPUFeatureFlag `xml:"feature"`
-	Features     *CapsHostCPUFeatures     `xml:"features"`
-	PageSizes    []CapsHostCPUPageSize    `xml:"pages"`
-	Microcode    *CapsHostCPUMicrocode    `xml:"microcode"`
+	XMLName      xml.Name                 `xml:"cpu" json:"-"`
+	Arch         string                   `xml:"arch,omitempty" json:"arch,omitempty"`
+	Model        string                   `xml:"model,omitempty" json:"model,omitempty"`
+	Vendor       string                   `xml:"vendor,omitempty" json:"vendor,omitempty"`
+	Topology     *CapsHostCPUTopology     `xml:"topology" json:"topology"`
+	FeatureFlags []CapsHostCPUFeatureFlag `xml:"feature" json:"feature"`
+	Features     *CapsHostCPUFeatures     `xml:"features" json:"features"`
+	PageSizes    []CapsHostCPUPageSize    `xml:"pages" json:"page"`
+	Microcode    *CapsHostCPUMicrocode    `xml:"microcode" json:"microcode"`
 }
 
 type CapsHostCPUFeature struct {
 }
 
 type CapsHostCPUFeatures struct {
-	PAE    *CapsHostCPUFeature `xml:"pae"`
-	NonPAE *CapsHostCPUFeature `xml:"nonpae"`
-	SVM    *CapsHostCPUFeature `xml:"svm"`
-	VMX    *CapsHostCPUFeature `xml:"vmx"`
+	PAE    *CapsHostCPUFeature `xml:"pae" json:"pae"`
+	NonPAE *CapsHostCPUFeature `xml:"nonpae" json:"nonPae"`
+	SVM    *CapsHostCPUFeature `xml:"svm" json:"svm"`
+	VMX    *CapsHostCPUFeature `xml:"vmx" json:"vmx"`
 }
 
 type CapsHostNUMAMemory struct {
-	Size uint64 `xml:",chardata"`
-	Unit string `xml:"unit,attr"`
+	Size uint64 `xml:",chardata" json:"size"`
+	Unit string `xml:"unit,attr" json:"unit"`
 }
 
 type CapsHostNUMAPageInfo struct {
-	Size  int    `xml:"size,attr"`
-	Unit  string `xml:"unit,attr"`
-	Count uint64 `xml:",chardata"`
+	Size  int32  `xml:"size,attr" json:"size"`
+	Unit  string `xml:"unit,attr" json:"unit"`
+	Count uint64 `xml:",chardata" json:"count"`
 }
 
 type CapsHostNUMACPU struct {
-	ID       int    `xml:"id,attr"`
-	SocketID *int   `xml:"socket_id,attr"`
-	DieID    *int   `xml:"die_id,attr"`
-	CoreID   *int   `xml:"core_id,attr"`
-	Siblings string `xml:"siblings,attr,omitempty"`
+	ID       int32  `xml:"id,attr" json:"id"`
+	SocketID *int   `xml:"socket_id,attr" json:"socketId"`
+	DieID    *int   `xml:"die_id,attr" json:"dieId"`
+	CoreID   *int   `xml:"core_id,attr" json:"coreId"`
+	Siblings string `xml:"siblings,attr,omitempty" json:"siblings"`
 }
 
 type CapsHostNUMASibling struct {
-	ID    int `xml:"id,attr"`
-	Value int `xml:"value,attr"`
+	ID    int32 `xml:"id,attr" json:"id"`
+	Value int32 `xml:"value,attr" json:"value"`
 }
 
 type CapsHostNUMACell struct {
-	ID        int                    `xml:"id,attr"`
-	Memory    *CapsHostNUMAMemory    `xml:"memory"`
-	PageInfo  []CapsHostNUMAPageInfo `xml:"pages"`
-	Distances *CapsHostNUMADistances `xml:"distances"`
-	CPUS      *CapsHostNUMACPUs      `xml:"cpus"`
+	ID        int32                  `xml:"id,attr" json:"id"`
+	Memory    *CapsHostNUMAMemory    `xml:"memory" json:"memory"`
+	PageInfo  []CapsHostNUMAPageInfo `xml:"pages" json:"pageInfo"`
+	Distances *CapsHostNUMADistances `xml:"distances" json:"distances"`
+	CPUS      *CapsHostNUMACPUs      `xml:"cpus" json:"cpus"`
 }
 
 type CapsHostNUMADistances struct {
-	Siblings []CapsHostNUMASibling `xml:"sibling"`
+	Siblings []CapsHostNUMASibling `xml:"sibling" json:"sibling"`
 }
 
 type CapsHostNUMACPUs struct {
-	Num  uint              `xml:"num,attr,omitempty"`
-	CPUs []CapsHostNUMACPU `xml:"cpu"`
+	Num  uint32            `xml:"num,attr,omitempty" json:"num,omitempty"`
+	CPUs []CapsHostNUMACPU `xml:"cpu" json:"cpus"`
 }
 
 type CapsHostNUMATopology struct {
-	Cells *CapsHostNUMACells `xml:"cells"`
+	Cells *CapsHostNUMACells `xml:"cells" json:"cells"`
 }
 
 type CapsHostNUMACells struct {
-	Num   uint               `xml:"num,attr,omitempty"`
-	Cells []CapsHostNUMACell `xml:"cell"`
+	Num   uint32             `xml:"num,attr,omitempty" json:"num,omitempty"`
+	Cells []CapsHostNUMACell `xml:"cell" json:"cells"`
 }
 
 type CapsHostSecModelLabel struct {
-	Type  string `xml:"type,attr"`
-	Value string `xml:",chardata"`
+	Type  string `xml:"type,attr" json:"type"`
+	Value string `xml:",chardata" json:"value"`
 }
 
 type CapsHostSecModel struct {
-	Name   string                  `xml:"model"`
-	DOI    string                  `xml:"doi"`
-	Labels []CapsHostSecModelLabel `xml:"baselabel"`
+	Name   string                  `xml:"model" json:"name"`
+	DOI    string                  `xml:"doi" json:"doi"`
+	Labels []CapsHostSecModelLabel `xml:"baselabel" json:"labels"`
 }
 
 type CapsHostMigrationFeatures struct {
-	Live          *CapsHostMigrationLive          `xml:"live"`
-	URITransports *CapsHostMigrationURITransports `xml:"uri_transports"`
+	Live          *CapsHostMigrationLive          `xml:"live" json:"live"`
+	URITransports *CapsHostMigrationURITransports `xml:"uri_transports" json:"uriTransports"`
 }
 
 type CapsHostMigrationLive struct {
 }
 
 type CapsHostMigrationURITransports struct {
-	URI []string `xml:"uri_transport"`
+	URI []string `xml:"uri_transport" json:"uri"`
 }
 
 type CapsHost struct {
-	UUID              string                     `xml:"uuid,omitempty"`
-	CPU               *CapsHostCPU               `xml:"cpu"`
-	PowerManagement   *CapsHostPowerManagement   `xml:"power_management"`
-	IOMMU             *CapsHostIOMMU             `xml:"iommu"`
-	MigrationFeatures *CapsHostMigrationFeatures `xml:"migration_features"`
-	NUMA              *CapsHostNUMATopology      `xml:"topology"`
-	Cache             *CapsHostCache             `xml:"cache"`
-	MemoryBandwidth   *CapsHostMemoryBandwidth   `xml:"memory_bandwidth"`
-	SecModel          []CapsHostSecModel         `xml:"secmodel"`
+	UUID              string                     `xml:"uuid,omitempty" json:"uuid,omitempty"`
+	CPU               *CapsHostCPU               `xml:"cpu" json:"cpu"`
+	PowerManagement   *CapsHostPowerManagement   `xml:"power_management" json:"powerManagement"`
+	IOMMU             *CapsHostIOMMU             `xml:"iommu" json:"iommu"`
+	MigrationFeatures *CapsHostMigrationFeatures `xml:"migration_features" json:"migrationFeatures"`
+	NUMA              *CapsHostNUMATopology      `xml:"topology" json:"numa"`
+	Cache             *CapsHostCache             `xml:"cache" json:"cache"`
+	MemoryBandwidth   *CapsHostMemoryBandwidth   `xml:"memory_bandwidth" json:"memoryBandwidth"`
+	SecModel          []CapsHostSecModel         `xml:"secmodel" json:"secModel"`
 }
 
 type CapsHostPowerManagement struct {
-	SuspendMem    *CapsHostPowerManagementMode `xml:"suspend_mem"`
-	SuspendDisk   *CapsHostPowerManagementMode `xml:"suspend_disk"`
-	SuspendHybrid *CapsHostPowerManagementMode `xml:"suspend_hybrid"`
+	SuspendMem    *CapsHostPowerManagementMode `xml:"suspend_mem" json:"suspendMem"`
+	SuspendDisk   *CapsHostPowerManagementMode `xml:"suspend_disk" json:"suspendDisk"`
+	SuspendHybrid *CapsHostPowerManagementMode `xml:"suspend_hybrid" json:"suspendHybrid"`
 }
 
 type CapsHostPowerManagementMode struct {
 }
 
 type CapsHostIOMMU struct {
-	Support string `xml:"support,attr"`
+	Support string `xml:"support,attr" json:"support"`
 }
 
 type CapsHostCache struct {
-	Banks   []CapsHostCacheBank   `xml:"bank"`
-	Monitor *CapsHostCacheMonitor `xml:"monitor"`
+	Banks   []CapsHostCacheBank   `xml:"bank" json:"banks"`
+	Monitor *CapsHostCacheMonitor `xml:"monitor" json:"monitor"`
 }
 
 type CapsHostCacheBank struct {
-	ID      uint                   `xml:"id,attr"`
-	Level   uint                   `xml:"level,attr"`
-	Type    string                 `xml:"type,attr"`
-	Size    uint                   `xml:"size,attr"`
-	Unit    string                 `xml:"unit,attr"`
-	CPUs    string                 `xml:"cpus,attr"`
-	Control []CapsHostCacheControl `xml:"control"`
+	ID      uint32                 `xml:"id,attr" json:"id"`
+	Level   uint32                 `xml:"level,attr" json:"level"`
+	Type    string                 `xml:"type,attr" json:"type"`
+	Size    uint32                 `xml:"size,attr" json:"size"`
+	Unit    string                 `xml:"unit,attr" json:"unit"`
+	CPUs    string                 `xml:"cpus,attr" json:"cpus"`
+	Control []CapsHostCacheControl `xml:"control" json:"control"`
 }
 
 type CapsHostCacheMonitor struct {
-	Level          uint                          `xml:"level,attr,omitempty"`
-	ResueThreshold uint                          `xml:"reuseThreshold,attr,omitempty"`
-	MaxMonitors    uint                          `xml:"maxMonitors,attr"`
-	Features       []CapsHostCacheMonitorFeature `xml:"feature"`
+	Level          uint32                        `xml:"level,attr,omitempty" json:"level,omitempty"`
+	ResueThreshold uint32                        `xml:"reuseThreshold,attr,omitempty" json:"resueThreshold,omitempty"`
+	MaxMonitors    uint32                        `xml:"maxMonitors,attr" json:"maxMonitors"`
+	Features       []CapsHostCacheMonitorFeature `xml:"feature" json:"features"`
 }
 
 type CapsHostCacheMonitorFeature struct {
-	Name string `xml:"name,attr"`
+	Name string `xml:"name,attr" json:"name"`
 }
 
 type CapsHostCacheControl struct {
-	Granularity uint   `xml:"granularity,attr"`
-	Min         uint   `xml:"min,attr,omitempty"`
-	Unit        string `xml:"unit,attr"`
-	Type        string `xml:"type,attr"`
-	MaxAllows   uint   `xml:"maxAllocs,attr"`
+	Granularity uint32 `xml:"granularity,attr" json:"granularity"`
+	Min         uint32 `xml:"min,attr,omitempty" json:"min,omitempty"`
+	Unit        string `xml:"unit,attr" json:"unit"`
+	Type        string `xml:"type,attr" json:"type"`
+	MaxAllows   uint32 `xml:"maxAllocs,attr" json:"maxAllows"`
 }
 
 type CapsHostMemoryBandwidth struct {
-	Nodes   []CapsHostMemoryBandwidthNode   `xml:"node"`
-	Monitor *CapsHostMemoryBandwidthMonitor `xml:"monitor"`
+	Nodes   []CapsHostMemoryBandwidthNode   `xml:"node" json:"nodes"`
+	Monitor *CapsHostMemoryBandwidthMonitor `xml:"monitor" json:"monitor"`
 }
 
 type CapsHostMemoryBandwidthNode struct {
-	ID      uint                                `xml:"id,attr"`
-	CPUs    string                              `xml:"cpus,attr"`
-	Control *CapsHostMemoryBandwidthNodeControl `xml:"control"`
+	ID      uint32                              `xml:"id,attr" json:"id"`
+	CPUs    string                              `xml:"cpus,attr" json:"cpus"`
+	Control *CapsHostMemoryBandwidthNodeControl `xml:"control" json:"control"`
 }
 
 type CapsHostMemoryBandwidthNodeControl struct {
-	Granularity uint `xml:"granularity,attr"`
-	Min         uint `xml:"min,attr"`
-	MaxAllocs   uint `xml:"maxAllocs,attr"`
+	Granularity uint32 `xml:"granularity,attr" json:"granularity"`
+	Min         uint32 `xml:"min,attr" json:"min"`
+	MaxAllocs   uint32 `xml:"maxAllocs,attr" json:"maxAllocs"`
 }
 
 type CapsHostMemoryBandwidthMonitor struct {
-	MaxMonitors uint                                    `xml:"maxMonitors,attr"`
-	Features    []CapsHostMemoryBandwidthMonitorFeature `xml:"feature"`
+	MaxMonitors uint32                                  `xml:"maxMonitors,attr" json:"max_monitors"`
+	Features    []CapsHostMemoryBandwidthMonitorFeature `xml:"feature" json:"features"`
 }
 
 type CapsHostMemoryBandwidthMonitorFeature struct {
-	Name string `xml:"name,attr"`
+	Name string `xml:"name,attr" json:"name"`
 }
 
 type CapsGuestMachine struct {
-	Name      string `xml:",chardata"`
-	MaxCPUs   int    `xml:"maxCpus,attr,omitempty"`
-	Canonical string `xml:"canonical,attr,omitempty"`
+	Name      string `xml:",chardata" json:"name"`
+	MaxCPUs   int32  `xml:"maxCpus,attr,omitempty" json:"maxCpus,omitempty"`
+	Canonical string `xml:"canonical,attr,omitempty" json:"canonical,omitempty"`
 }
 
 type CapsGuestDomain struct {
-	Type     string             `xml:"type,attr"`
-	Emulator string             `xml:"emulator,omitempty"`
-	Machines []CapsGuestMachine `xml:"machine"`
+	Type     string             `xml:"type,attr" json:"type"`
+	Emulator string             `xml:"emulator,omitempty" json:"emulator,omitempty"`
+	Machines []CapsGuestMachine `xml:"machine" json:"machines"`
 }
 
 type CapsGuestArch struct {
-	Name     string             `xml:"name,attr"`
-	WordSize string             `xml:"wordsize"`
-	Emulator string             `xml:"emulator"`
-	Loader   string             `xml:"loader,omitempty"`
-	Machines []CapsGuestMachine `xml:"machine"`
-	Domains  []CapsGuestDomain  `xml:"domain"`
+	Name     string             `xml:"name,attr" json:"name"`
+	WordSize string             `xml:"wordsize" json:"wordSize"`
+	Emulator string             `xml:"emulator" json:"emulator"`
+	Loader   string             `xml:"loader,omitempty" json:"loader,omitempty"`
+	Machines []CapsGuestMachine `xml:"machine" json:"machines"`
+	Domains  []CapsGuestDomain  `xml:"domain" json:"domains"`
 }
 
 type CapsGuestFeatureCPUSelection struct {
@@ -235,44 +235,44 @@ type CapsGuestFeatureNonPAE struct {
 }
 
 type CapsGuestFeatureDiskSnapshot struct {
-	Default string `xml:"default,attr,omitempty"`
-	Toggle  string `xml:"toggle,attr,omitempty"`
+	Default string `xml:"default,attr,omitempty" json:"default,omitempty"`
+	Toggle  string `xml:"toggle,attr,omitempty" json:"toggle,omitempty"`
 }
 
 type CapsGuestFeatureAPIC struct {
-	Default string `xml:"default,attr,omitempty"`
-	Toggle  string `xml:"toggle,attr,omitempty"`
+	Default string `xml:"default,attr,omitempty" json:"default,omitempty"`
+	Toggle  string `xml:"toggle,attr,omitempty" json:"toggle,omitempty"`
 }
 
 type CapsGuestFeatureACPI struct {
-	Default string `xml:"default,attr,omitempty"`
-	Toggle  string `xml:"toggle,attr,omitempty"`
+	Default string `xml:"default,attr,omitempty" json:"default,omitempty"`
+	Toggle  string `xml:"toggle,attr,omitempty" json:"toggle,omitempty"`
 }
 
 type CapsGuestFeatureIA64BE struct {
 }
 
 type CapsGuestFeatures struct {
-	CPUSelection *CapsGuestFeatureCPUSelection `xml:"cpuselection"`
-	DeviceBoot   *CapsGuestFeatureDeviceBoot   `xml:"deviceboot"`
-	DiskSnapshot *CapsGuestFeatureDiskSnapshot `xml:"disksnapshot"`
-	PAE          *CapsGuestFeaturePAE          `xml:"pae"`
-	NonPAE       *CapsGuestFeatureNonPAE       `xml:"nonpae"`
-	APIC         *CapsGuestFeatureAPIC         `xml:"apic"`
-	ACPI         *CapsGuestFeatureACPI         `xml:"acpi"`
-	IA64BE       *CapsGuestFeatureIA64BE       `xml:"ia64_be"`
+	CPUSelection *CapsGuestFeatureCPUSelection `xml:"cpuselection" json:"cpuSelection"`
+	DeviceBoot   *CapsGuestFeatureDeviceBoot   `xml:"deviceboot" json:"deviceBoot"`
+	DiskSnapshot *CapsGuestFeatureDiskSnapshot `xml:"disksnapshot" json:"diskSnapshot"`
+	PAE          *CapsGuestFeaturePAE          `xml:"pae" json:"pae"`
+	NonPAE       *CapsGuestFeatureNonPAE       `xml:"nonpae" json:"nonPae"`
+	APIC         *CapsGuestFeatureAPIC         `xml:"apic" json:"apic"`
+	ACPI         *CapsGuestFeatureACPI         `xml:"acpi" json:"acpi"`
+	IA64BE       *CapsGuestFeatureIA64BE       `xml:"ia64_be" json:"ia64_be"`
 }
 
 type CapsGuest struct {
-	OSType   string             `xml:"os_type"`
-	Arch     CapsGuestArch      `xml:"arch"`
-	Features *CapsGuestFeatures `xml:"features"`
+	OSType   string             `xml:"os_type" json:"osType"`
+	Arch     CapsGuestArch      `xml:"arch" json:"arch"`
+	Features *CapsGuestFeatures `xml:"features" json:"features"`
 }
 
 type Caps struct {
-	XMLName xml.Name    `xml:"capabilities"`
-	Host    CapsHost    `xml:"host"`
-	Guests  []CapsGuest `xml:"guest"`
+	XMLName xml.Name    `xml:"capabilities" json:"-"`
+	Host    CapsHost    `xml:"host" json:"host"`
+	Guests  []CapsGuest `xml:"guest" json:"guests"`
 }
 
 func (c *CapsHostCPU) Unmarshal(doc string) error {

@@ -3,116 +3,116 @@ package spec
 import "encoding/xml"
 
 type DomainCaps struct {
-	XMLName   xml.Name             `xml:"domainCapabilities"`
-	Path      string               `xml:"path"`
-	Domain    string               `xml:"domain"`
-	Machine   string               `xml:"machine,omitempty"`
-	Arch      string               `xml:"arch"`
-	VCPU      *DomainCapsVCPU      `xml:"vcpu"`
-	IOThreads *DomainCapsIOThreads `xml:"iothreads"`
-	OS        *DomainCapsOS        `xml:"os"`
-	CPU       *DomainCapsCPU       `xml:"cpu"`
-	Devices   *DomainCapsDevices   `xml:"devices"`
-	Features  *DomainCapsFeatures  `xml:"features"`
+	XMLName   xml.Name             `xml:"domainCapabilities" json:"-"`
+	Path      string               `xml:"path" json:"path"`
+	Domain    string               `xml:"domain" json:"domain"`
+	Machine   string               `xml:"machine,omitempty" json:"machine,omitempty"`
+	Arch      string               `xml:"arch" json:"arch"`
+	VCPU      *DomainCapsVCPU      `xml:"vcpu" json:"vcpu,omitempty"`
+	IOThreads *DomainCapsIOThreads `xml:"iothreads" json:"iothreads,omitempty"`
+	OS        *DomainCapsOS        `xml:"os" json:"os,omitempty"`
+	CPU       *DomainCapsCPU       `xml:"cpu" json:"cpu,omitempty"`
+	Devices   *DomainCapsDevices   `xml:"devices" json:"devices,omitempty"`
+	Features  *DomainCapsFeatures  `xml:"features" json:"features,omitempty"`
 }
 
 type DomainCapsVCPU struct {
-	Max uint `xml:"max,attr"`
+	Max uint `xml:"max,attr" json:"max"`
 }
 
 type DomainCapsOS struct {
-	Supported string              `xml:"supported,attr"`
-	Loader    *DomainCapsOSLoader `xml:"loader"`
-	Enums     []DomainCapsEnum    `xml:"enum"`
+	Supported string              `xml:"supported,attr" json:"supported"`
+	Loader    *DomainCapsOSLoader `xml:"loader" json:"loader,omitempty"`
+	Enums     []DomainCapsEnum    `xml:"enum" json:"enums"`
 }
 
 type DomainCapsOSLoader struct {
-	Supported string           `xml:"supported,attr"`
-	Values    []string         `xml:"value"`
-	Enums     []DomainCapsEnum `xml:"enum"`
+	Supported string           `xml:"supported,attr" json:"supported"`
+	Values    []string         `xml:"value" json:"values"`
+	Enums     []DomainCapsEnum `xml:"enum" json:"enums"`
 }
 
 type DomainCapsIOThreads struct {
-	Supported string `xml:"supported,attr"`
+	Supported string `xml:"supported,attr" json:"supported"`
 }
 
 type DomainCapsCPU struct {
-	Modes []DomainCapsCPUMode `xml:"mode"`
+	Modes []DomainCapsCPUMode `xml:"mode" json:"modes"`
 }
 
 type DomainCapsCPUMode struct {
-	Name      string                 `xml:"name,attr"`
-	Supported string                 `xml:"supported,attr"`
-	Models    []DomainCapsCPUModel   `xml:"model"`
-	Vendor    string                 `xml:"vendor,omitempty"`
-	Features  []DomainCapsCPUFeature `xml:"feature"`
-	Enums     []DomainCapsEnum       `xml:"enum"`
+	Name      string                 `xml:"name,attr" json:"name"`
+	Supported string                 `xml:"supported,attr" json:"supported"`
+	Models    []DomainCapsCPUModel   `xml:"model" json:"models"`
+	Vendor    string                 `xml:"vendor,omitempty" json:"vendor"`
+	Features  []DomainCapsCPUFeature `xml:"feature" json:"features"`
+	Enums     []DomainCapsEnum       `xml:"enum" json:"enums"`
 }
 
 type DomainCapsCPUModel struct {
-	Name       string `xml:",chardata"`
-	Usable     string `xml:"usable,attr,omitempty"`
-	Fallback   string `xml:"fallback,attr,omitempty"`
-	Deprecated string `xml:"deprecated,attr,omitempty"`
+	Name       string `xml:",chardata" json:"name"`
+	Usable     string `xml:"usable,attr,omitempty" json:"usable,omitempty"`
+	Fallback   string `xml:"fallback,attr,omitempty" json:"fallback,omitempty"`
+	Deprecated string `xml:"deprecated,attr,omitempty" json:"deprecated,omitempty"`
 }
 
 type DomainCapsCPUFeature struct {
-	Policy string `xml:"policy,attr,omitempty"`
-	Name   string `xml:"name,attr"`
+	Policy string `xml:"policy,attr,omitempty" json:"policy,omitempty"`
+	Name   string `xml:"name,attr" json:"name"`
 }
 
 type DomainCapsEnum struct {
-	Name   string   `xml:"name,attr"`
-	Values []string `xml:"value"`
+	Name   string   `xml:"name,attr" json:"name"`
+	Values []string `xml:"value" json:"values"`
 }
 
 type DomainCapsDevices struct {
-	Disk     *DomainCapsDevice `xml:"disk"`
-	Graphics *DomainCapsDevice `xml:"graphics"`
-	Video    *DomainCapsDevice `xml:"video"`
-	HostDev  *DomainCapsDevice `xml:"hostdev"`
-	RNG      *DomainCapsDevice `xml:"rng"`
+	Disk     *DomainCapsDevice `xml:"disk" json:"disk,omitempty"`
+	Graphics *DomainCapsDevice `xml:"graphics" json:"graphics,omitempty"`
+	Video    *DomainCapsDevice `xml:"video" json:"video,omitempty"`
+	HostDev  *DomainCapsDevice `xml:"hostdev" json:"hostdev,omitempty"`
+	RNG      *DomainCapsDevice `xml:"rng" json:"rng,omitempty"`
 }
 
 type DomainCapsDevice struct {
-	Supported string           `xml:"supported,attr"`
-	Enums     []DomainCapsEnum `xml:"enum"`
+	Supported string           `xml:"supported,attr" json:"supported"`
+	Enums     []DomainCapsEnum `xml:"enum" json:"enums"`
 }
 
 type DomainCapsFeatures struct {
-	GIC               *DomainCapsFeatureGIC               `xml:"gic"`
-	VMCoreInfo        *DomainCapsFeatureVMCoreInfo        `xml:"vmcoreinfo"`
-	GenID             *DomainCapsFeatureGenID             `xml:"genid"`
-	BackingStoreInput *DomainCapsFeatureBackingStoreInput `xml:"backingStoreInput"`
-	Backup            *DomainCapsFeatureBackup            `xml:"backup"`
-	SEV               *DomainCapsFeatureSEV               `xml:"sev"`
+	GIC               *DomainCapsFeatureGIC               `xml:"gic" json:"gic,omitempty"`
+	VMCoreInfo        *DomainCapsFeatureVMCoreInfo        `xml:"vmcoreinfo" json:"vmCoreInfo,omitempty"`
+	GenID             *DomainCapsFeatureGenID             `xml:"genid" json:"genId,omitempty"`
+	BackingStoreInput *DomainCapsFeatureBackingStoreInput `xml:"backingStoreInput" json:"backingStoreInput,omitempty"`
+	Backup            *DomainCapsFeatureBackup            `xml:"backup" json:"backup,omitempty"`
+	SEV               *DomainCapsFeatureSEV               `xml:"sev" json:"sev,omitempty"`
 }
 
 type DomainCapsFeatureGIC struct {
-	Supported string           `xml:"supported,attr"`
-	Enums     []DomainCapsEnum `xml:"enum"`
+	Supported string           `xml:"supported,attr" json:"supported"`
+	Enums     []DomainCapsEnum `xml:"enum" json:"enums"`
 }
 
 type DomainCapsFeatureVMCoreInfo struct {
-	Supported string `xml:"supported,attr"`
+	Supported string `xml:"supported,attr" json:"supported"`
 }
 
 type DomainCapsFeatureGenID struct {
-	Supported string `xml:"supported,attr"`
+	Supported string `xml:"supported,attr" json:"supported"`
 }
 
 type DomainCapsFeatureBackingStoreInput struct {
-	Supported string `xml:"supported,attr"`
+	Supported string `xml:"supported,attr" json:"supported"`
 }
 
 type DomainCapsFeatureBackup struct {
-	Supported string `xml:"supported,attr"`
+	Supported string `xml:"supported,attr" json:"supported"`
 }
 
 type DomainCapsFeatureSEV struct {
-	Supported       string `xml:"supported,attr"`
-	CBitPos         uint   `xml:"cbitpos,omitempty"`
-	ReducedPhysBits uint   `xml:"reducedPhysBits,omitempty"`
+	Supported       string `xml:"supported,attr" json:"supported"`
+	CBitPos         uint   `xml:"cbitpos,omitempty" json:"cBitPos,omitempty"`
+	ReducedPhysBits uint   `xml:"reducedPhysBits,omitempty" json:"reducedPhysBits,omitempty"`
 }
 
 func (c *DomainCaps) Unmarshal(doc string) error {
