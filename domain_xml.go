@@ -1998,6 +1998,12 @@ type DomainDevices struct {
 	Serial   []*DomainSerial   `xml:"serial,omitempty" json:"serial,omitempty"`
 	Console  []*DomainConsole  `xml:"console,omitempty" json:"console,omitempty"`
 	Channel  []*DomainChannel  `xml:"channel,omitempty" json:"channel,omitempty"`
+
+	Sound []*DomainSound `xml:"sound,omitempty" json:"sound,omitempty"`
+	Audio []*DomainAudio `xml:"audio,omitempty" json:"audio,omitempty"`
+
+	WatchDog   *DomainWatchDog   `xml:"watchdog,omitempty" json:"watchdog,omitempty"`
+	MemBalloon *DomainMemBalloon `xml:"memballoon,omitempty" json:"memballoon,omitempty"`
 }
 
 type DomainDiskType string
@@ -3967,6 +3973,10 @@ const (
 
 type DomainHub struct {
 	Type DomainHubType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
 }
 
 type DomainGraphicsType string
@@ -4012,6 +4022,10 @@ type DomainGraphics struct {
 	FileTransfer *DomainGraphicsFileTransfer `xml:"filetransfer,omitempty" json:"filetransfer,omitempty"`
 
 	GL *DomainGraphicsGL `xml:"gl,omitempty" json:"gl,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
 }
 
 type DomainGraphicsListenType string
@@ -4191,4 +4205,498 @@ const (
 type DomainVideoDriver struct {
 	Name    DomainDriverName         `xml:"name,attr,omitempty" json:"name,omitempty"`
 	VgaConf DomainVideoDriverVgaConf `xml:"vgaconf,attr,omitempty" json:"vgaconf,omitempty"`
+}
+
+type DomainDeviceType string
+
+const (
+	DomainDeviceTypePty       DomainDeviceType = "pty"
+	DomainDeviceTypeFile      DomainDeviceType = "file"
+	DomainDeviceTypeUnix      DomainDeviceType = "unix"
+	DomainDeviceTypeStdio     DomainDeviceType = "stdio"
+	DomainDeviceTypeVc        DomainDeviceType = "vc"
+	DomainDeviceTypeNull      DomainDeviceType = "null"
+	DomainDeviceTypeDev       DomainDeviceType = "dev"
+	DomainDeviceTypePipe      DomainDeviceType = "pipe"
+	DomainDeviceTypeTCP       DomainDeviceType = "tcp"
+	DomainDeviceTypeUDP       DomainDeviceType = "udp"
+	DomainDeviceTypeSpicePort DomainDeviceType = "spiceport"
+	DomainDeviceTypeNmdm      DomainDeviceType = "nmdm"
+)
+
+type DomainParallel struct {
+	Type     DomainDeviceType      `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Source   *DomainDeviceSource   `xml:"source,omitempty" json:"source,omitempty"`
+	Protocol *DomainDeviceProtocol `xml:"protocol,omitempty" json:"protocol,omitempty"`
+	Target   *DomainDeviceTarget   `xml:"target,omitempty" json:"target,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainSerial struct {
+	Type     DomainDeviceType      `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Source   *DomainDeviceSource   `xml:"source,omitempty" json:"source,omitempty"`
+	Protocol *DomainDeviceProtocol `xml:"protocol,omitempty" json:"protocol,omitempty"`
+	Target   *DomainDeviceTarget   `xml:"target,omitempty" json:"target,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainConsole struct {
+	Type     DomainDeviceType      `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Source   *DomainDeviceSource   `xml:"source,omitempty" json:"source,omitempty"`
+	Protocol *DomainDeviceProtocol `xml:"protocol,omitempty" json:"protocol,omitempty"`
+	Target   *DomainDeviceTarget   `xml:"target,omitempty" json:"target,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainChannel struct {
+	Type     DomainDeviceType      `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Source   *DomainDeviceSource   `xml:"source,omitempty" json:"source,omitempty"`
+	Protocol *DomainDeviceProtocol `xml:"protocol,omitempty" json:"protocol,omitempty"`
+	Target   *DomainDeviceTarget   `xml:"target,omitempty" json:"target,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainDeviceSourceMode string
+
+const (
+	DomainDeviceSourceModeBind    DomainDeviceSourceMode = "bind"
+	DomainDeviceSourceModeConnect DomainDeviceSourceMode = "connect"
+)
+
+type DomainDeviceSource struct {
+	Mode     DomainDeviceSourceMode `xml:"mode,attr,omitempty" json:"mode,omitempty"`
+	Path     string                 `xml:"path,attr,omitempty" json:"path,omitempty"`
+	Append   TurnState              `xml:"append,attr,omitempty" json:"append,omitempty"`
+	SecLabel *DomainSecLabel        `xml:"seclabel,omitempty" json:"seclabel,omitempty"`
+
+	Host    string      `xml:"host,attr,omitempty" json:"host,omitempty"`
+	Service int32       `xml:"service,attr,omitempty" json:"service,omitempty"`
+	TLS     ButtonState `xml:"tls,attr,omitempty" json:"tls,omitempty"`
+
+	Channel string `xml:"channel,attr,omitempty" json:"channel,omitempty"`
+
+	// Master device of the pair, that is passed to the hypervisor. Device is specified by a fully qualified path.
+	Master string `xml:"master,attr,omitempty" json:"master,omitempty"`
+	// Slave device of the pair, that is passed to the clients for connection to the guest console. Device is
+	// specified by a fully qualified path.
+	Slave string `xml:"slave,attr,omitempty" json:"slave,omitempty"`
+}
+
+type DomainSecLabelType string
+
+const (
+	DomainSecLabelTypeStatic  DomainSecLabelType = "static"
+	DomainSecLabelTypeDynamic DomainSecLabelType = "dynamic"
+	DomainSecLabelTypeNone    DomainSecLabelType = "none"
+)
+
+type DomainSecLabelModel string
+
+const (
+	DomainSecLabelModelDac DomainSecLabelModel = "dac"
+)
+
+type DomainDeviceProtocolType string
+
+const (
+	DomainDeviceProtocolTypeRaw    DomainDeviceProtocolType = "raw"
+	DomainDeviceProtocolTypeTelnet DomainDeviceProtocolType = "telnet"
+)
+
+type DomainDeviceProtocol struct {
+	Type DomainDeviceProtocolType `xml:"type,attr,omitempty" json:"type,omitempty"`
+}
+
+type DomainSecLabel struct {
+	Type    DomainSecLabelType  `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Model   DomainSecLabelModel `xml:"model,attr,omitempty" json:"model,omitempty"`
+	Relabel ButtonState         `xml:"relabel,attr,omitempty" json:"relabel,omitempty"`
+}
+
+type DomainDeviceTargetType string
+
+const (
+	DomainDeviceTargetTypeGuestFwd DomainDeviceTargetType = "guestfwd" // channel device
+	DomainDeviceTargetTypeXen      DomainDeviceTargetType = "xen"      // channel device
+	DomainDeviceTargetTypeSpiceVmc DomainDeviceTargetType = "spicevmc" // channel device
+
+	DomainDeviceTargetTypeIsaSerial       DomainDeviceTargetType = "isa-serial"       // serial device
+	DomainDeviceTargetTypeUsbSerial       DomainDeviceTargetType = "usb-serial"       // serial device
+	DomainDeviceTargetTypePciSerial       DomainDeviceTargetType = "pci-serial"       // serial device
+	DomainDeviceTargetTypeSpaprVioSerinal DomainDeviceTargetType = "spapr-vio-serial" // serial device
+	DomainDeviceTargetTypeSystemSerial    DomainDeviceTargetType = "system-serial"    // serial device
+	DomainDeviceTargetTypeSclpSerial      DomainDeviceTargetType = "sclp-serial"      // serial device
+
+	DomainDeviceTargetTypeSerial DomainDeviceTargetType = "serial" // console device
+	DomainDeviceTargetTypeVirtio DomainDeviceTargetType = "virtio" // console device | channel device
+)
+
+type DomainDeviceTargetState string
+
+const (
+	DomainDeviceTargetStateConnect    DomainDeviceTargetState = "connect"
+	DomainDeviceTargetStateDisconnect DomainDeviceTargetState = "disconnect"
+)
+
+// DomainDeviceTarget the target element can have an optional port attribute, which specifies the port number
+// (starting from 0), and an optional type attribute: valid values are, since 1.0.2 , isa-serial (usable with
+// x86 guests), usb-serial (usable whenever USB support is available) and pci-serial (usable whenever PCI support
+// is available); since 3.10.0 , spapr-vio-serial (usable with ppc64/pseries guests), system-serial (usable with
+// aarch64/virt and, since 4.7.0 , riscv/virt guests) and sclp-serial (usable with s390 and s390x guests) are
+// available as well.
+type DomainDeviceTarget struct {
+	Type    DomainDeviceTargetType `xml:"type,attr,omitempty" json:"type,omitempty"`
+	Address string                 `xml:"address,attr,omitempty" json:"address,omitempty"`
+	Port    int32                  `xml:"port,attr,omitempty" json:"port,omitempty"`
+
+	Name  string                  `xml:"name,attr,omitempty" json:"name,omitempty"`
+	State DomainDeviceTargetState `xml:"state,attr,omitempty" json:"state,omitempty"`
+
+	Model *DomainDeviceTargetModel `xml:"model,omitempty" json:"model,omitempty"`
+}
+
+type DomainDeviceTargetModelName string
+
+const (
+	DomainDeviceTargetModelNameIsaSerial DomainDeviceTargetModelName = "isa-serial"
+	DomainDeviceTargetModelNameUsbSerial DomainDeviceTargetModelName = "usb-serial"
+	DomainDeviceTargetModelNamePciSerial DomainDeviceTargetModelName = "pci-serial"
+	DomainDeviceTargetModelNameSpaprVty  DomainDeviceTargetModelName = "spapr-vty"
+)
+
+// DomainDeviceTargetModel since 3.10.0 , the target element can have an optional model subelement; valid values
+// for its name attribute are: isa-serial (usable with the isa-serial target type); usb-serial (usable with the
+// usb-serial target type); pci-serial (usable with the pci-serial target type); spapr-vty (usable with the
+// spapr-vio-serial target type); pl011 and, since 4.7.0 , 16550a (usable with the system-serial target type);
+// sclpconsole and sclplmconsole (usable with the sclp-serial target type). Providing a target model is usually
+// unnecessary: libvirt will automatically pick one that's suitable for the chosen target type, and overriding
+// that value is generally not recommended.
+type DomainDeviceTargetModel struct {
+	Name DomainDeviceTargetModelName `xml:"name,attr,omitempty" json:"name,omitempty"`
+}
+
+type DomainSoundModel string
+
+const (
+	DomainSoundModelES1370 DomainSoundModel = "es1370"
+	DomainSoundModelSB16   DomainSoundModel = "sb16"
+	DomainSoundModelAC97   DomainSoundModel = "ac97"
+	DomainSoundModelICH6   DomainSoundModel = "ich6"
+	DomainSoundModelUSB    DomainSoundModel = "usb"
+)
+
+// DomainSound the sound element has one mandatory attribute, model, which specifies what real sound device is
+// emulated. Valid values are specific to the underlying hypervisor, though typical choices are 'es1370', 'sb16',
+// 'ac97', 'ich6' and 'usb'. ( 'ac97' only since 0.6.0, 'ich6' only since 0.8.8, 'usb' only since 1.2.7 )
+type DomainSound struct {
+	Model DomainSoundModel `xml:"model,attr,omitempty" json:"model,omitempty"`
+
+	// Since 0.9.13 , a sound element with ich6 model can have optional sub-elements <codec> to attach various
+	// audio codecs to the audio device. If not specified, a default codec will be attached to allow playback
+	// and recording.
+	//
+	// Valid values are:
+	//  'duplex'	: advertise a line-in and a line-out
+	//  'micro'		: advertise a speaker and a microphone
+	//  'output'	: advertise a line-out Since 4.4.0
+	Codec *DomainSoundCodec `xml:"codec,omitempty" json:"codec,omitempty"`
+
+	Audio *DomainSoundAudio `xml:"audio,omitempty" json:"audio,omitempty"`
+}
+
+type DomainSoundCodecType string
+
+const (
+	DomainSoundCodecTypeDuplex DomainSoundCodecType = "duplex"
+	DomainSoundCodecTypeMicro  DomainSoundCodecType = "micro"
+	DomainSoundCodecTypeOutput DomainSoundCodecType = "output"
+)
+
+type DomainSoundCodec struct {
+	Type DomainSoundCodecType `xml:"type,attr,omitempty" json:"type,omitempty"`
+}
+
+type DomainSoundAudio struct {
+	Id int32 `xml:"id,attr,omitempty" json:"id,omitempty"`
+}
+
+type DomainAudioType string
+
+const (
+	DomainAudioTypeNone       DomainAudioType = "none"
+	DomainAudioTypeAlsa       DomainAudioType = "alsa"
+	DomainAudioTypeCoreAudio  DomainAudioType = "coreaudio"
+	DomainAudioTypeJack       DomainAudioType = "jack"
+	DomainAudioTypeOSS        DomainAudioType = "oss"
+	DomainAudioTypePulseAudio DomainAudioType = "pluseaudio"
+	DomainAudioTypeSDL        DomainAudioType = "sdl"
+	DomainAudioTypeSpice      DomainAudioType = "spice"
+	DomainAudioTypeFile       DomainAudioType = "file"
+)
+
+type DomainAudioDriver string
+
+const (
+	DomainAudioDriverESD        DomainAudioDriver = "esd"
+	DomainAudioDriverAlsa       DomainAudioDriver = "alsa"
+	DomainAudioDriverArts       DomainAudioDriver = "arts"
+	DomainAudioDriverPulseaudio DomainAudioDriver = "pulseaudio"
+)
+
+type DomainAudio struct {
+	Id   int32           `xml:"id,attr,omitempty" json:"id,omitempty"`
+	Type DomainAudioType `xml:"type,attr,omitempty" json:"type,omitempty"`
+
+	// OSS audio backend
+	// Attempt to use mmap for data transfer
+	TryMMap ButtonState `xml:"tryMMmap,attr,omitempty" json:"tryMMap,omitempty"`
+	// Enforce exclusive access to the host device
+	Exclusive ButtonState `xml:"exclusive,attr,omitempty" json:"exclusive,omitempty"`
+	// Set the timing policy of the device, values between -1 and 10. Smaller numbers result in
+	// lower latency but higher CPU usage. A negative value requests use of fragment mode.
+	DspPolicy int32 `xml:"dspPolicy,attr,omitempty" json:"dspPolicy,omitempty"`
+
+	// PulseAudio audio backend
+	ServerName string `xml:"serverName,attr,omitempty" json:"serverName,omitempty"`
+
+	// SDL audio backend
+	// SDL audio driver. The name attribute specifies SDL driver name, one of 'esd', 'alsa', 'arts', 'pulseaudio'.
+	Driver DomainAudioDriver `xml:"driver,attr,omitempty" json:"driver,omitempty"`
+
+	// The 'file' audio backend is an output only driver which records audio to a file. The file format is
+	// implementation defined, and defaults to 'WAV' with QEMU.
+	Path string `xml:"path,attr,omitempty" json:"path,omitempty"`
+
+	Input  *DomainAudioIO `xml:"input,omitempty" json:"input,omitempty"`
+	Output *DomainAudioIO `xml:"output,omitempty" json:"output,omitempty"`
+}
+
+type DomainAudioIO struct {
+	// Control whether the host mixing engine is used to convert between different audio formats and
+	// sampling rates. When the mixing engine is disabled it is possible to make use of improved audio
+	// formats such as 5.1/7.1. If not specified, a hypervisor default applies.
+	MixingEngine ButtonState `xml:"mixingEngine,attr,omitempty" json:"mixingEngine,omitempty"`
+	// Control whether the mixing engine can dynamically choose settings to minimize format conversion.
+	// This is only valid when the mixing engine is explicitly enabled.
+	FixedSettings ButtonState `xml:"fixedSettings,attr,omitempty" json:"fixedSettings,omitempty"`
+	// The number of voices voices to use, usually defaults to 1
+	Voices int32 `xml:"voices,attr,omitempty" json:"voices,omitempty"`
+	// The length of the audio buffer in microseconds. Default is backend specific.
+	BufferLength int32 `xml:"bufferLength,attr,omitempty" json:"bufferLength,omitempty"`
+
+	// Path to the host device node to connect the backend to. A hypervisor specific default applies if not specified.
+	Dev string `xml:"dev,attr,omitempty" json:"dev,omitempty"`
+	// The number of buffers. It is recommended to set the bufferLength attribute at the same time.
+	BufferCount int32 `xml:"bufferCount,attr,omitempty" json:"bufferCount,omitempty"`
+
+	TryPoll ButtonState `xml:"tryPoll,attr,omitempty" json:"tryPoll,omitempty"`
+
+	// Select the Jack server instance to connect to.
+	ServerName string `xml:"serverName,attr,omitempty" json:"serverName,omitempty"`
+	// The client name to identify as. The server may modify this to ensure uniqueness unless exactName is enabled
+	ClientName string `xml:"clientName,attr,omitempty" json:"clientName,omitempty"`
+	// A regular expression of Jack client port names to monitor and connect to.
+	ConnectPorts string `xml:"connectPorts,attr,omitempty" json:"connectPorts,omitempty"`
+	// Use the exact clientName requested
+	ExactName ButtonState `xml:"exactName,attr,omitempty" json:"exactName,omitempty"`
+
+	StreamName string `xml:"streamName,attr,omitempty" json:"streamName,omitempty"`
+	Latency    int32  `xml:"latency,attr,omitempty" json:"latency,omitempty"`
+}
+
+type DomainAudioIOFormat string
+
+const (
+	DomainAudioIOFormatS8  DomainAudioIOFormat = "s8"
+	DomainAudioIOFormatU8  DomainAudioIOFormat = "u8"
+	DomainAudioIOFormatS16 DomainAudioIOFormat = "s16"
+	DomainAudioIOFormatU16 DomainAudioIOFormat = "u16"
+	DomainAudioIOFormatS32 DomainAudioIOFormat = "s32"
+	DomainAudioIOFormatU32 DomainAudioIOFormat = "u32"
+	DomainAudioIOFormatF32 DomainAudioIOFormat = "f32"
+)
+
+type DomainAudioIOSetting struct {
+	// The frequency in HZ, usually defaulting to 44100
+	Frequency int64 `xml:"frequency,attr,omitempty" json:"frequency,omitempty"`
+	// The number of channels, usually defaulting to 2. The permitted max number of channels is hypervisor specific.
+	Channels int32 `xml:"channels,attr,omitempty" json:"channels,omitempty"`
+	// The audio format, one of s8, u8, s16, u16, s32, u32, f32. The default is hypervisor specific.
+	Format DomainAudioIOFormat `xml:"format,attr,omitempty" json:"format,omitempty"`
+}
+
+type DomainWatchDogModel string
+
+const (
+	DomainWatchDogModelI6300ESB DomainWatchDogModel = "i6300esb"
+	DomainWatchDogModelIB700    DomainWatchDogModel = "ib700"
+	DomainWatchDogModelDiag288  DomainWatchDogModel = "diag288"
+)
+
+type DomainWatchDogAction string
+
+const (
+	DomainWatchDogActionReset     DomainWatchDogAction = "reset"
+	DomainWatchDogActionShutdown  DomainWatchDogAction = "shutdown"
+	DomainWatchDogActionPowerOff  DomainWatchDogAction = "poweroff"
+	DomainWatchDogActionPause     DomainWatchDogAction = "pause"
+	DomainWatchDogActionNone      DomainWatchDogAction = "none"
+	DomainWatchDogActionDump      DomainWatchDogAction = "dump"
+	DomainWatchDogActionInjectNmi DomainWatchDogAction = "injectNmi"
+)
+
+// DomainWatchDog a virtual hardware watchdog device can be added to the guest via the watchdog element.
+// Since 0.7.3, QEMU and KVM only
+// The watchdog device requires an additional driver and management daemon in the guest. Just enabling the
+// watchdog in the libvirt configuration does not do anything useful on its own.
+type DomainWatchDog struct {
+	// The required model attribute specifies what real watchdog device is emulated. Valid values are
+	// specific to the underlying hypervisor.
+	// QEMU and KVM support:
+	//  'i6300esb'	: the recommended device, emulating a PCI Intel 6300ESB
+	//  'ib700'		: emulating an ISA iBase IB700
+	//  'diag288'	: emulating an S390 DIAG288 device Since 1.2.17
+	Model DomainWatchDogModel `xml:"model,attr,omitempty" json:"model,omitempty"`
+
+	// The optional action attribute describes what action to take when the watchdog expires. Valid values
+	// are specific to the underlying hypervisor.
+	// QEMU and KVM support:
+	//  'reset'		: default, forcefully reset the guest
+	//  'shutdown'	: gracefully shutdown the guest (not recommended)
+	//  'poweroff'  : forcefully power off the guest
+	//  'pause'		: pause the guest
+	//  'none'		: do nothing
+	//  'dump'		: automatically dump the guest Since 0.8.7
+	// 	'inject-nmi': inject a non-maskable interrupt into the guest Since 1.2.17
+	//
+	// Note 1: the 'shutdown' action requires that the guest is responsive to ACPI signals. In the sort of situations
+	//         where the watchdog has expired, guests are usually unable to respond to ACPI signals. Therefore using
+	//         'shutdown' is not recommended.
+	// Note 2: the directory to save dump files can be configured by auto_dump_path in file /etc/libvirt/qemu.conf.
+	Action DomainWatchDogAction `xml:"action,attr,omitempty" json:"action,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainMemBalloonModel string
+
+const (
+	DomainMemBalloonModelVirtio                DomainMemBalloonModel = "virtio"
+	DomainMemBalloonModelVirtioTransitional    DomainMemBalloonModel = "virtio-transitional"
+	DomainMemBalloonModelVirtioNonTransitional DomainMemBalloonModel = "virtio-non-transitional"
+	DomainMemBalloonModelXen                   DomainMemBalloonModel = "xen"
+)
+
+// DomainMemBalloon a virtual memory balloon device is added to all Xen and KVM/QEMU guests. It will be seen
+// as memballoon element. It will be automatically added when appropriate, so there is no need to explicitly
+// add this element in the guest XML unless a specific PCI slot needs to be assigned. Since 0.8.3, Xen, QEMU
+// and KVM only Additionally, since 0.8.4 , if the memballoon device needs to be explicitly disabled,
+// model='none' may be used.
+type DomainMemBalloon struct {
+	Model DomainMemBalloonModel `xml:"model,attr,omitempty" json:"model,omitempty"`
+
+	// The optional autodeflate attribute allows to enable/disable (values "on"/"off", respectively) the
+	// ability of the QEMU virtio memory balloon to release some memory at the last moment before a guest's
+	// process get killed by Out of Memory killer. Since 1.3.1, QEMU and KVM only
+	AutoDeflate TurnState `xml:"autodeflate,attr,omitempty" json:"autodeflate,omitempty"`
+
+	// The optional freePageReporting attribute allows to enable/disable ("on"/"off", respectively) the ability
+	// of the QEMU virtio memory balloon to return unused pages back to the hypervisor to be used by other guests
+	// or processes. Please note that despite its name it has no effect on free memory as reported by
+	// virDomainMemoryStats() and/or virsh dommemstat. Since 6.9.0, QEMU and KVM only
+	FreePageReporting TurnState `xml:"freePageReporting,attr,omitempty" json:"freePageReporting,omitempty"`
+
+	// The optional period allows the QEMU virtio memory balloon driver to provide statistics through the
+	// virsh dommemstat [domain] command. By default, collection is not enabled. In order to enable, use the
+	// virsh dommemstat [domain] --period [number] command or virsh edit command to add the option to the XML
+	// definition. The virsh dommemstat will accept the options --live, --current, or --config. If an option
+	// is not provided, the change for a running domain will only be made to the active guest. If the QEMU
+	// driver is not at the right revision, the attempt to set the period will fail. Large values
+	// (e.g. many years) might be ignored. Since 1.1.1, requires QEMU 1.5
+	Period int32 `xml:"period,attr,omitempty" json:"period,omitempty"`
+
+	Stat DomainMemBalloonStats `xml:"stat,omitempty" json:"stat,omitempty"`
+
+	// For model virtio memballoon, Virtio-specific options can also be set. ( Since 3.5.0 )
+	Driver *DomainDeviceDriver `xml:"driver,omitempty" json:"driver,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainMemBalloonStats struct {
+	Period int32 `xml:"period,attr,omitempty" json:"period,omitempty"`
+}
+
+type DomainDeviceDriver struct {
+	IOMMU ButtonState `xml:"iommu,attr,omitempty" json:"iommu,omitempty"`
+	Ats   ButtonState `xml:"ats,attr,omitempty" json:"ats,omitempty"`
+}
+
+// DomainRng the virtual random number generator device allows the host to pass through entropy to guest
+// operating systems. Since 1.0.3
+type DomainRng struct {
+	// The required model attribute specifies what type of RNG device is provided.
+	Model DomainVirtioModel `xml:"model,attr,omitempty" json:"model,omitempty"`
+
+	// The optional rate element allows limiting the rate at which entropy can be consumed from the source.
+	// The mandatory attribute bytes specifies how many bytes are permitted to be consumed per period. An
+	// optional period attribute specifies the duration of a period in milliseconds; if omitted, the period
+	// is taken as 1000 milliseconds (1 second). Since 1.0.4
+	Rate *DomainRngRate `xml:"rate,omitempty" json:"rate,omitempty"`
+
+	// The backend element specifies the source of entropy to be used for the domain. The source model is
+	// configured using the model attribute. Supported source models are:
+	//  random	: This backend type expects a non-blocking character device as input. The file name is specified
+	//            as contents of the backend element. Since 1.3.4 any path is accepted. Before that /dev/random
+	//            and /dev/hwrng were the only accepted paths. When no file name is specified, the hypervisor
+	//            default is used. For QEMU, the default is /dev/random. However, the recommended source of
+	//            entropy is /dev/urandom (as it doesn't have the limitations of /dev/random).
+	//
+	//  egd		: This backend connects to a source using the EGD protocol. The source is specified as a character
+	//            device. Refer to character device host interface for more information.
+	//
+	//  builtin	: This backend uses qemu builtin random generator, which uses getrandom() syscall as the source of
+	//            entropy. ( Since 6.1.0 and QEMU 4.2 )
+	Backend *DomainRngBackend `xml:"backend,omitempty" json:"backend,omitempty"`
+
+	Driver *DomainDeviceDriver `xml:"driver,omitempty" json:"driver,omitempty"`
+
+	ACPI    *DomainDeviceACPI    `xml:"acpi,omitempty" json:"acpi,omitempty"`
+	Alias   *DomainAlias         `xml:"alias,omitempty" json:"alias,omitempty"`
+	Address *DomainDeviceAddress `xml:"address,omitempty" json:"address,omitempty"`
+}
+
+type DomainRngRate struct {
+	Period int32 `xml:"period,attr,omitempty" json:"period,omitempty"`
+	Bytes  int64 `xml:"bytes,attr,omitempty" json:"bytes,omitempty"`
+}
+
+type DomainRngBackendModel string
+
+const (
+	DomainRngBackendModelRandom  DomainRngBackendModel = "random"
+	DomainRngBackendModelEGD     DomainRngBackendModel = "egd"
+	DomainRngBackendModelBuiltin DomainRngBackendModel = "builtin"
+)
+
+type DomainRngBackend struct {
+	Model DomainRngBackendModel `xml:"model,attr,omitempty" json:"model,omitempty"`
+
+	Value string `xml:",chardata" json:"value"`
 }

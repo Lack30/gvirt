@@ -39,10 +39,17 @@ var (
 	DefaultPoolMaxIdle = 50
 )
 
+type ClientKind string
+
+const (
+	KindQemu ClientKind = "qemu"
+)
+
 type Options struct {
 	// the url of libvirt api
 	u url.URL
 
+	Kind ClientKind
 	// Connection pool
 	PoolSize       int
 	PoolTTL        time.Duration
@@ -53,9 +60,9 @@ type Options struct {
 func newOptions(opts ...Option) Options {
 	options := Options{
 		u: url.URL{
-			Scheme: "qemu",
-			Path:   "/system",
+			Path: "/system",
 		},
+		Kind: KindQemu,
 		PoolSize:       DefaultPoolSize,
 		PoolTTL:        DefaultPoolTTL,
 		PoolMaxStreams: DefaultPoolMaxStreams,
@@ -71,11 +78,21 @@ func newOptions(opts ...Option) Options {
 
 type Option func(*Options)
 
+// Kind specifies the Kind for Options
+func Kind(kind ClientKind) Option {
+	return func(o *Options) {
+		o.Kind = kind
+	}
+}
+
 // Addr specifies the Schema and Host for url.URL
 func Addr(schema, host string) Option {
 	return func(o *Options) {
-		if !strings.HasPrefix(schema, "qemu") {
-			schema = "qemu+" + schema
+		switch o.Kind {
+		case KindQemu:
+			if !strings.HasPrefix(schema, "qemu") {
+				schema = "qemu+" + schema
+			}
 		}
 		o.u.Scheme = schema
 		o.u.Host = host
