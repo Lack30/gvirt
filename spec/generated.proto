@@ -196,7 +196,7 @@ message CapsHostCPUMicrocode {
 
 // +gogo:genproto=true
 message CapsHostCPUPageSize {
-  optional int32 size = 3;
+  optional int32 size = 1;
 
   optional string unit = 2;
 }
@@ -225,7 +225,7 @@ message CapsHostCacheBank {
 
   optional string type = 3;
 
-  optional int32 size = 8;
+  optional int32 size = 4;
 
   optional string unit = 5;
 
@@ -325,11 +325,11 @@ message CapsHostMigrationURITransports {
 message CapsHostNUMACPU {
   optional int32 id = 1;
 
-  optional int64 socketId = 2;
+  optional int32 socketId = 2;
 
-  optional int64 dieId = 3;
+  optional int32 dieId = 3;
 
-  optional int64 coreId = 4;
+  optional int32 coreId = 4;
 
   optional string siblings = 5;
 }
@@ -368,18 +368,18 @@ message CapsHostNUMADistances {
 
 // +gogo:genproto=true
 message CapsHostNUMAMemory {
-  optional uint64 size = 3;
+  optional int64 size = 1;
 
   optional string unit = 2;
 }
 
 // +gogo:genproto=true
 message CapsHostNUMAPageInfo {
-  optional int32 size = 4;
+  optional int32 size = 1;
 
   optional string unit = 2;
 
-  optional uint64 count = 3;
+  optional int64 count = 3;
 }
 
 // +gogo:genproto=true
@@ -431,7 +431,7 @@ message CapsHostSecModelLabel {
 message Domain {
   optional string type = 1;
 
-  optional int64 id = 2;
+  optional int32 id = 2;
 
   optional string name = 3;
 
@@ -461,7 +461,7 @@ message Domain {
 
   optional DomainVCPUs vcpus = 16;
 
-  optional uint64 iothreads = 17;
+  optional int32 iothreads = 17;
 
   optional DomainIOThreadIDs iothreadids = 18;
 
@@ -562,43 +562,43 @@ message DomainAddress {
 
 // +gogo:genproto=true
 message DomainAddressCCID {
-  optional uint64 controller = 1;
+  optional int32 controller = 1;
 
-  optional uint64 slot = 2;
+  optional int32 slot = 2;
 }
 
 // +gogo:genproto=true
 message DomainAddressCCW {
-  optional uint64 cssid = 1;
+  optional int32 cssid = 1;
 
-  optional uint64 ssid = 2;
+  optional int32 ssid = 2;
 
-  optional uint64 devno = 3;
+  optional int32 devno = 3;
 }
 
 // +gogo:genproto=true
 message DomainAddressDIMM {
-  optional uint64 slot = 1;
+  optional int32 slot = 1;
 
-  optional uint64 base = 2;
+  optional int64 base = 2;
 }
 
 // +gogo:genproto=true
 message DomainAddressDrive {
-  optional uint64 controller = 1;
+  optional int32 controller = 1;
 
-  optional uint64 bus = 2;
+  optional int32 bus = 2;
 
-  optional uint64 target = 3;
+  optional int32 target = 3;
 
-  optional uint64 unit = 4;
+  optional int32 unit = 4;
 }
 
 // +gogo:genproto=true
 message DomainAddressISA {
-  optional uint64 iobase = 1;
+  optional int32 iobase = 1;
 
-  optional uint64 irq = 2;
+  optional int32 irq = 2;
 }
 
 // +gogo:genproto=true
@@ -608,13 +608,13 @@ message DomainAddressMDev {
 
 // +gogo:genproto=true
 message DomainAddressPCI {
-  optional uint64 domain = 1;
+  optional int32 domain = 1;
 
-  optional uint64 bus = 2;
+  optional int32 bus = 2;
 
-  optional uint64 slot = 3;
+  optional int32 slot = 3;
 
-  optional uint64 function = 4;
+  optional int32 function = 4;
 
   optional string multifunction = 5;
 
@@ -623,16 +623,16 @@ message DomainAddressPCI {
 
 // +gogo:genproto=true
 message DomainAddressSpaprVIO {
-  optional uint64 reg = 1;
+  optional int64 reg = 1;
 }
 
 // +gogo:genproto=true
 message DomainAddressUSB {
-  optional uint64 bus = 1;
+  optional int32 bus = 1;
 
   optional string port = 2;
 
-  optional uint64 device = 3;
+  optional int32 device = 3;
 }
 
 // +gogo:genproto=true
@@ -649,18 +649,18 @@ message DomainAddressVirtioS390 {
 
 // +gogo:genproto=true
 message DomainAddressVirtioSerial {
-  optional uint64 controller = 1;
+  optional int32 controller = 1;
 
-  optional uint64 bus = 2;
+  optional int32 bus = 2;
 
-  optional uint64 port = 3;
+  optional int32 port = 3;
 }
 
 // +gogo:genproto=true
 message DomainAddressZPCI {
-  optional uint64 uid = 1;
+  optional int32 uid = 1;
 
-  optional uint64 fid = 2;
+  optional int32 fid = 2;
 }
 
 // +gogo:genproto=true
@@ -711,18 +711,18 @@ message DomainAudioChannel {
 
   optional string fixedSettings = 2;
 
-  optional uint64 voices = 3;
+  optional int32 voices = 3;
 
   optional DomainAudioChannelSettings settings = 4;
 
-  optional uint64 bufferLength = 5;
+  optional int32 bufferLength = 5;
 }
 
 // +gogo:genproto=true
 message DomainAudioChannelSettings {
-  optional uint64 frequency = 1;
+  optional int32 frequency = 1;
 
-  optional uint64 channels = 2;
+  optional int32 channels = 2;
 
   optional string format = 3;
 }
@@ -738,7 +738,7 @@ message DomainAudioCoreAudio {
 message DomainAudioCoreAudioChannel {
   optional DomainAudioChannel domainAudioChannel = 1;
 
-  optional uint64 bufferCount = 2;
+  optional int32 bufferCount = 2;
 }
 
 // +gogo:genproto=true
@@ -793,7 +793,7 @@ message DomainAudioOSS {
 
   optional string exclusive = 2;
 
-  optional int64 dspPolicy = 3;
+  optional int32 dspPolicy = 3;
 
   optional DomainAudioOSSChannel input = 4;
 
@@ -806,7 +806,7 @@ message DomainAudioOSSChannel {
 
   optional string dev = 2;
 
-  optional uint64 bufferCount = 3;
+  optional int32 bufferCount = 3;
 
   optional string tryPoll = 4;
 }
@@ -828,7 +828,7 @@ message DomainAudioPulseAudioChannel {
 
   optional string streamName = 3;
 
-  optional uint64 latency = 4;
+  optional int32 latency = 4;
 }
 
 // +gogo:genproto=true
@@ -844,7 +844,7 @@ message DomainAudioSDL {
 message DomainAudioSDLChannel {
   optional DomainAudioChannel domainAudioChannel = 1;
 
-  optional uint64 bufferCount = 2;
+  optional int32 bufferCount = 2;
 }
 
 // +gogo:genproto=true
@@ -882,7 +882,7 @@ message DomainBHyveCommandlineEnv {
 message DomainBIOS {
   optional string useSerial = 1;
 
-  optional int64 rebootTimeout = 2;
+  optional int32 rebootTimeout = 2;
 }
 
 // +gogo:genproto=true
@@ -892,7 +892,7 @@ message DomainBackendDomain {
 
 // +gogo:genproto=true
 message DomainBlockIOTune {
-  optional uint64 weight = 1;
+  optional int32 weight = 1;
 
   repeated DomainBlockIOTuneDevice device = 2;
 }
@@ -901,15 +901,15 @@ message DomainBlockIOTune {
 message DomainBlockIOTuneDevice {
   optional string path = 1;
 
-  optional uint64 weight = 2;
+  optional int32 weight = 2;
 
-  optional uint64 readIopsSec = 3;
+  optional int32 readIopsSec = 3;
 
-  optional uint64 writeIopsSec = 4;
+  optional int32 writeIopsSec = 4;
 
-  optional uint64 readBytesSec = 5;
+  optional int32 readBytesSec = 5;
 
-  optional uint64 writeBytesSec = 6;
+  optional int32 writeBytesSec = 6;
 }
 
 // +gogo:genproto=true
@@ -949,7 +949,7 @@ message DomainCPU {
 
 // +gogo:genproto=true
 message DomainCPUCache {
-  optional uint64 level = 1;
+  optional int32 level = 1;
 
   optional string mode = 2;
 }
@@ -965,20 +965,20 @@ message DomainCPUCacheTune {
 
 // +gogo:genproto=true
 message DomainCPUCacheTuneCache {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 
-  optional uint64 level = 2;
+  optional int32 level = 2;
 
   optional string type = 3;
 
-  optional uint64 size = 6;
+  optional int32 size = 4;
 
   optional string unit = 5;
 }
 
 // +gogo:genproto=true
 message DomainCPUCacheTuneMonitor {
-  optional uint64 level = 1;
+  optional int32 level = 1;
 
   optional string vcpus = 2;
 }
@@ -1001,16 +1001,16 @@ message DomainCPUMemoryTune {
 
 // +gogo:genproto=true
 message DomainCPUMemoryTuneMonitor {
-  optional uint64 level = 1;
+  optional int32 level = 1;
 
   optional string vcpus = 2;
 }
 
 // +gogo:genproto=true
 message DomainCPUMemoryTuneNode {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 
-  optional uint64 bandwidth = 2;
+  optional int32 bandwidth = 2;
 }
 
 // +gogo:genproto=true
@@ -1079,12 +1079,12 @@ message DomainCPUTuneEmulatorPin {
 message DomainCPUTuneEmulatorSched {
   optional string scheduler = 1;
 
-  optional int64 priority = 2;
+  optional int32 priority = 2;
 }
 
 // +gogo:genproto=true
 message DomainCPUTuneIOThreadPin {
-  optional uint64 iothread = 1;
+  optional int32 iothread = 1;
 
   optional string cpuset = 2;
 }
@@ -1095,12 +1095,12 @@ message DomainCPUTuneIOThreadSched {
 
   optional string scheduler = 2;
 
-  optional int64 priority = 3;
+  optional int32 priority = 3;
 }
 
 // +gogo:genproto=true
 message DomainCPUTunePeriod {
-  optional uint64 value = 1;
+  optional int64 value = 1;
 }
 
 // +gogo:genproto=true
@@ -1110,12 +1110,12 @@ message DomainCPUTuneQuota {
 
 // +gogo:genproto=true
 message DomainCPUTuneShares {
-  optional uint64 value = 1;
+  optional int32 value = 1;
 }
 
 // +gogo:genproto=true
 message DomainCPUTuneVCPUPin {
-  optional uint64 vcpu = 1;
+  optional int32 vcpu = 1;
 
   optional string cpu_set = 2;
 }
@@ -1126,7 +1126,7 @@ message DomainCPUTuneVCPUSched {
 
   optional string scheduler = 2;
 
-  optional int64 priority = 3;
+  optional int32 priority = 3;
 }
 
 // +gogo:genproto=true
@@ -1243,9 +1243,9 @@ message DomainCapsFeatureGenID {
 message DomainCapsFeatureSEV {
   optional string supported = 1;
 
-  optional uint64 cBitPos = 2;
+  optional int32 cBitPos = 2;
 
-  optional uint64 reducedPhysBits = 3;
+  optional int32 reducedPhysBits = 3;
 }
 
 // +gogo:genproto=true
@@ -1293,16 +1293,16 @@ message DomainCapsOSLoader {
 
 // +gogo:genproto=true
 message DomainCapsVCPU {
-  optional uint64 max = 1;
+  optional int32 max = 1;
 }
 
 // +gogo:genproto=true
 message DomainCell {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 
   optional string cpus = 2;
 
-  optional uint64 memory = 3;
+  optional int32 memory = 3;
 
   optional string unit = 4;
 
@@ -1317,13 +1317,13 @@ message DomainCell {
 
 // +gogo:genproto=true
 message DomainCellCache {
-  optional uint64 level = 1;
+  optional int32 level = 1;
 
   optional string associativity = 2;
 
   optional string policy = 3;
 
-  optional DomainCellCacheSize size = 6;
+  optional DomainCellCacheSize size = 4;
 
   optional DomainCellCacheLine line = 5;
 }
@@ -1349,9 +1349,9 @@ message DomainCellDistances {
 
 // +gogo:genproto=true
 message DomainCellSibling {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 
-  optional uint64 value = 2;
+  optional int32 value = 2;
 }
 
 // +gogo:genproto=true
@@ -1487,7 +1487,7 @@ message DomainChardevSourcePty {
 message DomainChardevSourceReconnect {
   optional string enabled = 1;
 
-  optional uint64 timeout = 2;
+  optional int32 timeout = 2;
 }
 
 // +gogo:genproto=true
@@ -1551,7 +1551,7 @@ message DomainChardevTarget {
   optional string state = 3;
 
   // is guest agent connected?
-  optional uint64 port = 4;
+  optional int32 port = 4;
 }
 
 // +gogo:genproto=true
@@ -1590,14 +1590,14 @@ message DomainConsole {
 message DomainConsoleTarget {
   optional string type = 1;
 
-  optional uint64 port = 2;
+  optional int32 port = 2;
 }
 
 // +gogo:genproto=true
 message DomainController {
   optional string type = 1;
 
-  optional uint64 index = 2;
+  optional int32 index = 2;
 
   optional string model = 3;
 
@@ -1620,15 +1620,15 @@ message DomainController {
 
 // +gogo:genproto=true
 message DomainControllerDriver {
-  optional uint64 queues = 1;
+  optional int32 queues = 1;
 
-  optional uint64 cmdPerLun = 2;
+  optional int32 cmdPerLun = 2;
 
-  optional uint64 maxSectors = 3;
+  optional int32 maxSectors = 3;
 
   optional string ioeventfd = 4;
 
-  optional uint64 iothread = 5;
+  optional int32 iothread = 5;
 
   optional string iommu = 6;
 
@@ -1648,7 +1648,7 @@ message DomainControllerPCI {
 
 // +gogo:genproto=true
 message DomainControllerPCIHole64 {
-  optional uint64 size = 3;
+  optional int64 size = 1;
 
   optional string unit = 2;
 }
@@ -1660,62 +1660,62 @@ message DomainControllerPCIModel {
 
 // +gogo:genproto=true
 message DomainControllerPCITarget {
-  optional uint64 chassisNr = 1;
+  optional int32 chassisNr = 1;
 
-  optional uint64 chassis = 2;
+  optional int32 chassis = 2;
 
-  optional uint64 port = 3;
+  optional int32 port = 3;
 
-  optional uint64 busNr = 4;
+  optional int32 busNr = 4;
 
-  optional uint64 index = 5;
+  optional int32 index = 5;
 
-  optional uint64 numaNode = 6;
+  optional int32 numaNode = 6;
 
   optional string hotplug = 7;
 }
 
 // +gogo:genproto=true
 message DomainControllerUSB {
-  optional uint64 port = 1;
+  optional int32 port = 1;
 
   optional DomainControllerUSBMaster master = 2;
 }
 
 // +gogo:genproto=true
 message DomainControllerUSBMaster {
-  optional uint64 startPort = 1;
+  optional int32 startPort = 1;
 }
 
 // +gogo:genproto=true
 message DomainControllerVirtIOSerial {
-  optional uint64 ports = 1;
+  optional int32 ports = 1;
 
-  optional uint64 vectors = 2;
+  optional int32 vectors = 2;
 }
 
 // +gogo:genproto=true
 message DomainControllerXenBus {
-  optional uint64 maxGrantFrames = 1;
+  optional int32 maxGrantFrames = 1;
 
-  optional uint64 maxEventChannels = 2;
+  optional int32 maxEventChannels = 2;
 }
 
 // +gogo:genproto=true
 message DomainCurrentMemory {
-  optional uint64 value = 1;
+  optional int32 value = 1;
 
   optional string unit = 2;
 }
 
 // +gogo:genproto=true
 message DomainDeviceACPI {
-  optional uint64 index = 1;
+  optional int32 index = 1;
 }
 
 // +gogo:genproto=true
 message DomainDeviceBoot {
-  optional uint64 order = 1;
+  optional int32 order = 1;
 
   optional string loadParm = 2;
 }
@@ -1860,7 +1860,7 @@ message DomainDiskAuth {
 
 // +gogo:genproto=true
 message DomainDiskBackingStore {
-  optional uint64 index = 1;
+  optional int32 index = 1;
 
   optional DomainDiskFormat format = 2;
 
@@ -1871,9 +1871,9 @@ message DomainDiskBackingStore {
 
 // +gogo:genproto=true
 message DomainDiskBlockIO {
-  optional uint64 logicalBlockSize = 1;
+  optional int32 logicalBlockSize = 1;
 
-  optional uint64 physicalBlockSize = 2;
+  optional int32 physicalBlockSize = 2;
 }
 
 // +gogo:genproto=true
@@ -1910,11 +1910,11 @@ message DomainDiskDriver {
 
   optional string discard = 10;
 
-  optional uint64 iothread = 11;
+  optional int32 iothread = 11;
 
   optional string detectZeros = 12;
 
-  optional uint64 queues = 13;
+  optional int32 queues = 13;
 
   optional string iommu = 14;
 
@@ -1941,54 +1941,54 @@ message DomainDiskFormat {
 
 // +gogo:genproto=true
 message DomainDiskGeometry {
-  optional uint64 cyli = 1;
+  optional int32 cyli = 1;
 
-  optional uint64 heads = 2;
+  optional int32 heads = 2;
 
-  optional uint64 secs = 3;
+  optional int32 secs = 3;
 
   optional string trans = 4;
 }
 
 // +gogo:genproto=true
 message DomainDiskIOTune {
-  optional uint64 totalBytesSec = 1;
+  optional int64 totalBytesSec = 1;
 
-  optional uint64 readBytesSec = 2;
+  optional int64 readBytesSec = 2;
 
-  optional uint64 writeBytesSec = 3;
+  optional int64 writeBytesSec = 3;
 
-  optional uint64 totalIopsSec = 4;
+  optional int64 totalIopsSec = 4;
 
-  optional uint64 readIopsSec = 5;
+  optional int64 readIopsSec = 5;
 
-  optional uint64 writeIopsSec = 6;
+  optional int64 writeIopsSec = 6;
 
-  optional uint64 totalBytesSecMax = 7;
+  optional int64 totalBytesSecMax = 7;
 
-  optional uint64 readBytesSecMax = 8;
+  optional int64 readBytesSecMax = 8;
 
-  optional uint64 writeBytesSecMax = 9;
+  optional int64 writeBytesSecMax = 9;
 
-  optional uint64 totalIopsSecMax = 10;
+  optional int64 totalIopsSecMax = 10;
 
-  optional uint64 readIopsSecMax = 11;
+  optional int64 readIopsSecMax = 11;
 
-  optional uint64 writeIopsSecMax = 12;
+  optional int64 writeIopsSecMax = 12;
 
-  optional uint64 totalBytesSecMaxLength = 13;
+  optional int64 totalBytesSecMaxLength = 13;
 
-  optional uint64 readBytesSecMaxLength = 14;
+  optional int64 readBytesSecMaxLength = 14;
 
-  optional uint64 writeBytesSecMaxLength = 15;
+  optional int64 writeBytesSecMaxLength = 15;
 
-  optional uint64 totalIopsSecMaxLength = 16;
+  optional int64 totalIopsSecMaxLength = 16;
 
-  optional uint64 readIopsSecMaxLength = 17;
+  optional int64 readIopsSecMaxLength = 17;
 
-  optional uint64 writeIopsSecMaxLength = 18;
+  optional int64 writeIopsSecMaxLength = 18;
 
-  optional uint64 sizeIopsSec = 19;
+  optional int64 sizeIopsSec = 19;
 
   optional string groupName = 20;
 }
@@ -2077,9 +2077,9 @@ message DomainDiskShareable {
 message DomainDiskSlice {
   optional string type = 1;
 
-  optional uint64 offset = 2;
+  optional int32 offset = 2;
 
-  optional uint64 size = 3;
+  optional int32 size = 3;
 }
 
 // +gogo:genproto=true
@@ -2105,7 +2105,7 @@ message DomainDiskSource {
 
   optional string startupPolicy = 8;
 
-  optional uint64 index = 9;
+  optional int32 index = 9;
 
   optional DomainDiskEncryption encryption = 10;
 
@@ -2161,7 +2161,7 @@ message DomainDiskSourceNVME {
 message DomainDiskSourceNVMEPCI {
   optional string managed = 1;
 
-  optional uint64 namespace = 2;
+  optional int64 namespace = 2;
 
   optional DomainAddressPCI address = 3;
 }
@@ -2281,7 +2281,7 @@ message DomainDiskTarget {
 
   optional string removable = 4;
 
-  optional uint64 rotationRate = 5;
+  optional int32 rotationRate = 5;
 }
 
 // +gogo:genproto=true
@@ -2423,7 +2423,7 @@ message DomainFeatureHyperV {
 
   optional DomainFeatureHyperVSTimer stimer = 8;
 
-  optional DomainFeatureState reset = 16;
+  optional DomainFeatureState reset = 9;
 
   optional DomainFeatureHyperVVendorId vendorId = 10;
 
@@ -2449,7 +2449,7 @@ message DomainFeatureHyperVSTimer {
 message DomainFeatureHyperVSpinlocks {
   optional DomainFeatureState domainFeatureState = 1;
 
-  optional uint64 retries = 2;
+  optional int32 retries = 2;
 }
 
 // +gogo:genproto=true
@@ -2552,7 +2552,7 @@ message DomainFeatureSMM {
 message DomainFeatureSMMTSeg {
   optional string unit = 1;
 
-  optional uint64 value = 2;
+  optional int32 value = 2;
 }
 
 // +gogo:genproto=true
@@ -2660,7 +2660,7 @@ message DomainFilesystemDriver {
 
   optional string packed = 7;
 
-  optional uint64 queue = 8;
+  optional int32 queue = 8;
 }
 
 // +gogo:genproto=true
@@ -2708,7 +2708,7 @@ message DomainFilesystemSourceMount {
 
 // +gogo:genproto=true
 message DomainFilesystemSourceRAM {
-  optional uint64 usage = 1;
+  optional int32 usage = 1;
 
   optional string units = 2;
 }
@@ -2727,14 +2727,14 @@ message DomainFilesystemSourceVolume {
 
 // +gogo:genproto=true
 message DomainFilesystemSpaceHardLimit {
-  optional uint64 value = 1;
+  optional int32 value = 1;
 
   optional string unit = 2;
 }
 
 // +gogo:genproto=true
 message DomainFilesystemSpaceSoftLimit {
-  optional uint64 value = 1;
+  optional int32 value = 1;
 
   optional string unit = 2;
 }
@@ -2768,7 +2768,7 @@ message DomainGraphic {
 
 // +gogo:genproto=true
 message DomainGraphicAudio {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 }
 
 // +gogo:genproto=true
@@ -3180,11 +3180,11 @@ message DomainIDMap {
 
 // +gogo:genproto=true
 message DomainIDMapRange {
-  optional uint64 start = 1;
+  optional int32 start = 1;
 
-  optional uint64 target = 2;
+  optional int32 target = 2;
 
-  optional uint64 count = 3;
+  optional int32 count = 3;
 }
 
 // +gogo:genproto=true
@@ -3204,12 +3204,12 @@ message DomainIOMMUDriver {
 
   optional string iotlb = 4;
 
-  optional uint64 awBits = 5;
+  optional int32 awBits = 5;
 }
 
 // +gogo:genproto=true
 message DomainIOThread {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 }
 
 // +gogo:genproto=true
@@ -3223,7 +3223,7 @@ message DomainIP {
 
   optional string family = 2;
 
-  optional uint64 prefix = 3;
+  optional int32 prefix = 3;
 }
 
 // +gogo:genproto=true
@@ -3336,13 +3336,13 @@ message DomainInterfaceBandwidth {
 
 // +gogo:genproto=true
 message DomainInterfaceBandwidthParams {
-  optional int64 average = 1;
+  optional int32 average = 1;
 
-  optional int64 peak = 2;
+  optional int32 peak = 2;
 
-  optional int64 burst = 3;
+  optional int32 burst = 3;
 
-  optional int64 floor = 4;
+  optional int32 floor = 4;
 }
 
 // +gogo:genproto=true
@@ -3357,7 +3357,7 @@ message DomainInterfaceCoalesceRX {
 
 // +gogo:genproto=true
 message DomainInterfaceCoalesceRXFrames {
-  optional uint64 max = 1;
+  optional int32 max = 1;
 }
 
 // +gogo:genproto=true
@@ -3370,11 +3370,11 @@ message DomainInterfaceDriver {
 
   optional string eventIdx = 4;
 
-  optional uint64 queues = 5;
+  optional int32 queues = 5;
 
-  optional uint64 rxQueueSize = 6;
+  optional int32 rxQueueSize = 6;
 
-  optional uint64 txQueueSize = 7;
+  optional int32 txQueueSize = 7;
 
   optional string iommu = 8;
 
@@ -3444,7 +3444,7 @@ message DomainInterfaceIP {
 
   optional string family = 2;
 
-  optional uint64 prefix = 3;
+  optional int32 prefix = 3;
 
   optional string peer = 4;
 }
@@ -3465,7 +3465,7 @@ message DomainInterfaceMAC {
 
 // +gogo:genproto=true
 message DomainInterfaceMTU {
-  optional uint64 size = 1;
+  optional int32 size = 1;
 }
 
 // +gogo:genproto=true
@@ -3486,11 +3486,11 @@ message DomainInterfaceRoute {
 
   optional string netmask = 3;
 
-  optional uint64 prefix = 4;
+  optional int32 prefix = 4;
 
   optional string gateway = 5;
 
-  optional uint64 metric = 6;
+  optional int32 metric = 6;
 }
 
 // +gogo:genproto=true
@@ -3536,7 +3536,7 @@ message DomainInterfaceSourceBridge {
 message DomainInterfaceSourceClient {
   optional string address = 1;
 
-  optional uint64 port = 2;
+  optional int32 port = 2;
 
   optional DomainInterfaceSourceLocal local = 3;
 }
@@ -3571,14 +3571,14 @@ message DomainInterfaceSourceInternal {
 message DomainInterfaceSourceLocal {
   optional string address = 1;
 
-  optional uint64 port = 2;
+  optional int32 port = 2;
 }
 
 // +gogo:genproto=true
 message DomainInterfaceSourceMCast {
   optional string address = 1;
 
-  optional uint64 port = 2;
+  optional int32 port = 2;
 
   optional DomainInterfaceSourceLocal local = 3;
 }
@@ -3598,7 +3598,7 @@ message DomainInterfaceSourceNetwork {
 message DomainInterfaceSourceServer {
   optional string address = 1;
 
-  optional uint64 port = 2;
+  optional int32 port = 2;
 
   optional DomainInterfaceSourceLocal local = 3;
 }
@@ -3607,7 +3607,7 @@ message DomainInterfaceSourceServer {
 message DomainInterfaceSourceUDP {
   optional string address = 1;
 
-  optional uint64 port = 2;
+  optional int32 port = 2;
 
   optional DomainInterfaceSourceLocal local = 3;
 }
@@ -3637,7 +3637,7 @@ message DomainInterfaceTeaming {
 
 // +gogo:genproto=true
 message DomainInterfaceTune {
-  optional uint64 sndbuf = 1;
+  optional int32 sndbuf = 1;
 }
 
 // +gogo:genproto=true
@@ -3649,7 +3649,7 @@ message DomainInterfaceVLan {
 
 // +gogo:genproto=true
 message DomainInterfaceVLanTag {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 
   optional string nativeMode = 2;
 }
@@ -3674,11 +3674,11 @@ message DomainInterfaceVirtualPortParams {
 
 // +gogo:genproto=true
 message DomainInterfaceVirtualPortParamsAny {
-  optional uint64 managerId = 1;
+  optional int32 managerId = 1;
 
-  optional uint64 typeId = 2;
+  optional int32 typeId = 2;
 
-  optional uint64 typeIdVersion = 3;
+  optional int32 typeIdVersion = 3;
 
   optional string instanceId = 4;
 
@@ -3701,11 +3701,11 @@ message DomainInterfaceVirtualPortParamsOpenVSwitch {
 
 // +gogo:genproto=true
 message DomainInterfaceVirtualPortParamsVEPA8021QBG {
-  optional uint64 managerId = 1;
+  optional int32 managerId = 1;
 
-  optional uint64 typeId = 2;
+  optional int32 typeId = 2;
 
-  optional uint64 typeIdVersion = 3;
+  optional int32 typeIdVersion = 3;
 
   optional string instanceId = 4;
 }
@@ -3750,11 +3750,11 @@ message DomainLaunchSecurity {
 
 // +gogo:genproto=true
 message DomainLaunchSecuritySEV {
-  optional uint64 cBitPos = 1;
+  optional int32 cBitPos = 1;
 
-  optional uint64 reducedPhysBits = 2;
+  optional int32 reducedPhysBits = 2;
 
-  optional uint64 policy = 3;
+  optional int32 policy = 3;
 
   optional string dh_cert = 4;
 
@@ -3774,7 +3774,7 @@ message DomainLease {
 message DomainLeaseTarget {
   optional string path = 1;
 
-  optional uint64 offset = 2;
+  optional int64 offset = 2;
 }
 
 // +gogo:genproto=true
@@ -3790,11 +3790,11 @@ message DomainLoader {
 
 // +gogo:genproto=true
 message DomainMaxMemory {
-  optional uint64 value = 1;
+  optional int32 value = 1;
 
   optional string unit = 2;
 
-  optional uint64 slots = 3;
+  optional int32 slots = 3;
 }
 
 // +gogo:genproto=true
@@ -3827,12 +3827,12 @@ message DomainMemBalloonDriver {
 
 // +gogo:genproto=true
 message DomainMemBalloonStats {
-  optional uint64 period = 1;
+  optional int32 period = 1;
 }
 
 // +gogo:genproto=true
 message DomainMemory {
-  optional uint64 value = 1;
+  optional int32 value = 1;
 
   optional string unit = 2;
 
@@ -3872,7 +3872,7 @@ message DomainMemoryDiscard {
 
 // +gogo:genproto=true
 message DomainMemoryHugepage {
-  optional uint64 size = 4;
+  optional int32 size = 1;
 
   optional string unit = 2;
 
@@ -3910,7 +3910,7 @@ message DomainMemoryTune {
 
 // +gogo:genproto=true
 message DomainMemoryTuneLimit {
-  optional uint64 value = 1;
+  optional int64 value = 1;
 
   optional string unit = 2;
 }
@@ -3951,7 +3951,7 @@ message DomainMemorydevSource {
 
 // +gogo:genproto=true
 message DomainMemorydevSourceAlignsize {
-  optional uint64 value = 1;
+  optional int64 value = 1;
 
   optional string unit = 2;
 }
@@ -3962,14 +3962,14 @@ message DomainMemorydevSourcePMem {
 
 // +gogo:genproto=true
 message DomainMemorydevSourcePagesize {
-  optional uint64 value = 1;
+  optional int64 value = 1;
 
   optional string unit = 2;
 }
 
 // +gogo:genproto=true
 message DomainMemorydevTarget {
-  optional DomainMemorydevTargetSize size = 5;
+  optional DomainMemorydevTargetSize size = 1;
 
   optional DomainMemorydevTargetNode node = 2;
 
@@ -3985,7 +3985,7 @@ message DomainMemorydevTargetLabel {
 
 // +gogo:genproto=true
 message DomainMemorydevTargetNode {
-  optional uint64 value = 1;
+  optional int32 value = 1;
 }
 
 // +gogo:genproto=true
@@ -3994,7 +3994,7 @@ message DomainMemorydevTargetReadOnly {
 
 // +gogo:genproto=true
 message DomainMemorydevTargetSize {
-  optional uint64 value = 1;
+  optional int32 value = 1;
 
   optional string unit = 2;
 }
@@ -4006,28 +4006,28 @@ message DomainMetadata {
 
 // +gogo:genproto=true
 message DomainNUMAInterconnectBandwidth {
-  optional uint64 initiator = 1;
+  optional int32 initiator = 1;
 
-  optional uint64 target = 2;
+  optional int32 target = 2;
 
   optional string type = 3;
 
-  optional uint64 value = 4;
+  optional int32 value = 4;
 
   optional string unit = 5;
 }
 
 // +gogo:genproto=true
 message DomainNUMAInterconnectLatency {
-  optional uint64 initiator = 1;
+  optional int32 initiator = 1;
 
-  optional uint64 target = 2;
+  optional int32 target = 2;
 
-  optional uint64 cache = 3;
+  optional int32 cache = 3;
 
   optional string type = 4;
 
-  optional uint64 value = 5;
+  optional int32 value = 5;
 }
 
 // +gogo:genproto=true
@@ -4046,7 +4046,7 @@ message DomainNUMATune {
 
 // +gogo:genproto=true
 message DomainNUMATuneMemNode {
-  optional uint64 cellId = 1;
+  optional int32 cellId = 1;
 
   optional string mode = 2;
 
@@ -4200,7 +4200,7 @@ message DomainParallel {
 message DomainParallelTarget {
   optional string type = 1;
 
-  optional uint64 port = 2;
+  optional int32 port = 2;
 }
 
 // +gogo:genproto=true
@@ -4304,9 +4304,9 @@ message DomainRNGDriver {
 
 // +gogo:genproto=true
 message DomainRNGRate {
-  optional uint64 bytes = 1;
+  optional int32 bytes = 1;
 
-  optional uint64 period = 2;
+  optional int32 period = 2;
 }
 
 // +gogo:genproto=true
@@ -4342,11 +4342,11 @@ message DomainRedirFilter {
 
 // +gogo:genproto=true
 message DomainRedirFilterUSB {
-  optional uint64 class = 1;
+  optional int32 class = 1;
 
-  optional uint64 vendor = 2;
+  optional int32 vendor = 2;
 
-  optional uint64 product = 3;
+  optional int32 product = 3;
 
   optional string version = 4;
 
@@ -4408,7 +4408,7 @@ message DomainSerial {
 message DomainSerialTarget {
   optional string type = 1;
 
-  optional uint64 port = 2;
+  optional int32 port = 2;
 
   optional DomainSerialTargetModel model = 3;
 }
@@ -4424,7 +4424,7 @@ message DomainShmem {
 
   optional string role = 2;
 
-  optional DomainShmemSize size = 10;
+  optional DomainShmemSize size = 3;
 
   optional DomainShmemModel model = 4;
 
@@ -4443,7 +4443,7 @@ message DomainShmem {
 message DomainShmemMSI {
   optional string enabled = 1;
 
-  optional uint64 vectors = 2;
+  optional int32 vectors = 2;
 
   optional string ioeventfd = 3;
 }
@@ -4460,7 +4460,7 @@ message DomainShmemServer {
 
 // +gogo:genproto=true
 message DomainShmemSize {
-  optional uint64 value = 1;
+  optional int32 value = 1;
 
   optional string unit = 2;
 }
@@ -4511,7 +4511,7 @@ message DomainSnapshot {
 
   optional Domain domain = 8;
 
-  optional uint64 active = 9;
+  optional int32 active = 9;
 }
 
 // +gogo:genproto=true
@@ -4559,7 +4559,7 @@ message DomainSound {
 
 // +gogo:genproto=true
 message DomainSoundAudio {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 }
 
 // +gogo:genproto=true
@@ -4694,7 +4694,7 @@ message DomainTimer {
 
   optional DomainTimerCatchUp catchup = 4;
 
-  optional uint64 frequency = 5;
+  optional int64 frequency = 5;
 
   optional string mode = 6;
 
@@ -4703,11 +4703,11 @@ message DomainTimer {
 
 // +gogo:genproto=true
 message DomainTimerCatchUp {
-  optional uint64 threshold = 1;
+  optional int32 threshold = 1;
 
-  optional uint64 slew = 2;
+  optional int32 slew = 2;
 
-  optional uint64 limit = 3;
+  optional int32 limit = 3;
 }
 
 // +gogo:genproto=true
@@ -4716,9 +4716,9 @@ message DomainVCPU {
 
   optional string cpuset = 2;
 
-  optional uint64 current = 3;
+  optional int32 current = 3;
 
-  optional uint64 value = 4;
+  optional int32 value = 4;
 }
 
 // +gogo:genproto=true
@@ -4728,13 +4728,13 @@ message DomainVCPUs {
 
 // +gogo:genproto=true
 message DomainVCPUsVCPU {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 
   optional string enabled = 2;
 
   optional string hotpluggable = 3;
 
-  optional uint64 order = 4;
+  optional int32 order = 4;
 }
 
 // +gogo:genproto=true
@@ -4812,15 +4812,15 @@ message DomainVideoDriver {
 message DomainVideoModel {
   optional string type = 1;
 
-  optional uint64 heads = 2;
+  optional int32 heads = 2;
 
-  optional uint64 ram = 3;
+  optional int32 ram = 3;
 
-  optional uint64 vram = 4;
+  optional int32 vram = 4;
 
-  optional uint64 vram64 = 5;
+  optional int32 vram64 = 5;
 
-  optional uint64 vgamem = 6;
+  optional int32 vgamem = 6;
 
   optional string primary = 7;
 
@@ -4831,9 +4831,9 @@ message DomainVideoModel {
 
 // +gogo:genproto=true
 message DomainVideoResolution {
-  optional uint64 x = 1;
+  optional int32 x = 1;
 
-  optional uint64 y = 2;
+  optional int32 y = 2;
 }
 
 // +gogo:genproto=true
@@ -4901,7 +4901,7 @@ message InterfaceBond {
 
 // +gogo:genproto=true
 message InterfaceBondARPMon {
-  optional uint64 interval = 1;
+  optional int32 interval = 1;
 
   optional string target = 2;
 
@@ -4910,9 +4910,9 @@ message InterfaceBondARPMon {
 
 // +gogo:genproto=true
 message InterfaceBondMIIMon {
-  optional uint64 freq = 1;
+  optional int32 freq = 1;
 
-  optional uint64 updelay = 2;
+  optional int32 updelay = 2;
 
   optional string carrier = 3;
 }
@@ -4935,12 +4935,12 @@ message InterfaceDHCP {
 message InterfaceIP {
   optional string address = 1;
 
-  optional uint64 prefix = 2;
+  optional int32 prefix = 2;
 }
 
 // +gogo:genproto=true
 message InterfaceLink {
-  optional uint64 speed = 1;
+  optional int32 speed = 1;
 
   optional string state = 2;
 }
@@ -4952,7 +4952,7 @@ message InterfaceMAC {
 
 // +gogo:genproto=true
 message InterfaceMTU {
-  optional uint64 size = 1;
+  optional int32 size = 1;
 }
 
 // +gogo:genproto=true
@@ -4980,7 +4980,7 @@ message InterfaceStart {
 
 // +gogo:genproto=true
 message InterfaceVLAN {
-  optional uint64 tag = 1;
+  optional int32 tag = 1;
 
   optional Interface interface = 2;
 }
@@ -5053,7 +5053,7 @@ message NWFilterField {
 
   optional string str = 2;
 
-  optional uint64 uint = 3;
+  optional int32 int32 = 3;
 }
 
 // +gogo:genproto=true
@@ -5593,7 +5593,7 @@ message Network {
 
 // +gogo:genproto=true
 message NetworkBandwidth {
-  optional uint64 classId = 1;
+  optional int32 classId = 1;
 
   optional NetworkBandwidthParams inbound = 2;
 
@@ -5602,13 +5602,13 @@ message NetworkBandwidth {
 
 // +gogo:genproto=true
 message NetworkBandwidthParams {
-  optional uint64 average = 1;
+  optional int32 average = 1;
 
-  optional uint64 peak = 2;
+  optional int32 peak = 2;
 
-  optional uint64 burst = 3;
+  optional int32 burst = 3;
 
-  optional uint64 floor = 4;
+  optional int32 floor = 4;
 }
 
 // +gogo:genproto=true
@@ -5655,7 +5655,7 @@ message NetworkDHCPHost {
 
 // +gogo:genproto=true
 message NetworkDHCPLease {
-  optional uint64 expiry = 1;
+  optional int32 expiry = 1;
 
   optional string unit = 2;
 }
@@ -5711,11 +5711,11 @@ message NetworkDNSSRV {
 
   optional string target = 3;
 
-  optional uint64 port = 4;
+  optional int32 port = 4;
 
-  optional uint64 priority = 5;
+  optional int32 priority = 5;
 
-  optional uint64 weight = 6;
+  optional int32 weight = 6;
 
   optional string domain = 7;
 }
@@ -5770,13 +5770,13 @@ message NetworkForwardAddress {
 
 // +gogo:genproto=true
 message NetworkForwardAddressPCI {
-  optional uint64 domain = 1;
+  optional int32 domain = 1;
 
-  optional uint64 bus = 2;
+  optional int32 bus = 2;
 
-  optional uint64 slot = 3;
+  optional int32 slot = 3;
 
-  optional uint64 function = 4;
+  optional int32 function = 4;
 }
 
 // +gogo:genproto=true
@@ -5807,9 +5807,9 @@ message NetworkForwardNATAddress {
 
 // +gogo:genproto=true
 message NetworkForwardNATPort {
-  optional uint64 start = 1;
+  optional int32 start = 1;
 
-  optional uint64 end = 2;
+  optional int32 end = 2;
 }
 
 // +gogo:genproto=true
@@ -5825,7 +5825,7 @@ message NetworkIP {
 
   optional string netmask = 3;
 
-  optional uint64 prefix = 4;
+  optional int32 prefix = 4;
 
   optional string localPtr = 5;
 
@@ -5841,7 +5841,7 @@ message NetworkMAC {
 
 // +gogo:genproto=true
 message NetworkMTU {
-  optional uint64 size = 1;
+  optional int32 size = 1;
 }
 
 // +gogo:genproto=true
@@ -5938,13 +5938,13 @@ message NetworkPortPlugHostDevPCI {
 
 // +gogo:genproto=true
 message NetworkPortPlugHostDevPCIAddress {
-  optional uint64 domain = 1;
+  optional int32 domain = 1;
 
-  optional uint64 bus = 2;
+  optional int32 bus = 2;
 
-  optional uint64 slot = 3;
+  optional int32 slot = 3;
 
-  optional uint64 function = 4;
+  optional int32 function = 4;
 }
 
 // +gogo:genproto=true
@@ -5978,7 +5978,7 @@ message NetworkPortVLAN {
 
 // +gogo:genproto=true
 message NetworkPortVLANTag {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 
   optional string nativeMode = 2;
 }
@@ -5991,7 +5991,7 @@ message NetworkRoute {
 
   optional string netmask = 3;
 
-  optional uint64 prefix = 4;
+  optional int32 prefix = 4;
 
   optional string gateway = 5;
 
@@ -6012,7 +6012,7 @@ message NetworkVLAN {
 
 // +gogo:genproto=true
 message NetworkVLANTag {
-  optional uint64 id = 1;
+  optional int32 id = 1;
 
   optional string nativeMode = 2;
 }
@@ -6037,11 +6037,11 @@ message NetworkVirtualPortParams {
 
 // +gogo:genproto=true
 message NetworkVirtualPortParamsAny {
-  optional uint64 managerId = 1;
+  optional int32 managerId = 1;
 
-  optional uint64 typeId = 2;
+  optional int32 typeId = 2;
 
-  optional uint64 typeIdVersion = 3;
+  optional int32 typeIdVersion = 3;
 
   optional string instanceId = 4;
 
@@ -6064,11 +6064,11 @@ message NetworkVirtualPortParamsOpenVSwitch {
 
 // +gogo:genproto=true
 message NetworkVirtualPortParamsVEPA8021QBG {
-  optional uint64 managerId = 1;
+  optional int32 managerId = 1;
 
-  optional uint64 typeId = 2;
+  optional int32 typeId = 2;
 
-  optional uint64 typeIdVersion = 3;
+  optional int32 typeIdVersion = 3;
 
   optional string instanceId = 4;
 }
@@ -6122,20 +6122,20 @@ message NodeDeviceAPQueueCapability {
 
 // +gogo:genproto=true
 message NodeDeviceCCWCapability {
-  optional uint64 cssid = 1;
+  optional int32 cssid = 1;
 
-  optional uint64 ssid = 2;
+  optional int32 ssid = 2;
 
-  optional uint64 devno = 3;
+  optional int32 devno = 3;
 }
 
 // +gogo:genproto=true
 message NodeDeviceCSSCapability {
-  optional uint64 cssid = 1;
+  optional int32 cssid = 1;
 
-  optional uint64 ssid = 2;
+  optional int32 ssid = 2;
 
-  optional uint64 devno = 3;
+  optional int32 devno = 3;
 
   repeated NodeDeviceCSSSubCapability capabilities = 4;
 }
@@ -6247,7 +6247,7 @@ message NodeDeviceMDevType {
 
   optional string deviceAPI = 3;
 
-  optional uint64 availableInstances = 4;
+  optional int32 availableInstances = 4;
 }
 
 // +gogo:genproto=true
@@ -6297,13 +6297,13 @@ message NodeDeviceNetSubCapability {
 
 // +gogo:genproto=true
 message NodeDevicePCIAddress {
-  optional uint64 domain = 1;
+  optional int32 domain = 1;
 
-  optional uint64 bus = 2;
+  optional int32 bus = 2;
 
-  optional uint64 slot = 3;
+  optional int32 slot = 3;
 
-  optional uint64 function = 4;
+  optional int32 function = 4;
 }
 
 // +gogo:genproto=true
@@ -6314,13 +6314,13 @@ message NodeDevicePCIBridgeCapability {
 message NodeDevicePCICapability {
   optional string class = 1;
 
-  optional uint64 domain = 2;
+  optional int32 domain = 2;
 
-  optional uint64 bus = 3;
+  optional int32 bus = 3;
 
-  optional uint64 slot = 4;
+  optional int32 slot = 4;
 
-  optional uint64 function = 5;
+  optional int32 function = 5;
 
   optional NodeDeviceIDName product = 6;
 
@@ -6346,9 +6346,9 @@ message NodeDevicePCIExpressLink {
 
   optional double speed = 2;
 
-  optional uint64 port = 3;
+  optional int32 port = 3;
 
-  optional uint64 width = 4;
+  optional int32 width = 4;
 }
 
 // +gogo:genproto=true
@@ -6410,9 +6410,9 @@ message NodeDeviceSCSIFCRemotePortCapability {
 
 // +gogo:genproto=true
 message NodeDeviceSCSIHostCapability {
-  optional uint64 host = 1;
+  optional int32 host = 1;
 
-  optional uint64 uniqueId = 2;
+  optional int32 uniqueId = 2;
 
   repeated NodeDeviceSCSIHostSubCapability capability = 3;
 }
@@ -6457,26 +6457,26 @@ message NodeDeviceStorageCapability {
 
   optional string serial = 6;
 
-  optional uint64 size = 11;
+  optional int32 size = 7;
 
-  optional uint64 logicalBlockSize = 8;
+  optional int32 logicalBlockSize = 8;
 
-  optional uint64 numBlocks = 9;
+  optional int32 numBlocks = 9;
 
   repeated NodeDeviceStorageSubCapability capability = 10;
 }
 
 // +gogo:genproto=true
 message NodeDeviceStorageRemovableCapability {
-  optional uint64 mediaAvailable = 1;
+  optional int32 mediaAvailable = 1;
 
-  optional uint64 mediaSize = 2;
+  optional int32 mediaSize = 2;
 
   optional string mediaLabel = 3;
 
-  optional uint64 logicalBlockSize = 4;
+  optional int32 logicalBlockSize = 4;
 
-  optional uint64 numBlocks = 5;
+  optional int32 numBlocks = 5;
 }
 
 // +gogo:genproto=true
@@ -6576,7 +6576,7 @@ message StorageEncryption {
 message StorageEncryptionCipher {
   optional string name = 1;
 
-  optional uint64 size = 5;
+  optional int64 size = 5;
 
   optional string mode = 3;
 
@@ -6603,7 +6603,7 @@ message StoragePool {
 
   optional string name = 2;
 
-  optional string uUID = 3;
+  optional string uuid = 3;
 
   optional StoragePoolSize allocation = 4;
 
@@ -6647,13 +6647,13 @@ message StoragePoolFeatures {
 
 // +gogo:genproto=true
 message StoragePoolPCIAddress {
-  optional uint64 domain = 1;
+  optional int32 domain = 1;
 
-  optional uint64 bus = 2;
+  optional int32 bus = 2;
 
-  optional uint64 slot = 3;
+  optional int32 slot = 3;
 
-  optional uint64 function = 4;
+  optional int32 function = 4;
 }
 
 // +gogo:genproto=true
@@ -6682,7 +6682,7 @@ message StoragePoolRefreshVol {
 message StoragePoolSize {
   optional string unit = 1;
 
-  optional uint64 value = 2;
+  optional int64 value = 2;
 }
 
 // +gogo:genproto=true
@@ -6729,7 +6729,7 @@ message StoragePoolSourceAdapter {
 
 // +gogo:genproto=true
 message StoragePoolSourceAdapterParentAddr {
-  optional uint64 uniqueId = 1;
+  optional int64 uniqueId = 1;
 
   optional StoragePoolPCIAddress address = 2;
 }
@@ -6761,9 +6761,9 @@ message StoragePoolSourceDevice {
 
 // +gogo:genproto=true
 message StoragePoolSourceDeviceFreeExtent {
-  optional uint64 start = 1;
+  optional int64 start = 1;
 
-  optional uint64 end = 2;
+  optional int64 end = 2;
 }
 
 // +gogo:genproto=true
@@ -6871,7 +6871,7 @@ message StorageVolumeBackingStore {
 message StorageVolumeSize {
   optional string unit = 1;
 
-  optional uint64 value = 2;
+  optional int64 value = 2;
 }
 
 // +gogo:genproto=true

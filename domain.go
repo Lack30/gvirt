@@ -21,3 +21,34 @@
 // SOFTWARE.
 
 package gkvm
+
+import (
+	"github.com/lack-io/gvirt/spec"
+	"libvirt.org/libvirt-go"
+)
+
+func (c *Client) GetDomains() ([]*spec.Domain, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	domains, err := cc.ListAllDomains(libvirt.CONNECT_LIST_DOMAINS_ACTIVE | libvirt.CONNECT_LIST_DOMAINS_INACTIVE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]*spec.Domain, 0, len(domains))
+	for _, dom := range domains {
+		doc, err := dom.GetXMLDesc(libvirt.DOMAIN_XML_SECURE | libvirt.DOMAIN_XML_INACTIVE)
+		if err != nil {
+			continue
+		}
+		d := &spec.Domain{}
+		if err := d.UnmarshalX(doc); err == nil {
+			out = append(out, d)
+		}
+	}
+	return out, nil
+}

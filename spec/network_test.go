@@ -5,17 +5,17 @@ import (
 	"testing"
 )
 
-var nicInAverage uint = 1000
-var nicInBurst uint = 10000
-var nicInPeak uint = 2000
-var nicInFloor uint = 500
-var nicOutAverage uint = 2000
+var nicInAverage int32 = 1000
+var nicInBurst int32 = 10000
+var nicInPeak int32 = 2000
+var nicInFloor int32 = 500
+var nicOutAverage int32 = 2000
 
-var netFwdDomain uint = 0
-var netFwdBus uint = 3
-var netFwdSlot uint = 0
-var netFwdFunc1 uint = 1
-var netFwdFunc2 uint = 2
+var netFwdDomain int32 = 0
+var netFwdBus int32 = 3
+var netFwdSlot int32 = 0
+var netFwdFunc1 int32 = 1
+var netFwdFunc2 int32 = 2
 
 var networkTestData = []struct {
 	Object   *Network
@@ -44,7 +44,7 @@ var networkTestData = []struct {
 		Object: &Network{
 			Name: "test",
 			MTU: &NetworkMTU{
-				Size: 1400,
+				Size_: 1400,
 			},
 			Domain: &NetworkDomain{
 				Name: "example.com",

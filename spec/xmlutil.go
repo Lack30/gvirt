@@ -177,8 +177,8 @@ func testCompareElement(filename, expectPath, actualPath string, expect, actual 
 	}
 
 	used := make([]bool, len(actual.Children))
-	expectChildIndexes := make(map[string]uint)
-	actualChildIndexes := make(map[string]uint)
+	expectChildIndexes := make(map[string]int32)
+	actualChildIndexes := make(map[string]int32)
 	for _, expectChild := range expect.Children {
 		expectIndex, _ := expectChildIndexes[expectChild.Name]
 		expectChildIndexes[expectChild.Name] = expectIndex + 1
@@ -210,7 +210,7 @@ func testCompareElement(filename, expectPath, actualPath string, expect, actual 
 		}
 	}
 
-	actualChildIndexes = make(map[string]uint)
+	actualChildIndexes = make(map[string]int32)
 	for i, actualChild := range actual.Children {
 		actualIndex, _ := actualChildIndexes[actualChild.Name]
 		actualChildIndexes[actualChild.Name] = actualIndex + 1

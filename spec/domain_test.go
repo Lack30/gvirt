@@ -7,47 +7,47 @@ import (
 )
 
 type PCIAddress struct {
-	Domain   uint
-	Bus      uint
-	Slot     uint
-	Function uint
+	Domain   int32
+	Bus      int32
+	Slot     int32
+	Function int32
 }
 
 type DriveAddress struct {
-	Controller uint
-	Bus        uint
-	Target     uint
-	Unit       uint
+	Controller int32
+	Bus        int32
+	Target     int32
+	Unit       int32
 }
 
 type ISAAddress struct {
-	IOBase uint
+	IOBase int32
 }
 
-var domainID int = 3
+var domainID int32 = 3
 
-var uhciIndex uint = 0
+var uhciIndex int32 = 0
 var uhciAddr = PCIAddress{0, 0, 1, 2}
 var nvmeAddr = PCIAddress{0, 1, 3, 0}
-var pciIndex uint = 0
-var pciTargetChassisNr uint = 7
-var pciTargetChassis uint = 23
-var pciTargetPort uint = 78
-var pciTargetBusNr uint = 2
-var pciTargetIndex uint = 3
-var pciTargetNUMANode uint = 2
-var scsiIndex uint = 0
-var scsiQueues uint = 3
-var scsiCmdPerLUN uint = 8
-var scsiMaxSectors uint = 512
+var pciIndex int32 = 0
+var pciTargetChassisNr int32 = 7
+var pciTargetChassis int32 = 23
+var pciTargetPort int32 = 78
+var pciTargetBusNr int32 = 2
+var pciTargetIndex int32 = 3
+var pciTargetNUMANode int32 = 2
+var scsiIndex int32 = 0
+var scsiQueues int32 = 3
+var scsiCmdPerLUN int32 = 8
+var scsiMaxSectors int32 = 512
 
-var usbHostBus uint = 14
-var usbHostDevice uint = 6
+var usbHostBus int32 = 14
+var usbHostDevice int32 = 6
 
-var pciHostDomain uint = 0
-var pciHostBus uint = 3
-var pciHostSlot uint = 14
-var pciHostFunction uint = 5
+var pciHostDomain int32 = 0
+var pciHostBus int32 = 3
+var pciHostSlot int32 = 14
+var pciHostFunction int32 = 5
 
 var diskAddr = PCIAddress{0, 0, 3, 0}
 var ifaceAddr = PCIAddress{0, 0, 4, 0}
@@ -60,33 +60,33 @@ var watchdogAddr = PCIAddress{0, 0, 8, 0}
 var rngAddr = PCIAddress{0, 0, 9, 0}
 var hostdevSCSI = DriveAddress{0, 0, 3, 0}
 
-var serialPort uint = 0
-var parallelPort uint = 0
-var tabletBus uint = 0
+var serialPort int32 = 0
+var parallelPort int32 = 0
+var tabletBus int32 = 0
 var tabletPort string = "1.1"
 
-var nicAverage int = 1000
-var nicBurst int = 10000
+var nicAverage int32 = 1000
+var nicBurst int32 = 10000
 
-var vcpuId0 uint = 0
-var vcpuOrder0 uint = 1
-var vcpuId1 uint = 1
+var vcpuId0 int32 = 0
+var vcpuOrder0 int32 = 1
+var vcpuId1 int32 = 1
 
-var memorydevAddressSlot uint = 0
-var memorydevAddressBase uint64 = 4294967296
+var memorydevAddressSlot int32 = 0
+var memorydevAddressBase int64 = 4294967296
 
-var rebootTimeout int = 0
-var cellID0 uint = 0
-var cellID1 uint = 1
+var rebootTimeout int32 = 0
+var cellID0 int32 = 0
+var cellID1 int32 = 1
 
-var ipv6Prefix uint = 24
+var ipv6Prefix int32 = 24
 
-var iothreadPriority int = -3
-var vcpuPriority int = -5
+var iothreadPriority int32 = -3
+var vcpuPriority int32 = -5
 
-var vepaManagerID uint = 5
-var vepaTypeID uint = 3
-var vepaTypeIDVersion uint = 12
+var vepaManagerID int32 = 5
+var vepaTypeID int32 = 3
+var vepaTypeIDVersion int32 = 12
 var vepaInstanceID = "c7bb5ab2-d42f-4690-89d6-f590eb199d0f"
 
 var vntagProfileID = "c7bb5ab2-d42f-4690-89d6-f590eb199d0f"
@@ -96,17 +96,17 @@ var ovsInterfaceID = "73728ac4-53d9-44de-8438-8d8f90beca00"
 
 var midoInterfaceID = "73728ac4-53d9-44de-8438-8d8f90beca00"
 
-var nvramReg uint64 = 0x4000
+var nvramReg int64 = 0x4000
 
-var smartcardController uint = 0
-var smartcardSlot uint = 7
+var smartcardController int32 = 0
+var smartcardSlot int32 = 7
 
-var redirBus uint = 0
+var redirBus int32 = 0
 var redirPort string = "3"
 
-var redirfilterClass uint = 0x08
-var redirfilterProduct uint = 0x2007
-var redirfilterVendor uint = 0x15e1
+var redirfilterClass int32 = 0x08
+var redirfilterProduct int32 = 0x2007
+var redirfilterVendor int32 = 0x15e1
 
 var domainTestData = []struct {
 	Object   Document
@@ -524,7 +524,7 @@ var domainTestData = []struct {
 						Model:  "dimm",
 						Access: "private",
 						Target: &DomainMemorydevTarget{
-							Size: &DomainMemorydevTargetSize{
+							Size_: &DomainMemorydevTargetSize{
 								Value: 1,
 								Unit:  "GiB",
 							},
@@ -637,12 +637,12 @@ var domainTestData = []struct {
 				MemoryHugePages: &DomainMemoryHugepages{
 					Hugepages: []DomainMemoryHugepage{
 						{
-							Size:    1,
+							Size_:    1,
 							Unit:    "G",
 							Nodeset: "0-3,5",
 						},
 						{
-							Size:    2,
+							Size_:    2,
 							Unit:    "M",
 							Nodeset: "4",
 						},
@@ -1738,8 +1738,8 @@ var domainTestData = []struct {
 								Burst:   &nicBurst,
 							},
 							Outbound: &DomainInterfaceBandwidthParams{
-								Average: new(int),
-								Burst:   new(int),
+								Average: new(int32),
+								Burst:   new(int32),
 							},
 						},
 					},
@@ -1888,7 +1888,7 @@ var domainTestData = []struct {
 					VPIndex: &DomainFeatureState{State: "on"},
 					Runtime: &DomainFeatureState{State: "on"},
 					Synic:   &DomainFeatureState{State: "on"},
-					Reset:   &DomainFeatureState{State: "on"},
+					Reset_:   &DomainFeatureState{State: "on"},
 					VendorId: &DomainFeatureHyperVVendorId{
 						DomainFeatureState{State: "on"}, "KVM Hv",
 					},
@@ -2006,7 +2006,7 @@ var domainTestData = []struct {
 								NUMANode:  &pciTargetNUMANode,
 							},
 							Hole64: &DomainControllerPCIHole64{
-								Size: 1024,
+								Size_: 1024,
 							},
 						},
 					},
@@ -2897,7 +2897,7 @@ var domainTestData = []struct {
 	{
 		Object: &DomainShmem{
 			Name: "demo",
-			Size: &DomainShmemSize{
+			Size_: &DomainShmemSize{
 				Value: 1,
 				Unit:  "GiB",
 			},
@@ -3768,7 +3768,7 @@ var domainTestData = []struct {
 				NodeMask: "0-1",
 			},
 			Target: &DomainMemorydevTarget{
-				Size: &DomainMemorydevTargetSize{
+				Size_: &DomainMemorydevTargetSize{
 					Value: 1,
 					Unit:  "GiB",
 				},
@@ -3776,7 +3776,7 @@ var domainTestData = []struct {
 					Value: 0,
 				},
 				Label: &DomainMemorydevTargetLabel{
-					Size: &DomainMemorydevTargetSize{
+					Size_: &DomainMemorydevTargetSize{
 						Value: 200,
 						Unit:  "KiB",
 					},
@@ -3867,7 +3867,7 @@ func TestDomain(t *testing.T) {
 			t.Fatalf("Could not clone %s", newobj.Interface())
 		}
 
-		err = newdocobj.Unmarshal(expect)
+		err = newdocobj.UnmarshalX(expect)
 		if err != nil {
 			t.Fatal(err)
 		}

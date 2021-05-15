@@ -65,8 +65,8 @@ type NodeDevicePCIExpress struct {
 type NodeDevicePCIExpressLink struct {
 	Validity string  `xml:"validity,attr,omitempty" json:"validity,omitempty" protobuf:"bytes,1,opt,name=validity"`
 	Speed    float64 `xml:"speed,attr,omitempty" json:"speed,omitempty" protobuf:"fixed64,2,opt,name=speed"`
-	Port     *uint   `xml:"port,attr" json:"port" protobuf:"varint,3,opt,name=port"`
-	Width    *uint   `xml:"width,attr" json:"width" protobuf:"varint,4,opt,name=width"`
+	Port     *int32  `xml:"port,attr" json:"port" protobuf:"varint,3,opt,name=port"`
+	Width    *int32  `xml:"width,attr" json:"width" protobuf:"varint,4,opt,name=width"`
 }
 
 // +gogo:genproto=true
@@ -83,10 +83,10 @@ type NodeDeviceNUMA struct {
 // +gogo:genproto=true
 type NodeDevicePCICapability struct {
 	Class        string                       `xml:"class,omitempty" json:"class,omitempty" protobuf:"bytes,1,opt,name=class"`
-	Domain       *uint                        `xml:"domain" json:"domain,omitempty" protobuf:"varint,2,opt,name=domain"`
-	Bus          *uint                        `xml:"bus" json:"bus,omitempty" protobuf:"varint,3,opt,name=bus"`
-	Slot         *uint                        `xml:"slot" json:"slot,omitempty" protobuf:"varint,4,opt,name=slot"`
-	Function     *uint                        `xml:"function" json:"function,omitempty" protobuf:"varint,5,opt,name=function"`
+	Domain       *int32                       `xml:"domain" json:"domain,omitempty" protobuf:"varint,2,opt,name=domain"`
+	Bus          *int32                       `xml:"bus" json:"bus,omitempty" protobuf:"varint,3,opt,name=bus"`
+	Slot         *int32                       `xml:"slot" json:"slot,omitempty" protobuf:"varint,4,opt,name=slot"`
+	Function     *int32                       `xml:"function" json:"function,omitempty" protobuf:"varint,5,opt,name=function"`
 	Product      NodeDeviceIDName             `xml:"product,omitempty" json:"product,omitempty" protobuf:"bytes,6,opt,name=product"`
 	Vendor       NodeDeviceIDName             `xml:"vendor,omitempty" json:"vendor,omitempty" protobuf:"bytes,7,opt,name=vendor"`
 	IOMMUGroup   *NodeDeviceIOMMUGroup        `xml:"iommuGroup" json:"iommuGroup,omitempty" protobuf:"bytes,8,opt,name=iommuGroup"`
@@ -97,10 +97,10 @@ type NodeDevicePCICapability struct {
 
 // +gogo:genproto=true
 type NodeDevicePCIAddress struct {
-	Domain   *uint `xml:"domain,attr" json:"domain,omitempty" protobuf:"varint,1,opt,name=domain"`
-	Bus      *uint `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
-	Slot     *uint `xml:"slot,attr" json:"slot,omitempty" protobuf:"varint,3,opt,name=slot"`
-	Function *uint `xml:"function,attr" json:"function,omitempty" protobuf:"varint,4,opt,name=function"`
+	Domain   *int32 `xml:"domain,attr" json:"domain,omitempty" protobuf:"varint,1,opt,name=domain"`
+	Bus      *int32 `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
+	Slot     *int32 `xml:"slot,attr" json:"slot,omitempty" protobuf:"varint,3,opt,name=slot"`
+	Function *int32 `xml:"function,attr" json:"function,omitempty" protobuf:"varint,4,opt,name=function"`
 }
 
 // +gogo:genproto=true
@@ -132,7 +132,7 @@ type NodeDeviceMDevType struct {
 	ID                 string `xml:"id,attr" json:"id" protobuf:"bytes,1,opt,name=id"`
 	Name               string `xml:"name" json:"name" protobuf:"bytes,2,opt,name=name"`
 	DeviceAPI          string `xml:"deviceAPI" json:"deviceAPI" protobuf:"bytes,3,opt,name=deviceAPI"`
-	AvailableInstances uint   `xml:"availableInstances" json:"availableInstances" protobuf:"varint,4,opt,name=availableInstances"`
+	AvailableInstances int32  `xml:"availableInstances" json:"availableInstances" protobuf:"varint,4,opt,name=availableInstances"`
 }
 
 // +gogo:genproto=true
@@ -233,8 +233,8 @@ type NodeDeviceSCSIHostSubCapability struct {
 
 // +gogo:genproto=true
 type NodeDeviceSCSIHostCapability struct {
-	Host       uint                              `xml:"host" json:"host" protobuf:"varint,1,opt,name=host"`
-	UniqueID   *uint                             `xml:"unique_id" json:"uniqueId,omitempty" protobuf:"varint,2,opt,name=uniqueId"`
+	Host       int32                             `xml:"host" json:"host" protobuf:"varint,1,opt,name=host"`
+	UniqueID   *int32                            `xml:"unique_id" json:"uniqueId,omitempty" protobuf:"varint,2,opt,name=uniqueId"`
 	Capability []NodeDeviceSCSIHostSubCapability `xml:"capability" json:"capability" protobuf:"bytes,3,rep,name=capability"`
 }
 
@@ -271,11 +271,11 @@ type NodeDeviceStorageSubCapability struct {
 
 // +gogo:genproto=true
 type NodeDeviceStorageRemovableCapability struct {
-	MediaAvailable   *uint  `xml:"media_available" json:"mediaAvailable,omitempty" protobuf:"varint,1,opt,name=mediaAvailable"`
-	MediaSize        *uint  `xml:"media_size" json:"mediaSize,omitempty" protobuf:"varint,2,opt,name=mediaSize"`
+	MediaAvailable   *int32 `xml:"media_available" json:"mediaAvailable,omitempty" protobuf:"varint,1,opt,name=mediaAvailable"`
+	MediaSize        *int32 `xml:"media_size" json:"mediaSize,omitempty" protobuf:"varint,2,opt,name=mediaSize"`
 	MediaLabel       string `xml:"media_label,omitempty" json:"mediaLabel,omitempty" protobuf:"bytes,3,opt,name=mediaLabel"`
-	LogicalBlockSize *uint  `xml:"logical_block_size" json:"logicalBlockSize,omitempty" protobuf:"varint,4,opt,name=logicalBlockSize"`
-	NumBlocks        *uint  `xml:"num_blocks" json:"numBlocks,omitempty" protobuf:"varint,5,opt,name=numBlocks"`
+	LogicalBlockSize *int32 `xml:"logical_block_size" json:"logicalBlockSize,omitempty" protobuf:"varint,4,opt,name=logicalBlockSize"`
+	NumBlocks        *int32 `xml:"num_blocks" json:"numBlocks,omitempty" protobuf:"varint,5,opt,name=numBlocks"`
 }
 
 // +gogo:genproto=true
@@ -286,9 +286,9 @@ type NodeDeviceStorageCapability struct {
 	Model            string                           `xml:"model,omitempty" json:"model,omitempty" protobuf:"bytes,4,opt,name=model"`
 	Vendor           string                           `xml:"vendor,omitempty" json:"vendor,omitempty" protobuf:"bytes,5,opt,name=vendor"`
 	Serial           string                           `xml:"serial,omitempty" json:"serial,omitempty" protobuf:"bytes,6,opt,name=serial"`
-	Size             *uint                            `xml:"size" json:"size,omitempty"`
-	LogicalBlockSize *uint                            `xml:"logical_block_size" json:"logicalBlockSize,omitempty" protobuf:"varint,8,opt,name=logicalBlockSize"`
-	NumBlocks        *uint                            `xml:"num_blocks" json:"numBlocks,omitempty" protobuf:"varint,9,opt,name=numBlocks"`
+	Size_            *int32                           `xml:"size" json:"size,omitempty" protobuf:"varint,7,opt,name=size"`
+	LogicalBlockSize *int32                           `xml:"logical_block_size" json:"logicalBlockSize,omitempty" protobuf:"varint,8,opt,name=logicalBlockSize"`
+	NumBlocks        *int32                           `xml:"num_blocks" json:"numBlocks,omitempty" protobuf:"varint,9,opt,name=numBlocks"`
 	Capability       []NodeDeviceStorageSubCapability `xml:"capability" json:"capability" protobuf:"bytes,10,rep,name=capability"`
 }
 
@@ -299,9 +299,9 @@ type NodeDeviceDRMCapability struct {
 
 // +gogo:genproto=true
 type NodeDeviceCCWCapability struct {
-	CSSID *uint `xml:"cssid" json:"cssid,omitempty" protobuf:"varint,1,opt,name=cssid"`
-	SSID  *uint `xml:"ssid" json:"ssid,omitempty" protobuf:"varint,2,opt,name=ssid"`
-	DevNo *uint `xml:"devno" json:"devno,omitempty" protobuf:"varint,3,opt,name=devno"`
+	CSSID *int32 `xml:"cssid" json:"cssid,omitempty" protobuf:"varint,1,opt,name=cssid"`
+	SSID  *int32 `xml:"ssid" json:"ssid,omitempty" protobuf:"varint,2,opt,name=ssid"`
+	DevNo *int32 `xml:"devno" json:"devno,omitempty" protobuf:"varint,3,opt,name=devno"`
 }
 
 // +gogo:genproto=true
@@ -325,9 +325,9 @@ type NodeDeviceMDevCapabilityAttrs struct {
 
 // +gogo:genproto=true
 type NodeDeviceCSSCapability struct {
-	CSSID        *uint                        `xml:"cssid" json:"cssid,omitempty" protobuf:"varint,1,opt,name=cssid"`
-	SSID         *uint                        `xml:"ssid" json:"ssid,omitempty" protobuf:"varint,2,opt,name=ssid"`
-	DevNo        *uint                        `xml:"devno" json:"devno,omitempty" protobuf:"varint,3,opt,name=devno"`
+	CSSID        *int32                       `xml:"cssid" json:"cssid,omitempty" protobuf:"varint,1,opt,name=cssid"`
+	SSID         *int32                       `xml:"ssid" json:"ssid,omitempty" protobuf:"varint,2,opt,name=ssid"`
+	DevNo        *int32                       `xml:"devno" json:"devno,omitempty" protobuf:"varint,3,opt,name=devno"`
 	Capabilities []NodeDeviceCSSSubCapability `xml:"capability" json:"capabilities" protobuf:"bytes,4,rep,name=capabilities"`
 }
 
@@ -380,19 +380,19 @@ func (a *NodeDevicePCIAddress) MarshalXML(e *xml.Encoder, start xml.StartElement
 func (a *NodeDevicePCIAddress) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "domain" {
-			if err := unmarshalUintAttr(attr.Value, &a.Domain, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Domain, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "bus" {
-			if err := unmarshalUintAttr(attr.Value, &a.Bus, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Bus, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "slot" {
-			if err := unmarshalUintAttr(attr.Value, &a.Slot, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Slot, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "function" {
-			if err := unmarshalUintAttr(attr.Value, &a.Function, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Function, 0); err != nil {
 				return err
 			}
 		}
@@ -493,7 +493,7 @@ func (c *NodeDeviceCCWCapability) UnmarshalXML(d *xml.Decoder, start xml.StartEl
 				return err
 			}
 
-			vali := uint(val)
+			vali := int32(val)
 			if tok.Name.Local == "cssid" {
 				c.CSSID = &vali
 			} else if tok.Name.Local == "ssid" {
@@ -588,7 +588,7 @@ func (c *NodeDeviceCSSCapability) UnmarshalXML(d *xml.Decoder, start xml.StartEl
 				return err
 			}
 
-			vali := uint(val)
+			vali := int32(val)
 			if tok.Name.Local == "cssid" {
 				c.CSSID = &vali
 			} else if tok.Name.Local == "ssid" {

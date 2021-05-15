@@ -5,7 +5,7 @@ import "encoding/xml"
 // +gogo:genproto=true
 type StoragePoolSize struct {
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,1,opt,name=unit"`
-	Value uint64 `xml:",chardata" json:"value,omitempty" protobuf:"varint,2,opt,name=value"`
+	Value int64  `xml:",chardata" json:"value,omitempty" protobuf:"varint,2,opt,name=value"`
 }
 
 // +gogo:genproto=true
@@ -56,8 +56,8 @@ type StoragePoolSourceDevice struct {
 
 // +gogo:genproto=true
 type StoragePoolSourceDeviceFreeExtent struct {
-	Start uint64 `xml:"start,attr" json:"start,omitempty" protobuf:"varint,1,opt,name=start"`
-	End   uint64 `xml:"end,attr" json:"end,omitempty" protobuf:"varint,2,opt,name=end"`
+	Start int64 `xml:"start,attr" json:"start,omitempty" protobuf:"varint,1,opt,name=start"`
+	End   int64 `xml:"end,attr" json:"end,omitempty" protobuf:"varint,2,opt,name=end"`
 }
 
 // +gogo:genproto=true
@@ -85,15 +85,15 @@ type StoragePoolSourceProduct struct {
 
 // +gogo:genproto=true
 type StoragePoolPCIAddress struct {
-	Domain   *uint `xml:"domain,attr,omitempty" json:"domain,omitempty" protobuf:"varint,1,opt,name=domain"`
-	Bus      *uint `xml:"bus,attr,omitempty" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
-	Slot     *uint `xml:"slot,attr,omitempty" json:"slot,omitempty" protobuf:"varint,3,opt,name=slot"`
-	Function *uint `xml:"function,attr,omitempty" json:"function,omitempty" protobuf:"varint,4,opt,name=function"`
+	Domain   *int32 `xml:"domain,attr,omitempty" json:"domain,omitempty" protobuf:"varint,1,opt,name=domain"`
+	Bus      *int32 `xml:"bus,attr,omitempty" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
+	Slot     *int32 `xml:"slot,attr,omitempty" json:"slot,omitempty" protobuf:"varint,3,opt,name=slot"`
+	Function *int32 `xml:"function,attr,omitempty" json:"function,omitempty" protobuf:"varint,4,opt,name=function"`
 }
 
 // +gogo:genproto=true
 type StoragePoolSourceAdapterParentAddr struct {
-	UniqueID uint64                 `xml:"unique_id,attr,omitempty" json:"uniqueId,omitempty" protobuf:"varint,1,opt,name=uniqueId"`
+	UniqueID int64                  `xml:"unique_id,attr,omitempty" json:"uniqueId,omitempty" protobuf:"varint,1,opt,name=uniqueId"`
 	Address  *StoragePoolPCIAddress `xml:"address,omitempty" json:"address,omitempty" protobuf:"bytes,2,opt,name=address"`
 }
 
@@ -163,7 +163,7 @@ type StoragePool struct {
 	XMLName    xml.Name             `xml:"pool" json:"-"`
 	Type       string               `xml:"type,attr" json:"type" protobuf:"bytes,1,opt,name=type"`
 	Name       string               `xml:"name,omitempty" json:"name" protobuf:"bytes,2,opt,name=name"`
-	UUID       string               `xml:"uuid,omitempty" json:"uuid" protobuf:"bytes,3,opt,name=uUID"`
+	UUID       string               `xml:"uuid,omitempty" json:"uuid" protobuf:"bytes,3,opt,name=uuid"`
 	Allocation *StoragePoolSize     `xml:"allocation" json:"allocation,omitempty" protobuf:"bytes,4,opt,name=allocation"`
 	Capacity   *StoragePoolSize     `xml:"capacity" json:"capacity,omitempty" protobuf:"bytes,5,opt,name=capacity"`
 	Available  *StoragePoolSize     `xml:"available" json:"available,omitempty" protobuf:"bytes,6,opt,name=available"`
@@ -213,19 +213,19 @@ func (a *StoragePoolPCIAddress) MarshalXML(e *xml.Encoder, start xml.StartElemen
 func (a *StoragePoolPCIAddress) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "domain" {
-			if err := unmarshalUintAttr(attr.Value, &a.Domain, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Domain, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "bus" {
-			if err := unmarshalUintAttr(attr.Value, &a.Bus, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Bus, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "slot" {
-			if err := unmarshalUintAttr(attr.Value, &a.Slot, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Slot, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "function" {
-			if err := unmarshalUintAttr(attr.Value, &a.Function, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Function, 0); err != nil {
 				return err
 			}
 		}

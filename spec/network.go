@@ -27,9 +27,9 @@ type NetworkVirtualPortParams struct {
 
 // +gogo:genproto=true
 type NetworkVirtualPortParamsAny struct {
-	ManagerID     *uint  `xml:"managerid,attr" json:"managerId,omitempty" protobuf:"varint,1,opt,name=managerId"`
-	TypeID        *uint  `xml:"typeid,attr" json:"typeId,omitempty" protobuf:"varint,2,opt,name=typeId"`
-	TypeIDVersion *uint  `xml:"typeidversion,attr" json:"typeIdVersion,omitempty" protobuf:"varint,3,opt,name=typeIdVersion"`
+	ManagerID     *int32 `xml:"managerid,attr" json:"managerId,omitempty" protobuf:"varint,1,opt,name=managerId"`
+	TypeID        *int32 `xml:"typeid,attr" json:"typeId,omitempty" protobuf:"varint,2,opt,name=typeId"`
+	TypeIDVersion *int32 `xml:"typeidversion,attr" json:"typeIdVersion,omitempty" protobuf:"varint,3,opt,name=typeIdVersion"`
 	InstanceID    string `xml:"instanceid,attr,omitempty" json:"instanceId,omitempty" protobuf:"bytes,4,opt,name=instanceId"`
 	ProfileID     string `xml:"profileid,attr,omitempty" json:"profileId,omitempty" protobuf:"bytes,5,opt,name=profileId"`
 	InterfaceID   string `xml:"interfaceid,attr,omitempty" json:"interfaceId,omitempty" protobuf:"bytes,6,opt,name=interfaceId"`
@@ -37,9 +37,9 @@ type NetworkVirtualPortParamsAny struct {
 
 // +gogo:genproto=true
 type NetworkVirtualPortParamsVEPA8021QBG struct {
-	ManagerID     *uint  `xml:"managerid,attr" json:"managerId,omitempty" protobuf:"varint,1,opt,name=managerId"`
-	TypeID        *uint  `xml:"typeid,attr" json:"typeId,omitempty" protobuf:"varint,2,opt,name=typeId"`
-	TypeIDVersion *uint  `xml:"typeidversion,attr" json:"typeIdVersion,omitempty" protobuf:"varint,3,opt,name=typeIdVersion"`
+	ManagerID     *int32 `xml:"managerid,attr" json:"managerId,omitempty" protobuf:"varint,1,opt,name=managerId"`
+	TypeID        *int32 `xml:"typeid,attr" json:"typeId,omitempty" protobuf:"varint,2,opt,name=typeId"`
+	TypeIDVersion *int32 `xml:"typeidversion,attr" json:"typeIdVersion,omitempty" protobuf:"varint,3,opt,name=typeIdVersion"`
 	InstanceID    string `xml:"instanceid,attr,omitempty" json:"instanceId,omitempty" protobuf:"bytes,4,opt,name=instanceId"`
 }
 
@@ -73,8 +73,8 @@ type NetworkForwardNATAddress struct {
 
 // +gogo:genproto=true
 type NetworkForwardNATPort struct {
-	Start uint `xml:"start,attr" json:"start" protobuf:"varint,1,opt,name=start"`
-	End   uint `xml:"end,attr" json:"end" protobuf:"varint,2,opt,name=end"`
+	Start int32 `xml:"start,attr" json:"start" protobuf:"varint,1,opt,name=start"`
+	End   int32 `xml:"end,attr" json:"end" protobuf:"varint,2,opt,name=end"`
 }
 
 // +gogo:genproto=true
@@ -113,10 +113,10 @@ type NetworkForwardAddress struct {
 
 // +gogo:genproto=true
 type NetworkForwardAddressPCI struct {
-	Domain   *uint `xml:"domain,attr" json:"domain,omitempty" protobuf:"varint,1,opt,name=domain"`
-	Bus      *uint `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
-	Slot     *uint `xml:"slot,attr" json:"slot,omitempty" protobuf:"varint,3,opt,name=slot"`
-	Function *uint `xml:"function,attr" json:"function,omitempty" protobuf:"varint,4,opt,name=function"`
+	Domain   *int32 `xml:"domain,attr" json:"domain,omitempty" protobuf:"varint,1,opt,name=domain"`
+	Bus      *int32 `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
+	Slot     *int32 `xml:"slot,attr" json:"slot,omitempty" protobuf:"varint,3,opt,name=slot"`
+	Function *int32 `xml:"function,attr" json:"function,omitempty" protobuf:"varint,4,opt,name=function"`
 }
 
 // +gogo:genproto=true
@@ -140,7 +140,7 @@ type NetworkDHCPRange struct {
 
 // +gogo:genproto=true
 type NetworkDHCPLease struct {
-	Expiry uint   `xml:"expiry,attr" json:"expiry" protobuf:"varint,1,opt,name=expiry"`
+	Expiry int32  `xml:"expiry,attr" json:"expiry" protobuf:"varint,1,opt,name=expiry"`
 	Unit   string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
@@ -172,7 +172,7 @@ type NetworkIP struct {
 	Address  string       `xml:"address,attr,omitempty" json:"address,omitempty" protobuf:"bytes,1,opt,name=address"`
 	Family   string       `xml:"family,attr,omitempty" json:"family,omitempty" protobuf:"bytes,2,opt,name=family"`
 	Netmask  string       `xml:"netmask,attr,omitempty" json:"netmask,omitempty" protobuf:"bytes,3,opt,name=netmask"`
-	Prefix   uint         `xml:"prefix,attr,omitempty" json:"prefix,omitempty" protobuf:"varint,4,opt,name=prefix"`
+	Prefix   int32        `xml:"prefix,attr,omitempty" json:"prefix,omitempty" protobuf:"varint,4,opt,name=prefix"`
 	LocalPtr string       `xml:"localPtr,attr,omitempty" json:"localPtr,omitempty" protobuf:"bytes,5,opt,name=localPtr"`
 	DHCP     *NetworkDHCP `xml:"dhcp" json:"dhcp,omitempty" protobuf:"bytes,6,opt,name=dhcp"`
 	TFTP     *NetworkTFTP `xml:"tftp" json:"tftp,omitempty" protobuf:"bytes,7,opt,name=tftp"`
@@ -188,7 +188,7 @@ type NetworkRoute struct {
 	Family  string `xml:"family,attr,omitempty" json:"family,omitempty" protobuf:"bytes,1,opt,name=family"`
 	Address string `xml:"address,attr,omitempty" json:"address,omitempty" protobuf:"bytes,2,opt,name=address"`
 	Netmask string `xml:"netmask,attr,omitempty" json:"netmask,omitempty" protobuf:"bytes,3,opt,name=netmask"`
-	Prefix  uint   `xml:"prefix,attr,omitempty" json:"prefix,omitempty" protobuf:"varint,4,opt,name=prefix"`
+	Prefix  int32  `xml:"prefix,attr,omitempty" json:"prefix,omitempty" protobuf:"varint,4,opt,name=prefix"`
 	Gateway string `xml:"gateway,attr,omitempty" json:"gateway,omitempty" protobuf:"bytes,5,opt,name=gateway"`
 	Metric  string `xml:"metric,attr,omitempty" json:"metric,omitempty" protobuf:"bytes,6,opt,name=metric"`
 }
@@ -224,9 +224,9 @@ type NetworkDNSSRV struct {
 	Service  string   `xml:"service,attr,omitempty" json:"service,omitempty" protobuf:"bytes,1,opt,name=service"`
 	Protocol string   `xml:"protocol,attr,omitempty" json:"protocol,omitempty" protobuf:"bytes,2,opt,name=protocol"`
 	Target   string   `xml:"target,attr,omitempty" json:"target,omitempty" protobuf:"bytes,3,opt,name=target"`
-	Port     uint     `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,4,opt,name=port"`
-	Priority uint     `xml:"priority,attr,omitempty" json:"priority,omitempty" protobuf:"varint,5,opt,name=priority"`
-	Weight   uint     `xml:"weight,attr,omitempty" json:"weight,omitempty" protobuf:"varint,6,opt,name=weight"`
+	Port     int32    `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,4,opt,name=port"`
+	Priority int32    `xml:"priority,attr,omitempty" json:"priority,omitempty" protobuf:"varint,5,opt,name=priority"`
+	Weight   int32    `xml:"weight,attr,omitempty" json:"weight,omitempty" protobuf:"varint,6,opt,name=weight"`
 	Domain   string   `xml:"domain,attr,omitempty" json:"domain,omitempty" protobuf:"bytes,7,opt,name=domain"`
 }
 
@@ -247,7 +247,7 @@ type NetworkMetadata struct {
 
 // +gogo:genproto=true
 type NetworkMTU struct {
-	Size uint `xml:"size,attr" json:"size"`
+	Size_ int32 `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
 }
 
 // +gogo:genproto=true
@@ -298,21 +298,21 @@ type NetworkVLAN struct {
 
 // +gogo:genproto=true
 type NetworkVLANTag struct {
-	ID         uint   `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
+	ID         int32  `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
 	NativeMode string `xml:"nativeMode,attr,omitempty" json:"nativeMode,omitempty" protobuf:"bytes,2,opt,name=nativeMode"`
 }
 
 // +gogo:genproto=true
 type NetworkBandwidthParams struct {
-	Average *uint `xml:"average,attr" json:"average" protobuf:"varint,1,opt,name=average"`
-	Peak    *uint `xml:"peak,attr" json:"peak" protobuf:"varint,2,opt,name=peak"`
-	Burst   *uint `xml:"burst,attr" json:"burst" protobuf:"varint,3,opt,name=burst"`
-	Floor   *uint `xml:"floor,attr" json:"floor" protobuf:"varint,4,opt,name=floor"`
+	Average *int32 `xml:"average,attr" json:"average" protobuf:"varint,1,opt,name=average"`
+	Peak    *int32 `xml:"peak,attr" json:"peak" protobuf:"varint,2,opt,name=peak"`
+	Burst   *int32 `xml:"burst,attr" json:"burst" protobuf:"varint,3,opt,name=burst"`
+	Floor   *int32 `xml:"floor,attr" json:"floor" protobuf:"varint,4,opt,name=floor"`
 }
 
 // +gogo:genproto=true
 type NetworkBandwidth struct {
-	ClassID  uint                    `xml:"classID,attr,omitempty" json:"classId" protobuf:"varint,1,opt,name=classId"`
+	ClassID  int32                   `xml:"classID,attr,omitempty" json:"classId" protobuf:"varint,1,opt,name=classId"`
 	Inbound  *NetworkBandwidthParams `xml:"inbound" json:"inbound,omitempty" protobuf:"bytes,2,opt,name=inbound"`
 	Outbound *NetworkBandwidthParams `xml:"outbound" json:"outbound,omitempty" protobuf:"bytes,3,opt,name=outbound"`
 }
@@ -430,19 +430,19 @@ func (a *NetworkForwardAddressPCI) MarshalXML(e *xml.Encoder, start xml.StartEle
 func (a *NetworkForwardAddressPCI) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "domain" {
-			if err := unmarshalUintAttr(attr.Value, &a.Domain, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Domain, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "bus" {
-			if err := unmarshalUintAttr(attr.Value, &a.Bus, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Bus, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "slot" {
-			if err := unmarshalUintAttr(attr.Value, &a.Slot, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Slot, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "function" {
-			if err := unmarshalUintAttr(attr.Value, &a.Function, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Function, 0); err != nil {
 				return err
 			}
 		}

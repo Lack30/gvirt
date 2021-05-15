@@ -53,10 +53,10 @@ var storageVolumeTestData = []struct {
 					Ctime: "1341930622.047245868",
 				},
 				Compat: "1.1",
-				NoCOW:  &struct{}{},
+				NoCOW:  &Empty{},
 				Features: []StorageVolumeTargetFeature{
 					StorageVolumeTargetFeature{
-						LazyRefcounts: &struct{}{},
+						LazyRefcounts: &Empty{},
 					},
 				},
 			},
@@ -175,7 +175,7 @@ var storageVolumeTestData = []struct {
 					},
 					Cipher: &StorageEncryptionCipher{
 						Name: "twofish",
-						Size: 256,
+						Size_: 256,
 						Mode: "cbc",
 						Hash: "sha256",
 					},

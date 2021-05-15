@@ -9,7 +9,7 @@ type Empty struct {
 // +gogo:genproto=true
 type StorageVolumeSize struct {
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,1,opt,name=unit"`
-	Value uint64 `xml:",chardata" json:"value" protobuf:"varint,2,opt,name=value"`
+	Value int64  `xml:",chardata" json:"value" protobuf:"varint,2,opt,name=value"`
 }
 
 // +gogo:genproto=true

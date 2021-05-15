@@ -37,7 +37,7 @@ type DomainSnapshot struct {
 	Memory       *DomainSnapshotMemory `xml:"memory" json:"memory,omitempty" protobuf:"bytes,6,opt,name=memory"`
 	Disks        *DomainSnapshotDisks  `xml:"disks" json:"disks,omitempty" protobuf:"bytes,7,opt,name=disks"`
 	Domain       *Domain               `xml:"domain" json:"domain,omitempty" protobuf:"bytes,8,opt,name=domain"`
-	Active       *uint                 `xml:"active" json:"active,omitempty" protobuf:"varint,9,opt,name=active"`
+	Active       *int32                `xml:"active" json:"active,omitempty" protobuf:"varint,9,opt,name=active"`
 }
 
 type domainSnapshotDisk DomainSnapshotDisk

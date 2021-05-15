@@ -40,7 +40,7 @@ type NWFilterParameter struct {
 type NWFilterField struct {
 	Var  string `json:"var" protobuf:"bytes,1,opt,name=var"`
 	Str  string `json:"str" protobuf:"bytes,2,opt,name=str"`
-	Uint *uint  `json:"uint,omitempty" protobuf:"varint,3,opt,name=uint"`
+	Uint *int32 `json:"int32,omitempty" protobuf:"varint,3,opt,name=int32"`
 }
 
 // +gogo:genproto=true
@@ -390,7 +390,7 @@ func (s *NWFilterField) UnmarshalXMLAttr(attr xml.Attr) error {
 		if err != nil {
 			return err
 		}
-		uval := uint(val)
+		uval := int32(val)
 		s.Uint = &uval
 	}
 	s.Str = attr.Value

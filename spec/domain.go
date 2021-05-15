@@ -10,8 +10,8 @@ import (
 
 // +gogo:genproto=true
 type DomainControllerPCIHole64 struct {
-	Size uint64 `xml:",chardata" json:"size"`
-	Unit string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
+	Size_ int64  `xml:",chardata" json:"size" protobuf:"varint,1,opt,name=size"`
+	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
 // +gogo:genproto=true
@@ -21,12 +21,12 @@ type DomainControllerPCIModel struct {
 
 // +gogo:genproto=true
 type DomainControllerPCITarget struct {
-	ChassisNr *uint  `json:"chassisNr,omitempty" protobuf:"varint,1,opt,name=chassisNr"`
-	Chassis   *uint  `json:"chassis,omitempty" protobuf:"varint,2,opt,name=chassis"`
-	Port      *uint  `json:"port,omitempty" protobuf:"varint,3,opt,name=port"`
-	BusNr     *uint  `json:"busNr,omitempty" protobuf:"varint,4,opt,name=busNr"`
-	Index     *uint  `json:"index,omitempty" protobuf:"varint,5,opt,name=index"`
-	NUMANode  *uint  `json:"numaNode,omitempty" protobuf:"varint,6,opt,name=numaNode"`
+	ChassisNr *int32 `json:"chassisNr,omitempty" protobuf:"varint,1,opt,name=chassisNr"`
+	Chassis   *int32 `json:"chassis,omitempty" protobuf:"varint,2,opt,name=chassis"`
+	Port      *int32 `json:"port,omitempty" protobuf:"varint,3,opt,name=port"`
+	BusNr     *int32 `json:"busNr,omitempty" protobuf:"varint,4,opt,name=busNr"`
+	Index     *int32 `json:"index,omitempty" protobuf:"varint,5,opt,name=index"`
+	NUMANode  *int32 `json:"numaNode,omitempty" protobuf:"varint,6,opt,name=numaNode"`
 	Hotplug   string `json:"hotplug,omitempty" protobuf:"bytes,7,opt,name=hotplug"`
 }
 
@@ -39,34 +39,34 @@ type DomainControllerPCI struct {
 
 // +gogo:genproto=true
 type DomainControllerUSBMaster struct {
-	StartPort uint `xml:"startport,attr" json:"startPort" protobuf:"varint,1,opt,name=startPort"`
+	StartPort int32 `xml:"startport,attr" json:"startPort" protobuf:"varint,1,opt,name=startPort"`
 }
 
 // +gogo:genproto=true
 type DomainControllerUSB struct {
-	Port   *uint                      `xml:"ports,attr" json:"port,omitempty" protobuf:"varint,1,opt,name=port"`
+	Port   *int32                     `xml:"ports,attr" json:"port,omitempty" protobuf:"varint,1,opt,name=port"`
 	Master *DomainControllerUSBMaster `xml:"master,omitempty" json:"master,omitempty" protobuf:"bytes,2,opt,name=master"`
 }
 
 // +gogo:genproto=true
 type DomainControllerVirtIOSerial struct {
-	Ports   *uint `xml:"ports,attr" json:"ports,omitempty" protobuf:"varint,1,opt,name=ports"`
-	Vectors *uint `xml:"vectors,attr" json:"vectors,omitempty" protobuf:"varint,2,opt,name=vectors"`
+	Ports   *int32 `xml:"ports,attr" json:"ports,omitempty" protobuf:"varint,1,opt,name=ports"`
+	Vectors *int32 `xml:"vectors,attr" json:"vectors,omitempty" protobuf:"varint,2,opt,name=vectors"`
 }
 
 // +gogo:genproto=true
 type DomainControllerXenBus struct {
-	MaxGrantFrames   uint `xml:"maxGrantFrames,attr,omitempty" json:"maxGrantFrames,omitempty" protobuf:"varint,1,opt,name=maxGrantFrames"`
-	MaxEventChannels uint `xml:"maxEventChannels,attr,omitempty" json:"maxEventChannels,omitempty" protobuf:"varint,2,opt,name=maxEventChannels"`
+	MaxGrantFrames   int32 `xml:"maxGrantFrames,attr,omitempty" json:"maxGrantFrames,omitempty" protobuf:"varint,1,opt,name=maxGrantFrames"`
+	MaxEventChannels int32 `xml:"maxEventChannels,attr,omitempty" json:"maxEventChannels,omitempty" protobuf:"varint,2,opt,name=maxEventChannels"`
 }
 
 // +gogo:genproto=true
 type DomainControllerDriver struct {
-	Queues     *uint  `xml:"queues,attr" json:"queues,omitempty" protobuf:"varint,1,opt,name=queues"`
-	CmdPerLUN  *uint  `xml:"cmd_per_lun,attr" json:"cmdPerLun,omitempty" protobuf:"varint,2,opt,name=cmdPerLun"`
-	MaxSectors *uint  `xml:"max_sectors,attr" json:"maxSectors,omitempty" protobuf:"varint,3,opt,name=maxSectors"`
+	Queues     *int32 `xml:"queues,attr" json:"queues,omitempty" protobuf:"varint,1,opt,name=queues"`
+	CmdPerLUN  *int32 `xml:"cmd_per_lun,attr" json:"cmdPerLun,omitempty" protobuf:"varint,2,opt,name=cmdPerLun"`
+	MaxSectors *int32 `xml:"max_sectors,attr" json:"maxSectors,omitempty" protobuf:"varint,3,opt,name=maxSectors"`
 	IOEventFD  string `xml:"ioeventfd,attr,omitempty" json:"ioeventfd,omitempty" protobuf:"bytes,4,opt,name=ioeventfd"`
-	IOThread   uint   `xml:"iothread,attr,omitempty" json:"iothread,omitempty" protobuf:"varint,5,opt,name=iothread"`
+	IOThread   int32  `xml:"iothread,attr,omitempty" json:"iothread,omitempty" protobuf:"varint,5,opt,name=iothread"`
 	IOMMU      string `xml:"iommu,attr,omitempty" json:"iommu,omitempty" protobuf:"bytes,6,opt,name=iommu"`
 	ATS        string `xml:"ats,attr,omitempty" json:"ats,omitempty" protobuf:"bytes,7,opt,name=ats"`
 	Packed     string `xml:"packed,attr,omitempty" json:"packed,omitempty" protobuf:"bytes,8,opt,name=packed"`
@@ -76,7 +76,7 @@ type DomainControllerDriver struct {
 type DomainController struct {
 	XMLName      xml.Name                      `xml:"controller" json:"-"`
 	Type         string                        `xml:"type,attr" json:"type,omitempty" protobuf:"bytes,1,opt,name=type"`
-	Index        *uint                         `xml:"index,attr" json:"index,omitempty" protobuf:"varint,2,opt,name=index"`
+	Index        *int32                        `xml:"index,attr" json:"index,omitempty" protobuf:"varint,2,opt,name=index"`
 	Model        string                        `xml:"model,attr,omitempty" json:"model,omitempty" protobuf:"bytes,3,opt,name=model"`
 	Driver       *DomainControllerDriver       `xml:"driver" json:"driver,omitempty" protobuf:"bytes,4,opt,name=driver"`
 	PCI          *DomainControllerPCI          `xml:"-" json:"pci,omitempty" protobuf:"bytes,5,opt,name=pci"`
@@ -127,7 +127,7 @@ type DomainDiskCookies struct {
 
 // +gogo:genproto=true
 type DomainDiskSourceReadahead struct {
-	Size string `xml:"size,attr" json:"size"`
+	Size_ string `xml:"size,attr" json:"size" protobuf:"bytes,1,opt,name=size"`
 }
 
 // +gogo:genproto=true
@@ -155,7 +155,7 @@ type DomainDiskSource struct {
 	NVME          *DomainDiskSourceNVME      `xml:"-" json:"nvme,omitempty" protobuf:"bytes,6,opt,name=nvme"`
 	VHostUser     *DomainDiskSourceVHostUser `xml:"-" json:"vHostUser,omitempty" protobuf:"bytes,7,opt,name=vHostUser"`
 	StartupPolicy string                     `xml:"startupPolicy,attr,omitempty" json:"startupPolicy,omitempty" protobuf:"bytes,8,opt,name=startupPolicy"`
-	Index         uint                       `xml:"index,attr,omitempty" json:"index,omitempty" protobuf:"varint,9,opt,name=index"`
+	Index         int32                      `xml:"index,attr,omitempty" json:"index,omitempty" protobuf:"varint,9,opt,name=index"`
 	Encryption    *DomainDiskEncryption      `xml:"encryption" json:"encryption,omitempty" protobuf:"bytes,10,opt,name=encryption"`
 	Reservations  *DomainDiskReservations    `xml:"reservations" json:"reservations,omitempty" protobuf:"bytes,11,opt,name=reservations"`
 	Slices        *DomainDiskSlices          `xml:"slices" json:"slices,omitempty" protobuf:"bytes,12,opt,name=slices"`
@@ -173,8 +173,8 @@ type DomainDiskSlices struct {
 // +gogo:genproto=true
 type DomainDiskSlice struct {
 	Type   string `xml:"type,attr" json:"type" protobuf:"bytes,1,opt,name=type"`
-	Offset uint   `xml:"offset,attr" json:"offset" protobuf:"varint,2,opt,name=offset"`
-	Size   uint   `xml:"size,attr" json:"size"`
+	Offset int32  `xml:"offset,attr" json:"offset" protobuf:"varint,2,opt,name=offset"`
+	Size_  int32  `xml:"size,attr" json:"size" protobuf:"varint,3,opt,name=size"`
 }
 
 // +gogo:genproto=true
@@ -191,7 +191,7 @@ type DomainDiskSourceNVME struct {
 // +gogo:genproto=true
 type DomainDiskSourceNVMEPCI struct {
 	Managed   string            `xml:"managed,attr,omitempty" json:"managed,omitempty" protobuf:"bytes,1,opt,name=managed"`
-	Namespace uint64            `xml:"namespace,attr,omitempty" json:"namespace,omitempty" protobuf:"varint,2,opt,name=namespace"`
+	Namespace int64             `xml:"namespace,attr,omitempty" json:"namespace,omitempty" protobuf:"varint,2,opt,name=namespace"`
 	Address   *DomainAddressPCI `xml:"address" json:"address,omitempty" protobuf:"bytes,3,opt,name=address"`
 }
 
@@ -280,9 +280,9 @@ type DomainDiskDriver struct {
 	EventIDX      string                   `xml:"event_idx,attr,omitempty" json:"eventIdx,omitempty" protobuf:"bytes,8,opt,name=eventIdx"`
 	CopyOnRead    string                   `xml:"copy_on_read,attr,omitempty" json:"copyOnRead,omitempty" protobuf:"bytes,9,opt,name=copyOnRead"`
 	Discard       string                   `xml:"discard,attr,omitempty" json:"discard,omitempty" protobuf:"bytes,10,opt,name=discard"`
-	IOThread      *uint                    `xml:"iothread,attr" json:"iothread,omitempty" protobuf:"varint,11,opt,name=iothread"`
+	IOThread      *int32                   `xml:"iothread,attr" json:"iothread,omitempty" protobuf:"varint,11,opt,name=iothread"`
 	DetectZeros   string                   `xml:"detect_zeroes,attr,omitempty" json:"detectZeros,omitempty" protobuf:"bytes,12,opt,name=detectZeros"`
-	Queues        *uint                    `xml:"queues,attr" json:"queues,omitempty" protobuf:"varint,13,opt,name=queues"`
+	Queues        *int32                   `xml:"queues,attr" json:"queues,omitempty" protobuf:"varint,13,opt,name=queues"`
 	IOMMU         string                   `xml:"iommu,attr,omitempty" json:"iommu,omitempty" protobuf:"bytes,14,opt,name=iommu"`
 	ATS           string                   `xml:"ats,attr,omitempty" json:"ats,omitempty" protobuf:"bytes,15,opt,name=ats"`
 	Packed        string                   `xml:"packed,attr,omitempty" json:"packed,omitempty" protobuf:"bytes,16,opt,name=packed"`
@@ -295,7 +295,7 @@ type DomainDiskTarget struct {
 	Bus          string `xml:"bus,attr,omitempty" json:"bus,omitempty" protobuf:"bytes,2,opt,name=bus"`
 	Tray         string `xml:"tray,attr,omitempty" json:"tray,omitempty" protobuf:"bytes,3,opt,name=tray"`
 	Removable    string `xml:"removable,attr,omitempty" json:"removable,omitempty" protobuf:"bytes,4,opt,name=removable"`
-	RotationRate uint   `xml:"rotation_rate,attr,omitempty" json:"rotationRate,omitempty" protobuf:"varint,5,opt,name=rotationRate"`
+	RotationRate int32  `xml:"rotation_rate,attr,omitempty" json:"rotationRate,omitempty" protobuf:"varint,5,opt,name=rotationRate"`
 }
 
 // +gogo:genproto=true
@@ -318,40 +318,40 @@ type DomainDiskTransient struct {
 
 // +gogo:genproto=true
 type DomainDiskIOTune struct {
-	TotalBytesSec          uint64 `xml:"total_bytes_sec,omitempty" json:"totalBytesSec,omitempty" protobuf:"varint,1,opt,name=totalBytesSec"`
-	ReadBytesSec           uint64 `xml:"read_bytes_sec,omitempty" json:"readBytesSec,omitempty" protobuf:"varint,2,opt,name=readBytesSec"`
-	WriteBytesSec          uint64 `xml:"write_bytes_sec,omitempty" json:"writeBytesSec,omitempty" protobuf:"varint,3,opt,name=writeBytesSec"`
-	TotalIopsSec           uint64 `xml:"total_iops_sec,omitempty" json:"totalIopsSec,omitempty" protobuf:"varint,4,opt,name=totalIopsSec"`
-	ReadIopsSec            uint64 `xml:"read_iops_sec,omitempty" json:"readIopsSec,omitempty" protobuf:"varint,5,opt,name=readIopsSec"`
-	WriteIopsSec           uint64 `xml:"write_iops_sec,omitempty" json:"writeIopsSec,omitempty" protobuf:"varint,6,opt,name=writeIopsSec"`
-	TotalBytesSecMax       uint64 `xml:"total_bytes_sec_max,omitempty" json:"totalBytesSecMax,omitempty" protobuf:"varint,7,opt,name=totalBytesSecMax"`
-	ReadBytesSecMax        uint64 `xml:"read_bytes_sec_max,omitempty" json:"readBytesSecMax,omitempty" protobuf:"varint,8,opt,name=readBytesSecMax"`
-	WriteBytesSecMax       uint64 `xml:"write_bytes_sec_max,omitempty" json:"writeBytesSecMax,omitempty" protobuf:"varint,9,opt,name=writeBytesSecMax"`
-	TotalIopsSecMax        uint64 `xml:"total_iops_sec_max,omitempty" json:"totalIopsSecMax,omitempty" protobuf:"varint,10,opt,name=totalIopsSecMax"`
-	ReadIopsSecMax         uint64 `xml:"read_iops_sec_max,omitempty" json:"readIopsSecMax,omitempty" protobuf:"varint,11,opt,name=readIopsSecMax"`
-	WriteIopsSecMax        uint64 `xml:"write_iops_sec_max,omitempty" json:"writeIopsSecMax,omitempty" protobuf:"varint,12,opt,name=writeIopsSecMax"`
-	TotalBytesSecMaxLength uint64 `xml:"total_bytes_sec_max_length,omitempty" json:"totalBytesSecMaxLength,omitempty" protobuf:"varint,13,opt,name=totalBytesSecMaxLength"`
-	ReadBytesSecMaxLength  uint64 `xml:"read_bytes_sec_max_length,omitempty" json:"readBytesSecMaxLength,omitempty" protobuf:"varint,14,opt,name=readBytesSecMaxLength"`
-	WriteBytesSecMaxLength uint64 `xml:"write_bytes_sec_max_length,omitempty" json:"writeBytesSecMaxLength,omitempty" protobuf:"varint,15,opt,name=writeBytesSecMaxLength"`
-	TotalIopsSecMaxLength  uint64 `xml:"total_iops_sec_max_length,omitempty" json:"totalIopsSecMaxLength,omitempty" protobuf:"varint,16,opt,name=totalIopsSecMaxLength"`
-	ReadIopsSecMaxLength   uint64 `xml:"read_iops_sec_max_length,omitempty" json:"readIopsSecMaxLength,omitempty" protobuf:"varint,17,opt,name=readIopsSecMaxLength"`
-	WriteIopsSecMaxLength  uint64 `xml:"write_iops_sec_max_length,omitempty" json:"writeIopsSecMaxLength,omitempty" protobuf:"varint,18,opt,name=writeIopsSecMaxLength"`
-	SizeIopsSec            uint64 `xml:"size_iops_sec,omitempty" json:"sizeIopsSec,omitempty" protobuf:"varint,19,opt,name=sizeIopsSec"`
+	TotalBytesSec          int64  `xml:"total_bytes_sec,omitempty" json:"totalBytesSec,omitempty" protobuf:"varint,1,opt,name=totalBytesSec"`
+	ReadBytesSec           int64  `xml:"read_bytes_sec,omitempty" json:"readBytesSec,omitempty" protobuf:"varint,2,opt,name=readBytesSec"`
+	WriteBytesSec          int64  `xml:"write_bytes_sec,omitempty" json:"writeBytesSec,omitempty" protobuf:"varint,3,opt,name=writeBytesSec"`
+	TotalIopsSec           int64  `xml:"total_iops_sec,omitempty" json:"totalIopsSec,omitempty" protobuf:"varint,4,opt,name=totalIopsSec"`
+	ReadIopsSec            int64  `xml:"read_iops_sec,omitempty" json:"readIopsSec,omitempty" protobuf:"varint,5,opt,name=readIopsSec"`
+	WriteIopsSec           int64  `xml:"write_iops_sec,omitempty" json:"writeIopsSec,omitempty" protobuf:"varint,6,opt,name=writeIopsSec"`
+	TotalBytesSecMax       int64  `xml:"total_bytes_sec_max,omitempty" json:"totalBytesSecMax,omitempty" protobuf:"varint,7,opt,name=totalBytesSecMax"`
+	ReadBytesSecMax        int64  `xml:"read_bytes_sec_max,omitempty" json:"readBytesSecMax,omitempty" protobuf:"varint,8,opt,name=readBytesSecMax"`
+	WriteBytesSecMax       int64  `xml:"write_bytes_sec_max,omitempty" json:"writeBytesSecMax,omitempty" protobuf:"varint,9,opt,name=writeBytesSecMax"`
+	TotalIopsSecMax        int64  `xml:"total_iops_sec_max,omitempty" json:"totalIopsSecMax,omitempty" protobuf:"varint,10,opt,name=totalIopsSecMax"`
+	ReadIopsSecMax         int64  `xml:"read_iops_sec_max,omitempty" json:"readIopsSecMax,omitempty" protobuf:"varint,11,opt,name=readIopsSecMax"`
+	WriteIopsSecMax        int64  `xml:"write_iops_sec_max,omitempty" json:"writeIopsSecMax,omitempty" protobuf:"varint,12,opt,name=writeIopsSecMax"`
+	TotalBytesSecMaxLength int64  `xml:"total_bytes_sec_max_length,omitempty" json:"totalBytesSecMaxLength,omitempty" protobuf:"varint,13,opt,name=totalBytesSecMaxLength"`
+	ReadBytesSecMaxLength  int64  `xml:"read_bytes_sec_max_length,omitempty" json:"readBytesSecMaxLength,omitempty" protobuf:"varint,14,opt,name=readBytesSecMaxLength"`
+	WriteBytesSecMaxLength int64  `xml:"write_bytes_sec_max_length,omitempty" json:"writeBytesSecMaxLength,omitempty" protobuf:"varint,15,opt,name=writeBytesSecMaxLength"`
+	TotalIopsSecMaxLength  int64  `xml:"total_iops_sec_max_length,omitempty" json:"totalIopsSecMaxLength,omitempty" protobuf:"varint,16,opt,name=totalIopsSecMaxLength"`
+	ReadIopsSecMaxLength   int64  `xml:"read_iops_sec_max_length,omitempty" json:"readIopsSecMaxLength,omitempty" protobuf:"varint,17,opt,name=readIopsSecMaxLength"`
+	WriteIopsSecMaxLength  int64  `xml:"write_iops_sec_max_length,omitempty" json:"writeIopsSecMaxLength,omitempty" protobuf:"varint,18,opt,name=writeIopsSecMaxLength"`
+	SizeIopsSec            int64  `xml:"size_iops_sec,omitempty" json:"sizeIopsSec,omitempty" protobuf:"varint,19,opt,name=sizeIopsSec"`
 	GroupName              string `xml:"group_name,omitempty" json:"groupName,omitempty" protobuf:"bytes,20,opt,name=groupName"`
 }
 
 // +gogo:genproto=true
 type DomainDiskGeometry struct {
-	Cylinders uint   `xml:"cyls,attr" json:"cyli" protobuf:"varint,1,opt,name=cyli"`
-	Headers   uint   `xml:"heads,attr" json:"heads" protobuf:"varint,2,opt,name=heads"`
-	Sectors   uint   `xml:"secs,attr" json:"secs" protobuf:"varint,3,opt,name=secs"`
+	Cylinders int32  `xml:"cyls,attr" json:"cyli" protobuf:"varint,1,opt,name=cyli"`
+	Headers   int32  `xml:"heads,attr" json:"heads" protobuf:"varint,2,opt,name=heads"`
+	Sectors   int32  `xml:"secs,attr" json:"secs" protobuf:"varint,3,opt,name=secs"`
 	Trans     string `xml:"trans,attr,omitempty" json:"trans,omitempty" protobuf:"bytes,4,opt,name=trans"`
 }
 
 // +gogo:genproto=true
 type DomainDiskBlockIO struct {
-	LogicalBlockSize  uint `xml:"logical_block_size,attr,omitempty" json:"logicalBlockSize,omitempty" protobuf:"varint,1,opt,name=logicalBlockSize"`
-	PhysicalBlockSize uint `xml:"physical_block_size,attr,omitempty" json:"physicalBlockSize,omitempty" protobuf:"varint,2,opt,name=physicalBlockSize"`
+	LogicalBlockSize  int32 `xml:"logical_block_size,attr,omitempty" json:"logicalBlockSize,omitempty" protobuf:"varint,1,opt,name=logicalBlockSize"`
+	PhysicalBlockSize int32 `xml:"physical_block_size,attr,omitempty" json:"physicalBlockSize,omitempty" protobuf:"varint,2,opt,name=physicalBlockSize"`
 }
 
 // +gogo:genproto=true
@@ -362,7 +362,7 @@ type DomainDiskFormat struct {
 
 // +gogo:genproto=true
 type DomainDiskBackingStore struct {
-	Index        uint                    `xml:"index,attr,omitempty" json:"index,omitempty" protobuf:"varint,1,opt,name=index"`
+	Index        int32                   `xml:"index,attr,omitempty" json:"index,omitempty" protobuf:"varint,1,opt,name=index"`
 	Format       *DomainDiskFormat       `xml:"format" json:"format,omitempty" protobuf:"bytes,2,opt,name=format"`
 	Source       *DomainDiskSource       `xml:"source" json:"source,omitempty" protobuf:"bytes,3,opt,name=source"`
 	BackingStore *DomainDiskBackingStore `xml:"backingStore" json:"backingStore,omitempty" protobuf:"bytes,4,opt,name=backingStore"`
@@ -423,7 +423,7 @@ type DomainFilesystemDriver struct {
 	IOMMU    string `xml:"iommu,attr,omitempty" json:"iommu,omitempty" protobuf:"bytes,5,opt,name=iommu"`
 	ATS      string `xml:"ats,attr,omitempty" json:"ats,omitempty" protobuf:"bytes,6,opt,name=ats"`
 	Packed   string `xml:"packed,attr,omitempty" json:"packed,omitempty" protobuf:"bytes,7,opt,name=packed"`
-	Queue    uint   `xml:"queue,attr,omitempty" json:"queue,omitempty" protobuf:"varint,8,opt,name=queue"`
+	Queue    int32  `xml:"queue,attr,omitempty" json:"queue,omitempty" protobuf:"varint,8,opt,name=queue"`
 }
 
 // +gogo:genproto=true
@@ -460,7 +460,7 @@ type DomainFilesystemSourceTemplate struct {
 
 // +gogo:genproto=true
 type DomainFilesystemSourceRAM struct {
-	Usage uint   `xml:"usage,attr" json:"usage" protobuf:"varint,1,opt,name=usage"`
+	Usage int32  `xml:"usage,attr" json:"usage" protobuf:"varint,1,opt,name=usage"`
 	Units string `xml:"units,attr,omitempty" json:"units,omitempty" protobuf:"bytes,2,opt,name=units"`
 }
 
@@ -486,13 +486,13 @@ type DomainFilesystemReadOnly struct {
 
 // +gogo:genproto=true
 type DomainFilesystemSpaceHardLimit struct {
-	Value uint   `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int32  `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
 // +gogo:genproto=true
 type DomainFilesystemSpaceSoftLimit struct {
-	Value uint   `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int32  `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
@@ -584,21 +584,21 @@ type DomainInterfaceSourceEthernet struct {
 // +gogo:genproto=true
 type DomainInterfaceSourceServer struct {
 	Address string                      `xml:"address,attr,omitempty" json:"address,omitempty" protobuf:"bytes,1,opt,name=address"`
-	Port    uint                        `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
+	Port    int32                       `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
 	Local   *DomainInterfaceSourceLocal `xml:"local" json:"local,omitempty" protobuf:"bytes,3,opt,name=local"`
 }
 
 // +gogo:genproto=true
 type DomainInterfaceSourceClient struct {
 	Address string                      `xml:"address,attr,omitempty" json:"address,omitempty" protobuf:"bytes,1,opt,name=address"`
-	Port    uint                        `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
+	Port    int32                       `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
 	Local   *DomainInterfaceSourceLocal `xml:"local" json:"local,omitempty" protobuf:"bytes,3,opt,name=local"`
 }
 
 // +gogo:genproto=true
 type DomainInterfaceSourceMCast struct {
 	Address string                      `xml:"address,attr,omitempty" json:"address,omitempty" protobuf:"bytes,1,opt,name=address"`
-	Port    uint                        `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
+	Port    int32                       `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
 	Local   *DomainInterfaceSourceLocal `xml:"local" json:"local,omitempty" protobuf:"bytes,3,opt,name=local"`
 }
 
@@ -635,7 +635,7 @@ type DomainInterfaceSourceHostdev struct {
 // +gogo:genproto=true
 type DomainInterfaceSourceUDP struct {
 	Address string                      `xml:"address,attr,omitempty" json:"address,omitempty" protobuf:"bytes,1,opt,name=address"`
-	Port    uint                        `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
+	Port    int32                       `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
 	Local   *DomainInterfaceSourceLocal `xml:"local" json:"local,omitempty" protobuf:"bytes,3,opt,name=local"`
 }
 
@@ -647,7 +647,7 @@ type DomainInterfaceSourceVDPA struct {
 // +gogo:genproto=true
 type DomainInterfaceSourceLocal struct {
 	Address string `xml:"address,attr,omitempty" json:"address,omitempty" protobuf:"bytes,1,opt,name=address"`
-	Port    uint   `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
+	Port    int32  `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
 }
 
 // +gogo:genproto=true
@@ -663,7 +663,7 @@ type DomainInterfaceLink struct {
 
 // +gogo:genproto=true
 type DomainDeviceBoot struct {
-	Order    uint   `xml:"order,attr" json:"order" protobuf:"varint,1,opt,name=order"`
+	Order    int32  `xml:"order,attr" json:"order" protobuf:"varint,1,opt,name=order"`
 	LoadParm string `xml:"loadparm,attr,omitempty" json:"loadParm,omitempty" protobuf:"bytes,2,opt,name=loadParm"`
 }
 
@@ -678,9 +678,9 @@ type DomainInterfaceDriver struct {
 	TXMode      string                      `xml:"txmode,attr,omitempty" json:"txMode,omitempty" protobuf:"bytes,2,opt,name=txMode"`
 	IOEventFD   string                      `xml:"ioeventfd,attr,omitempty" json:"ioeventfd,omitempty" protobuf:"bytes,3,opt,name=ioeventfd"`
 	EventIDX    string                      `xml:"event_idx,attr,omitempty" json:"eventIdx,omitempty" protobuf:"bytes,4,opt,name=eventIdx"`
-	Queues      uint                        `xml:"queues,attr,omitempty" json:"queues,omitempty" protobuf:"varint,5,opt,name=queues"`
-	RXQueueSize uint                        `xml:"rx_queue_size,attr,omitempty" json:"rxQueueSize,omitempty" protobuf:"varint,6,opt,name=rxQueueSize"`
-	TXQueueSize uint                        `xml:"tx_queue_size,attr,omitempty" json:"txQueueSize,omitempty" protobuf:"varint,7,opt,name=txQueueSize"`
+	Queues      int32                       `xml:"queues,attr,omitempty" json:"queues,omitempty" protobuf:"varint,5,opt,name=queues"`
+	RXQueueSize int32                       `xml:"rx_queue_size,attr,omitempty" json:"rxQueueSize,omitempty" protobuf:"varint,6,opt,name=rxQueueSize"`
+	TXQueueSize int32                       `xml:"tx_queue_size,attr,omitempty" json:"txQueueSize,omitempty" protobuf:"varint,7,opt,name=txQueueSize"`
 	IOMMU       string                      `xml:"iommu,attr,omitempty" json:"iommu,omitempty" protobuf:"bytes,8,opt,name=iommu"`
 	ATS         string                      `xml:"ats,attr,omitempty" json:"ats,omitempty" protobuf:"bytes,9,opt,name=ats"`
 	Packed      string                      `xml:"packed,attr,omitempty" json:"packed,omitempty" protobuf:"bytes,10,opt,name=packed"`
@@ -724,9 +724,9 @@ type DomainInterfaceVirtualPortParams struct {
 
 // +gogo:genproto=true
 type DomainInterfaceVirtualPortParamsAny struct {
-	ManagerID     *uint  `xml:"managerid,attr" json:"managerId,omitempty" protobuf:"varint,1,opt,name=managerId"`
-	TypeID        *uint  `xml:"typeid,attr" json:"typeId,omitempty" protobuf:"varint,2,opt,name=typeId"`
-	TypeIDVersion *uint  `xml:"typeidversion,attr" json:"typeIdVersion,omitempty" protobuf:"varint,3,opt,name=typeIdVersion"`
+	ManagerID     *int32 `xml:"managerid,attr" json:"managerId,omitempty" protobuf:"varint,1,opt,name=managerId"`
+	TypeID        *int32 `xml:"typeid,attr" json:"typeId,omitempty" protobuf:"varint,2,opt,name=typeId"`
+	TypeIDVersion *int32 `xml:"typeidversion,attr" json:"typeIdVersion,omitempty" protobuf:"varint,3,opt,name=typeIdVersion"`
 	InstanceID    string `xml:"instanceid,attr,omitempty" json:"instanceId,omitempty" protobuf:"bytes,4,opt,name=instanceId"`
 	ProfileID     string `xml:"profileid,attr,omitempty" json:"profileId,omitempty" protobuf:"bytes,5,opt,name=profileId"`
 	InterfaceID   string `xml:"interfaceid,attr,omitempty" json:"interfaceId,omitempty" protobuf:"bytes,6,opt,name=interfaceId"`
@@ -734,9 +734,9 @@ type DomainInterfaceVirtualPortParamsAny struct {
 
 // +gogo:genproto=true
 type DomainInterfaceVirtualPortParamsVEPA8021QBG struct {
-	ManagerID     *uint  `xml:"managerid,attr" json:"managerId,omitempty" protobuf:"varint,1,opt,name=managerId"`
-	TypeID        *uint  `xml:"typeid,attr" json:"typeId,omitempty" protobuf:"varint,2,opt,name=typeId"`
-	TypeIDVersion *uint  `xml:"typeidversion,attr" json:"typeIdVersion,omitempty" protobuf:"varint,3,opt,name=typeIdVersion"`
+	ManagerID     *int32 `xml:"managerid,attr" json:"managerId,omitempty" protobuf:"varint,1,opt,name=managerId"`
+	TypeID        *int32 `xml:"typeid,attr" json:"typeId,omitempty" protobuf:"varint,2,opt,name=typeId"`
+	TypeIDVersion *int32 `xml:"typeidversion,attr" json:"typeIdVersion,omitempty" protobuf:"varint,3,opt,name=typeIdVersion"`
 	InstanceID    string `xml:"instanceid,attr,omitempty" json:"instanceId,omitempty" protobuf:"bytes,4,opt,name=instanceId"`
 }
 
@@ -758,10 +758,10 @@ type DomainInterfaceVirtualPortParamsMidoNet struct {
 
 // +gogo:genproto=true
 type DomainInterfaceBandwidthParams struct {
-	Average *int `xml:"average,attr" json:"average,omitempty" protobuf:"varint,1,opt,name=average"`
-	Peak    *int `xml:"peak,attr" json:"peak,omitempty" protobuf:"varint,2,opt,name=peak"`
-	Burst   *int `xml:"burst,attr" json:"burst,omitempty" protobuf:"varint,3,opt,name=burst"`
-	Floor   *int `xml:"floor,attr" json:"floor,omitempty" protobuf:"varint,4,opt,name=floor"`
+	Average *int32 `xml:"average,attr" json:"average,omitempty" protobuf:"varint,1,opt,name=average"`
+	Peak    *int32 `xml:"peak,attr" json:"peak,omitempty" protobuf:"varint,2,opt,name=peak"`
+	Burst   *int32 `xml:"burst,attr" json:"burst,omitempty" protobuf:"varint,3,opt,name=burst"`
+	Floor   *int32 `xml:"floor,attr" json:"floor,omitempty" protobuf:"varint,4,opt,name=floor"`
 }
 
 // +gogo:genproto=true
@@ -778,7 +778,7 @@ type DomainInterfaceVLan struct {
 
 // +gogo:genproto=true
 type DomainInterfaceVLanTag struct {
-	ID         uint   `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
+	ID         int32  `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
 	NativeMode string `xml:"nativeMode,attr,omitempty" json:"nativeMode" protobuf:"bytes,2,opt,name=nativeMode"`
 }
 
@@ -808,12 +808,12 @@ type DomainInterfaceBackend struct {
 
 // +gogo:genproto=true
 type DomainInterfaceTune struct {
-	SndBuf uint `xml:"sndbuf" json:"sndbuf" protobuf:"varint,1,opt,name=sndbuf"`
+	SndBuf int32 `xml:"sndbuf" json:"sndbuf" protobuf:"varint,1,opt,name=sndbuf"`
 }
 
 // +gogo:genproto=true
 type DomainInterfaceMTU struct {
-	Size uint `xml:"size,attr" json:"size"`
+	Size_ int32 `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
 }
 
 // +gogo:genproto=true
@@ -828,7 +828,7 @@ type DomainInterfaceCoalesceRX struct {
 
 // +gogo:genproto=true
 type DomainInterfaceCoalesceRXFrames struct {
-	Max *uint `xml:"max,attr" json:"max,omitempty" protobuf:"varint,1,opt,name=max"`
+	Max *int32 `xml:"max,attr" json:"max,omitempty" protobuf:"varint,1,opt,name=max"`
 }
 
 // +gogo:genproto=true
@@ -842,7 +842,7 @@ type DomainROM struct {
 type DomainInterfaceIP struct {
 	Address string `xml:"address,attr" json:"address" protobuf:"bytes,1,opt,name=address"`
 	Family  string `xml:"family,attr,omitempty" json:"family,omitempty" protobuf:"bytes,2,opt,name=family"`
-	Prefix  uint   `xml:"prefix,attr,omitempty" json:"prefix,omitempty" protobuf:"varint,3,opt,name=prefix"`
+	Prefix  int32  `xml:"prefix,attr,omitempty" json:"prefix,omitempty" protobuf:"varint,3,opt,name=prefix"`
 	Peer    string `xml:"peer,attr,omitempty" json:"peer,omitempty" protobuf:"bytes,4,opt,name=peer"`
 }
 
@@ -851,9 +851,9 @@ type DomainInterfaceRoute struct {
 	Family  string `xml:"family,attr,omitempty" json:"family,omitempty" protobuf:"bytes,1,opt,name=family"`
 	Address string `xml:"address,attr" json:"address" protobuf:"bytes,2,opt,name=address"`
 	Netmask string `xml:"netmask,attr,omitempty" json:"netmask,omitempty" protobuf:"bytes,3,opt,name=netmask"`
-	Prefix  uint   `xml:"prefix,attr,omitempty" json:"prefix,omitempty" protobuf:"varint,4,opt,name=prefix"`
+	Prefix  int32  `xml:"prefix,attr,omitempty" json:"prefix,omitempty" protobuf:"varint,4,opt,name=prefix"`
 	Gateway string `xml:"gateway,attr" json:"gateway" protobuf:"bytes,5,opt,name=gateway"`
-	Metric  uint   `xml:"metric,attr,omitempty" json:"metric,omitempty" protobuf:"varint,6,opt,name=metric"`
+	Metric  int32  `xml:"metric,attr,omitempty" json:"metric,omitempty" protobuf:"varint,6,opt,name=metric"`
 }
 
 // +gogo:genproto=true
@@ -966,7 +966,7 @@ type DomainChardevSourceUDP struct {
 // +gogo:genproto=true
 type DomainChardevSourceReconnect struct {
 	Enabled string `xml:"enabled,attr" json:"enabled" protobuf:"bytes,1,opt,name=enabled"`
-	Timeout *uint  `xml:"timeout,attr" json:"timeout,omitempty" protobuf:"varint,2,opt,name=timeout"`
+	Timeout *int32 `xml:"timeout,attr" json:"timeout,omitempty" protobuf:"varint,2,opt,name=timeout"`
 }
 
 // +gogo:genproto=true
@@ -1006,19 +1006,19 @@ type DomainChardevTarget struct {
 	Type  string `xml:"type,attr,omitempty" json:"type,omitempty" protobuf:"bytes,1,opt,name=type"`
 	Name  string `xml:"name,attr,omitempty" json:"name,omitempty" protobuf:"bytes,2,opt,name=name"`
 	State string `xml:"state,attr,omitempty" json:"state,omitempty" protobuf:"bytes,3,opt,name=state"` // is guest agent connected?
-	Port  *uint  `xml:"port,attr" json:"port,omitempty" protobuf:"varint,4,opt,name=port"`
+	Port  *int32 `xml:"port,attr" json:"port,omitempty" protobuf:"varint,4,opt,name=port"`
 }
 
 // +gogo:genproto=true
 type DomainConsoleTarget struct {
 	Type string `xml:"type,attr,omitempty" json:"type,omitempty" protobuf:"bytes,1,opt,name=type"`
-	Port *uint  `xml:"port,attr" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
+	Port *int32 `xml:"port,attr" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
 }
 
 // +gogo:genproto=true
 type DomainSerialTarget struct {
 	Type  string                   `xml:"type,attr,omitempty" json:"type,omitempty" protobuf:"bytes,1,opt,name=type"`
-	Port  *uint                    `xml:"port,attr" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
+	Port  *int32                   `xml:"port,attr" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
 	Model *DomainSerialTargetModel `xml:"model" json:"model,omitempty" protobuf:"bytes,3,opt,name=model"`
 }
 
@@ -1030,7 +1030,7 @@ type DomainSerialTargetModel struct {
 // +gogo:genproto=true
 type DomainParallelTarget struct {
 	Type string `xml:"type,attr,omitempty" json:"type,omitempty" protobuf:"bytes,1,opt,name=type"`
-	Port *uint  `xml:"port,attr" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
+	Port *int32 `xml:"port,attr" json:"port,omitempty" protobuf:"varint,2,opt,name=port"`
 }
 
 // +gogo:genproto=true
@@ -1065,50 +1065,50 @@ type DomainAlias struct {
 
 // +gogo:genproto=true
 type DomainDeviceACPI struct {
-	Index uint `xml:"index,attr,omitempty" json:"index,omitempty" protobuf:"varint,1,opt,name=index"`
+	Index int32 `xml:"index,attr,omitempty" json:"index,omitempty" protobuf:"varint,1,opt,name=index"`
 }
 
 // +gogo:genproto=true
 type DomainAddressPCI struct {
-	Domain        *uint              `xml:"domain,attr" json:"domain,omitempty" protobuf:"varint,1,opt,name=domain"`
-	Bus           *uint              `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
-	Slot          *uint              `xml:"slot,attr" json:"slot,omitempty" protobuf:"varint,3,opt,name=slot"`
-	Function      *uint              `xml:"function,attr" json:"function,omitempty" protobuf:"varint,4,opt,name=function"`
+	Domain        *int32             `xml:"domain,attr" json:"domain,omitempty" protobuf:"varint,1,opt,name=domain"`
+	Bus           *int32             `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
+	Slot          *int32             `xml:"slot,attr" json:"slot,omitempty" protobuf:"varint,3,opt,name=slot"`
+	Function      *int32             `xml:"function,attr" json:"function,omitempty" protobuf:"varint,4,opt,name=function"`
 	MultiFunction string             `xml:"multifunction,attr,omitempty" json:"multifunction,omitempty" protobuf:"bytes,5,opt,name=multifunction"`
 	ZPCI          *DomainAddressZPCI `xml:"zpci" json:"zpci,omitempty" protobuf:"bytes,6,opt,name=zpci"`
 }
 
 // +gogo:genproto=true
 type DomainAddressZPCI struct {
-	UID *uint `xml:"uid,attr,omitempty" json:"uid,omitempty" protobuf:"varint,1,opt,name=uid"`
-	FID *uint `xml:"fid,attr,omitempty" json:"fid,omitempty" protobuf:"varint,2,opt,name=fid"`
+	UID *int32 `xml:"uid,attr,omitempty" json:"uid,omitempty" protobuf:"varint,1,opt,name=uid"`
+	FID *int32 `xml:"fid,attr,omitempty" json:"fid,omitempty" protobuf:"varint,2,opt,name=fid"`
 }
 
 // +gogo:genproto=true
 type DomainAddressUSB struct {
-	Bus    *uint  `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,1,opt,name=bus"`
+	Bus    *int32 `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,1,opt,name=bus"`
 	Port   string `xml:"port,attr,omitempty" json:"port,omitempty" protobuf:"bytes,2,opt,name=port"`
-	Device *uint  `xml:"device,attr" json:"device,omitempty" protobuf:"varint,3,opt,name=device"`
+	Device *int32 `xml:"device,attr" json:"device,omitempty" protobuf:"varint,3,opt,name=device"`
 }
 
 // +gogo:genproto=true
 type DomainAddressDrive struct {
-	Controller *uint `xml:"controller,attr" json:"controller,omitempty" protobuf:"varint,1,opt,name=controller"`
-	Bus        *uint `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
-	Target     *uint `xml:"target,attr" json:"target,omitempty" protobuf:"varint,3,opt,name=target"`
-	Unit       *uint `xml:"unit,attr" json:"unit,omitempty" protobuf:"varint,4,opt,name=unit"`
+	Controller *int32 `xml:"controller,attr" json:"controller,omitempty" protobuf:"varint,1,opt,name=controller"`
+	Bus        *int32 `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
+	Target     *int32 `xml:"target,attr" json:"target,omitempty" protobuf:"varint,3,opt,name=target"`
+	Unit       *int32 `xml:"unit,attr" json:"unit,omitempty" protobuf:"varint,4,opt,name=unit"`
 }
 
 // +gogo:genproto=true
 type DomainAddressDIMM struct {
-	Slot *uint   `xml:"slot,attr" json:"slot,omitempty" protobuf:"varint,1,opt,name=slot"`
-	Base *uint64 `xml:"base,attr" json:"base,omitempty" protobuf:"varint,2,opt,name=base"`
+	Slot *int32 `xml:"slot,attr" json:"slot,omitempty" protobuf:"varint,1,opt,name=slot"`
+	Base *int64 `xml:"base,attr" json:"base,omitempty" protobuf:"varint,2,opt,name=base"`
 }
 
 // +gogo:genproto=true
 type DomainAddressISA struct {
-	IOBase *uint `xml:"iobase,attr" json:"iobase,omitempty" protobuf:"varint,1,opt,name=iobase"`
-	IRQ    *uint `xml:"irq,attr" json:"irq,omitempty" protobuf:"varint,2,opt,name=irq"`
+	IOBase *int32 `xml:"iobase,attr" json:"iobase,omitempty" protobuf:"varint,1,opt,name=iobase"`
+	IRQ    *int32 `xml:"irq,attr" json:"irq,omitempty" protobuf:"varint,2,opt,name=irq"`
 }
 
 // +gogo:genproto=true
@@ -1117,27 +1117,27 @@ type DomainAddressVirtioMMIO struct {
 
 // +gogo:genproto=true
 type DomainAddressCCW struct {
-	CSSID *uint `xml:"cssid,attr" json:"cssid,omitempty" protobuf:"varint,1,opt,name=cssid"`
-	SSID  *uint `xml:"ssid,attr" json:"ssid,omitempty" protobuf:"varint,2,opt,name=ssid"`
-	DevNo *uint `xml:"devno,attr" json:"devno,omitempty" protobuf:"varint,3,opt,name=devno"`
+	CSSID *int32 `xml:"cssid,attr" json:"cssid,omitempty" protobuf:"varint,1,opt,name=cssid"`
+	SSID  *int32 `xml:"ssid,attr" json:"ssid,omitempty" protobuf:"varint,2,opt,name=ssid"`
+	DevNo *int32 `xml:"devno,attr" json:"devno,omitempty" protobuf:"varint,3,opt,name=devno"`
 }
 
 // +gogo:genproto=true
 type DomainAddressVirtioSerial struct {
-	Controller *uint `xml:"controller,attr" json:"controller,omitempty" protobuf:"varint,1,opt,name=controller"`
-	Bus        *uint `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
-	Port       *uint `xml:"port,attr" json:"port,omitempty" protobuf:"varint,3,opt,name=port"`
+	Controller *int32 `xml:"controller,attr" json:"controller,omitempty" protobuf:"varint,1,opt,name=controller"`
+	Bus        *int32 `xml:"bus,attr" json:"bus,omitempty" protobuf:"varint,2,opt,name=bus"`
+	Port       *int32 `xml:"port,attr" json:"port,omitempty" protobuf:"varint,3,opt,name=port"`
 }
 
 // +gogo:genproto=true
 type DomainAddressSpaprVIO struct {
-	Reg *uint64 `xml:"reg,attr" json:"reg,omitempty" protobuf:"varint,1,opt,name=reg"`
+	Reg *int64 `xml:"reg,attr" json:"reg,omitempty" protobuf:"varint,1,opt,name=reg"`
 }
 
 // +gogo:genproto=true
 type DomainAddressCCID struct {
-	Controller *uint `xml:"controller,attr" json:"controller,omitempty" protobuf:"varint,1,opt,name=controller"`
-	Slot       *uint `xml:"slot,attr" json:"slot,omitempty" protobuf:"varint,2,opt,name=slot"`
+	Controller *int32 `xml:"controller,attr" json:"controller,omitempty" protobuf:"varint,1,opt,name=controller"`
+	Slot       *int32 `xml:"slot,attr" json:"slot,omitempty" protobuf:"varint,2,opt,name=slot"`
 }
 
 // +gogo:genproto=true
@@ -1243,9 +1243,9 @@ type DomainRedirFilter struct {
 
 // +gogo:genproto=true
 type DomainRedirFilterUSB struct {
-	Class   *uint  `xml:"class,attr" json:"class,omitempty" protobuf:"varint,1,opt,name=class"`
-	Vendor  *uint  `xml:"vendor,attr" json:"vendor,omitempty" protobuf:"varint,2,opt,name=vendor"`
-	Product *uint  `xml:"product,attr" json:"product,omitempty" protobuf:"varint,3,opt,name=product"`
+	Class   *int32 `xml:"class,attr" json:"class,omitempty" protobuf:"varint,1,opt,name=class"`
+	Vendor  *int32 `xml:"vendor,attr" json:"vendor,omitempty" protobuf:"varint,2,opt,name=vendor"`
+	Product *int32 `xml:"product,attr" json:"product,omitempty" protobuf:"varint,3,opt,name=product"`
 	Version string `xml:"version,attr,omitempty" json:"version,omitempty" protobuf:"bytes,4,opt,name=version"`
 	Allow   string `xml:"allow,attr" json:"allow" protobuf:"bytes,5,opt,name=allow"`
 }
@@ -1442,7 +1442,7 @@ type DomainGraphicEGLHeadless struct {
 
 // +gogo:genproto=true
 type DomainGraphicAudio struct {
-	ID uint `xml:"id,attr,omitempty" json:"id,omitempty" protobuf:"varint,1,opt,name=id"`
+	ID int32 `xml:"id,attr,omitempty" json:"id,omitempty" protobuf:"varint,1,opt,name=id"`
 }
 
 // +gogo:genproto=true
@@ -1466,18 +1466,18 @@ type DomainVideoAccel struct {
 
 // +gogo:genproto=true
 type DomainVideoResolution struct {
-	X uint `xml:"x,attr" json:"x" protobuf:"varint,1,opt,name=x"`
-	Y uint `xml:"y,attr" json:"y" protobuf:"varint,2,opt,name=y"`
+	X int32 `xml:"x,attr" json:"x" protobuf:"varint,1,opt,name=x"`
+	Y int32 `xml:"y,attr" json:"y" protobuf:"varint,2,opt,name=y"`
 }
 
 // +gogo:genproto=true
 type DomainVideoModel struct {
 	Type       string                 `xml:"type,attr" json:"type" protobuf:"bytes,1,opt,name=type"`
-	Heads      uint                   `xml:"heads,attr,omitempty" json:"heads,omitempty" protobuf:"varint,2,opt,name=heads"`
-	Ram        uint                   `xml:"ram,attr,omitempty" json:"ram,omitempty" protobuf:"varint,3,opt,name=ram"`
-	VRam       uint                   `xml:"vram,attr,omitempty" json:"vram,omitempty" protobuf:"varint,4,opt,name=vram"`
-	VRam64     uint                   `xml:"vram64,attr,omitempty" json:"vram64,omitempty" protobuf:"varint,5,opt,name=vram64"`
-	VGAMem     uint                   `xml:"vgamem,attr,omitempty" json:"vgamem,omitempty" protobuf:"varint,6,opt,name=vgamem"`
+	Heads      int32                  `xml:"heads,attr,omitempty" json:"heads,omitempty" protobuf:"varint,2,opt,name=heads"`
+	Ram        int32                  `xml:"ram,attr,omitempty" json:"ram,omitempty" protobuf:"varint,3,opt,name=ram"`
+	VRam       int32                  `xml:"vram,attr,omitempty" json:"vram,omitempty" protobuf:"varint,4,opt,name=vram"`
+	VRam64     int32                  `xml:"vram64,attr,omitempty" json:"vram64,omitempty" protobuf:"varint,5,opt,name=vram64"`
+	VGAMem     int32                  `xml:"vgamem,attr,omitempty" json:"vgamem,omitempty" protobuf:"varint,6,opt,name=vgamem"`
 	Primary    string                 `xml:"primary,attr,omitempty" json:"primary,omitempty" protobuf:"bytes,7,opt,name=primary"`
 	Accel      *DomainVideoAccel      `xml:"acceleration" json:"accel,omitempty" protobuf:"bytes,8,opt,name=accel"`
 	Resolution *DomainVideoResolution `xml:"resolution" json:"resolution,omitempty" protobuf:"bytes,9,opt,name=resolution"`
@@ -1504,7 +1504,7 @@ type DomainVideoDriver struct {
 
 // +gogo:genproto=true
 type DomainMemBalloonStats struct {
-	Period uint `xml:"period,attr" json:"period,omitempty" protobuf:"varint,1,opt,name=period"`
+	Period int32 `xml:"period,attr" json:"period,omitempty" protobuf:"varint,1,opt,name=period"`
 }
 
 // +gogo:genproto=true
@@ -1578,7 +1578,7 @@ type DomainSound struct {
 
 // +gogo:genproto=true
 type DomainSoundAudio struct {
-	ID uint `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
+	ID int32 `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
 }
 
 // +gogo:genproto=true
@@ -1600,15 +1600,15 @@ type DomainAudio struct {
 type DomainAudioChannel struct {
 	MixingEngine  string                      `xml:"mixingEngine,attr,omitempty" json:"mixingEngine,omitempty" protobuf:"bytes,1,opt,name=mixingEngine"`
 	FixedSettings string                      `xml:"fixedSettings,attr,omitempty" json:"fixedSettings,omitempty" protobuf:"bytes,2,opt,name=fixedSettings"`
-	Voices        uint                        `xml:"voices,attr,omitempty" json:"voices,omitempty" protobuf:"varint,3,opt,name=voices"`
+	Voices        int32                       `xml:"voices,attr,omitempty" json:"voices,omitempty" protobuf:"varint,3,opt,name=voices"`
 	Settings      *DomainAudioChannelSettings `xml:"settings" json:"settings,omitempty" protobuf:"bytes,4,opt,name=settings"`
-	BufferLength  uint                        `xml:"bufferLength,attr,omitempty" json:"bufferLength,omitempty" protobuf:"varint,5,opt,name=bufferLength"`
+	BufferLength  int32                       `xml:"bufferLength,attr,omitempty" json:"bufferLength,omitempty" protobuf:"varint,5,opt,name=bufferLength"`
 }
 
 // +gogo:genproto=true
 type DomainAudioChannelSettings struct {
-	Frequency uint   `xml:"frequency,attr,omitempty" json:"frequency,omitempty" protobuf:"varint,1,opt,name=frequency"`
-	Channels  uint   `xml:"channels,attr,omitempty" json:"channels,omitempty" protobuf:"varint,2,opt,name=channels"`
+	Frequency int32  `xml:"frequency,attr,omitempty" json:"frequency,omitempty" protobuf:"varint,1,opt,name=frequency"`
+	Channels  int32  `xml:"channels,attr,omitempty" json:"channels,omitempty" protobuf:"varint,2,opt,name=channels"`
 	Format    string `xml:"format,attr,omitempty" json:"format,omitempty" protobuf:"bytes,3,opt,name=format"`
 }
 
@@ -1644,7 +1644,7 @@ type DomainAudioCoreAudio struct {
 // +gogo:genproto=true
 type DomainAudioCoreAudioChannel struct {
 	DomainAudioChannel `json:",inline" protobuf:"bytes,1,opt,name=domainAudioChannel"`
-	BufferCount        uint `xml:"bufferCount,attr,omitempty" json:"bufferCount,omitempty" protobuf:"varint,2,opt,name=bufferCount"`
+	BufferCount        int32 `xml:"bufferCount,attr,omitempty" json:"bufferCount,omitempty" protobuf:"varint,2,opt,name=bufferCount"`
 }
 
 // +gogo:genproto=true
@@ -1666,7 +1666,7 @@ type DomainAudioJackChannel struct {
 type DomainAudioOSS struct {
 	TryMMap   string `xml:"tryMMap,attr,omitempty" json:"tryMMap,omitempty" protobuf:"bytes,1,opt,name=tryMMap"`
 	Exclusive string `xml:"exclusive,attr,omitempty" json:"exclusive,omitempty" protobuf:"bytes,2,opt,name=exclusive"`
-	DSPPolicy *int   `xml:"dspPolicy,attr" json:"dspPolicy,omitempty" protobuf:"varint,3,opt,name=dspPolicy"`
+	DSPPolicy *int32 `xml:"dspPolicy,attr" json:"dspPolicy,omitempty" protobuf:"varint,3,opt,name=dspPolicy"`
 
 	Input  *DomainAudioOSSChannel `xml:"input" json:"input,omitempty" protobuf:"bytes,4,opt,name=input"`
 	Output *DomainAudioOSSChannel `xml:"output" json:"output,omitempty" protobuf:"bytes,5,opt,name=output"`
@@ -1676,7 +1676,7 @@ type DomainAudioOSS struct {
 type DomainAudioOSSChannel struct {
 	DomainAudioChannel `json:",inline" protobuf:"bytes,1,opt,name=domainAudioChannel"`
 	Dev                string `xml:"dev,attr,omitempty" json:"dev,omitempty" protobuf:"bytes,2,opt,name=dev"`
-	BufferCount        uint   `xml:"bufferCount,attr,omitempty" json:"bufferCount,omitempty" protobuf:"varint,3,opt,name=bufferCount"`
+	BufferCount        int32  `xml:"bufferCount,attr,omitempty" json:"bufferCount,omitempty" protobuf:"varint,3,opt,name=bufferCount"`
 	TryPoll            string `xml:"tryPoll,attr,omitempty" json:"tryPoll,omitempty" protobuf:"bytes,4,opt,name=tryPoll"`
 }
 
@@ -1692,7 +1692,7 @@ type DomainAudioPulseAudioChannel struct {
 	DomainAudioChannel `json:",inline" protobuf:"bytes,1,opt,name=domainAudioChannel"`
 	Name               string `xml:"name,attr,omitempty" json:"name,omitempty" protobuf:"bytes,2,opt,name=name"`
 	StreamName         string `xml:"streamName,attr,omitempty" json:"streamName,omitempty" protobuf:"bytes,3,opt,name=streamName"`
-	Latency            uint   `xml:"latency,attr,omitempty" json:"latency,omitempty" protobuf:"varint,4,opt,name=latency"`
+	Latency            int32  `xml:"latency,attr,omitempty" json:"latency,omitempty" protobuf:"varint,4,opt,name=latency"`
 }
 
 // +gogo:genproto=true
@@ -1705,7 +1705,7 @@ type DomainAudioSDL struct {
 // +gogo:genproto=true
 type DomainAudioSDLChannel struct {
 	DomainAudioChannel `json:",inline" protobuf:"bytes,1,opt,name=domainAudioChannel"`
-	BufferCount        uint `xml:"bufferCount,attr,omitempty" json:"bufferCount,omitempty" protobuf:"varint,2,opt,name=bufferCount"`
+	BufferCount        int32 `xml:"bufferCount,attr,omitempty" json:"bufferCount,omitempty" protobuf:"varint,2,opt,name=bufferCount"`
 }
 
 // +gogo:genproto=true
@@ -1733,8 +1733,8 @@ type DomainAudioFileChannel struct {
 
 // +gogo:genproto=true
 type DomainRNGRate struct {
-	Bytes  uint `xml:"bytes,attr" json:"bytes" protobuf:"varint,1,opt,name=bytes"`
-	Period uint `xml:"period,attr,omitempty" json:"period,omitempty" protobuf:"varint,2,opt,name=period"`
+	Bytes  int32 `xml:"bytes,attr" json:"bytes" protobuf:"varint,1,opt,name=bytes"`
+	Period int32 `xml:"period,attr,omitempty" json:"period,omitempty" protobuf:"varint,2,opt,name=period"`
 }
 
 // +gogo:genproto=true
@@ -1904,7 +1904,7 @@ type DomainHostdevCapsMiscSource struct {
 type DomainIP struct {
 	Address string `xml:"address,attr,omitempty" json:"address,omitempty" protobuf:"bytes,1,opt,name=address"`
 	Family  string `xml:"family,attr,omitempty" json:"family,omitempty" protobuf:"bytes,2,opt,name=family"`
-	Prefix  *uint  `xml:"prefix,attr" json:"prefix,omitempty" protobuf:"varint,3,opt,name=prefix"`
+	Prefix  *int32 `xml:"prefix,attr" json:"prefix,omitempty" protobuf:"varint,3,opt,name=prefix"`
 }
 
 // +gogo:genproto=true
@@ -1959,19 +1959,19 @@ type DomainMemorydevSourcePMem struct {
 
 // +gogo:genproto=true
 type DomainMemorydevSourcePagesize struct {
-	Value uint64 `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int64  `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
 // +gogo:genproto=true
 type DomainMemorydevSourceAlignsize struct {
-	Value uint64 `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int64  `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
 // +gogo:genproto=true
 type DomainMemorydevTargetNode struct {
-	Value uint `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int32 `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 }
 
 // +gogo:genproto=true
@@ -1980,18 +1980,18 @@ type DomainMemorydevTargetReadOnly struct {
 
 // +gogo:genproto=true
 type DomainMemorydevTargetSize struct {
-	Value uint   `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int32  `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
 // +gogo:genproto=true
 type DomainMemorydevTargetLabel struct {
-	Size *DomainMemorydevTargetSize `xml:"size" json:"size,omitempty"`
+	Size_ *DomainMemorydevTargetSize `xml:"size" json:"size,omitempty" protobuf:"bytes,1,opt,name=size"`
 }
 
 // +gogo:genproto=true
 type DomainMemorydevTarget struct {
-	Size     *DomainMemorydevTargetSize     `xml:"size" json:"size,omitempty"`
+	Size_    *DomainMemorydevTargetSize     `xml:"size" json:"size,omitempty" protobuf:"bytes,1,opt,name=size"`
 	Node     *DomainMemorydevTargetNode     `xml:"node" json:"node,omitempty" protobuf:"bytes,2,opt,name=node"`
 	Label    *DomainMemorydevTargetLabel    `xml:"label" json:"label,omitempty" protobuf:"bytes,3,opt,name=label"`
 	ReadOnly *DomainMemorydevTargetReadOnly `xml:"readonly" json:"readonly,omitempty" protobuf:"bytes,4,opt,name=readonly"`
@@ -2041,7 +2041,7 @@ type DomainIOMMUDriver struct {
 	CachingMode string `xml:"caching_mode,attr,omitempty" json:"cachingMode,omitempty" protobuf:"bytes,2,opt,name=cachingMode"`
 	EIM         string `xml:"eim,attr,omitempty" json:"eim,omitempty" protobuf:"bytes,3,opt,name=eim"`
 	IOTLB       string `xml:"iotlb,attr,omitempty" json:"iotlb,omitempty" protobuf:"bytes,4,opt,name=iotlb"`
-	AWBits      uint   `xml:"aw_bits,attr,omitempty" json:"awBits,omitempty" protobuf:"varint,5,opt,name=awBits"`
+	AWBits      int32  `xml:"aw_bits,attr,omitempty" json:"awBits,omitempty" protobuf:"varint,5,opt,name=awBits"`
 }
 
 // +gogo:genproto=true
@@ -2061,7 +2061,7 @@ type DomainLease struct {
 // +gogo:genproto=true
 type DomainLeaseTarget struct {
 	Path   string `xml:"path,attr" json:"path" protobuf:"bytes,1,opt,name=path"`
-	Offset uint64 `xml:"offset,attr,omitempty" json:"offset,omitempty" protobuf:"varint,2,opt,name=offset"`
+	Offset int64  `xml:"offset,attr,omitempty" json:"offset,omitempty" protobuf:"varint,2,opt,name=offset"`
 }
 
 // +gogo:genproto=true
@@ -2129,7 +2129,7 @@ type DomainShmem struct {
 	XMLName xml.Name           `xml:"shmem" json:"-"`
 	Name    string             `xml:"name,attr" json:"name" protobuf:"bytes,1,opt,name=name"`
 	Role    string             `xml:"role,attr,omitempty" json:"role,omitempty" protobuf:"bytes,2,opt,name=role"`
-	Size    *DomainShmemSize   `xml:"size" json:"size,omitempty"`
+	Size_   *DomainShmemSize   `xml:"size" json:"size,omitempty" protobuf:"bytes,3,opt,name=size"`
 	Model   *DomainShmemModel  `xml:"model" json:"model,omitempty" protobuf:"bytes,4,opt,name=model"`
 	Server  *DomainShmemServer `xml:"server" json:"server,omitempty" protobuf:"bytes,5,opt,name=server"`
 	MSI     *DomainShmemMSI    `xml:"msi" json:"msi,omitempty" protobuf:"bytes,6,opt,name=msi"`
@@ -2140,7 +2140,7 @@ type DomainShmem struct {
 
 // +gogo:genproto=true
 type DomainShmemSize struct {
-	Value uint   `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int32  `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
@@ -2157,7 +2157,7 @@ type DomainShmemServer struct {
 // +gogo:genproto=true
 type DomainShmemMSI struct {
 	Enabled   string `xml:"enabled,attr,omitempty" json:"enabled,omitempty" protobuf:"bytes,1,opt,name=enabled"`
-	Vectors   uint   `xml:"vectors,attr,omitempty" json:"vectors,omitempty" protobuf:"varint,2,opt,name=vectors"`
+	Vectors   int32  `xml:"vectors,attr,omitempty" json:"vectors,omitempty" protobuf:"varint,2,opt,name=vectors"`
 	IOEventFD string `xml:"ioeventfd,attr,omitempty" json:"ioeventfd,omitempty" protobuf:"bytes,3,opt,name=ioeventfd"`
 }
 
@@ -2197,27 +2197,27 @@ type DomainDeviceList struct {
 
 // +gogo:genproto=true
 type DomainMemory struct {
-	Value    uint   `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value    int32  `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 	Unit     string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 	DumpCore string `xml:"dumpCore,attr,omitempty" json:"dumpCore,omitempty" protobuf:"bytes,3,opt,name=dumpCore"`
 }
 
 // +gogo:genproto=true
 type DomainCurrentMemory struct {
-	Value uint   `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int32  `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
 // +gogo:genproto=true
 type DomainMaxMemory struct {
-	Value uint   `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int32  `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
-	Slots uint   `xml:"slots,attr,omitempty" json:"slots,omitempty" protobuf:"varint,3,opt,name=slots"`
+	Slots int32  `xml:"slots,attr,omitempty" json:"slots,omitempty" protobuf:"varint,3,opt,name=slots"`
 }
 
 // +gogo:genproto=true
 type DomainMemoryHugepage struct {
-	Size    uint   `xml:"size,attr" json:"size"`
+	Size_   int32  `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
 	Unit    string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 	Nodeset string `xml:"nodeset,attr,omitempty" json:"nodeset,omitempty" protobuf:"bytes,3,opt,name=nodeset"`
 }
@@ -2361,7 +2361,7 @@ type DomainSysInfoEntry struct {
 // +gogo:genproto=true
 type DomainBIOS struct {
 	UseSerial     string `xml:"useserial,attr,omitempty" json:"useSerial,omitempty" protobuf:"bytes,1,opt,name=useSerial"`
-	RebootTimeout *int   `xml:"rebootTimeout,attr" json:"rebootTimeout" protobuf:"varint,2,opt,name=rebootTimeout"`
+	RebootTimeout *int32 `xml:"rebootTimeout,attr" json:"rebootTimeout" protobuf:"varint,2,opt,name=rebootTimeout"`
 }
 
 // +gogo:genproto=true
@@ -2433,16 +2433,16 @@ type DomainResource struct {
 type DomainVCPU struct {
 	Placement string `xml:"placement,attr,omitempty" json:"placement,omitempty" protobuf:"bytes,1,opt,name=placement"`
 	CPUSet    string `xml:"cpuset,attr,omitempty" json:"cpuset,omitempty" protobuf:"bytes,2,opt,name=cpuset"`
-	Current   uint   `xml:"current,attr,omitempty" json:"current,omitempty" protobuf:"varint,3,opt,name=current"`
-	Value     uint   `xml:",chardata" json:"value" protobuf:"varint,4,opt,name=value"`
+	Current   int32  `xml:"current,attr,omitempty" json:"current,omitempty" protobuf:"varint,3,opt,name=current"`
+	Value     int32  `xml:",chardata" json:"value" protobuf:"varint,4,opt,name=value"`
 }
 
 // +gogo:genproto=true
 type DomainVCPUsVCPU struct {
-	Id           *uint  `xml:"id,attr" json:"id,omitempty" protobuf:"varint,1,opt,name=id"`
+	Id           *int32 `xml:"id,attr" json:"id,omitempty" protobuf:"varint,1,opt,name=id"`
 	Enabled      string `xml:"enabled,attr,omitempty" json:"enabled,omitempty" protobuf:"bytes,2,opt,name=enabled"`
 	Hotpluggable string `xml:"hotpluggable,attr,omitempty" json:"hotpluggable,omitempty" protobuf:"bytes,3,opt,name=hotpluggable"`
-	Order        *uint  `xml:"order,attr" json:"order,omitempty" protobuf:"varint,4,opt,name=order"`
+	Order        *int32 `xml:"order,attr" json:"order,omitempty" protobuf:"varint,4,opt,name=order"`
 }
 
 // +gogo:genproto=true
@@ -2473,7 +2473,7 @@ type DomainCPUFeature struct {
 
 // +gogo:genproto=true
 type DomainCPUCache struct {
-	Level uint   `xml:"level,attr,omitempty" json:"level,omitempty" protobuf:"varint,1,opt,name=level"`
+	Level int32  `xml:"level,attr,omitempty" json:"level,omitempty" protobuf:"varint,1,opt,name=level"`
 	Mode  string `xml:"mode,attr" json:"mode,omitempty" protobuf:"bytes,2,opt,name=mode"`
 }
 
@@ -2500,9 +2500,9 @@ type DomainNuma struct {
 
 // +gogo:genproto=true
 type DomainCell struct {
-	ID        *uint                `xml:"id,attr" json:"id,omitempty" protobuf:"varint,1,opt,name=id"`
+	ID        *int32               `xml:"id,attr" json:"id,omitempty" protobuf:"varint,1,opt,name=id"`
 	CPUs      string               `xml:"cpus,attr,omitempty" json:"cpus" protobuf:"bytes,2,opt,name=cpus"`
-	Memory    uint                 `xml:"memory,attr" json:"memory" protobuf:"varint,3,opt,name=memory"`
+	Memory    int32                `xml:"memory,attr" json:"memory" protobuf:"varint,3,opt,name=memory"`
 	Unit      string               `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,4,opt,name=unit"`
 	MemAccess string               `xml:"memAccess,attr,omitempty" json:"memAccess,omitempty" protobuf:"bytes,5,opt,name=memAccess"`
 	Discard   string               `xml:"discard,attr,omitempty" json:"discard,omitempty" protobuf:"bytes,6,opt,name=discard"`
@@ -2517,16 +2517,16 @@ type DomainCellDistances struct {
 
 // +gogo:genproto=true
 type DomainCellSibling struct {
-	ID    uint `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
-	Value uint `xml:"value,attr" json:"value" protobuf:"varint,2,opt,name=value"`
+	ID    int32 `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
+	Value int32 `xml:"value,attr" json:"value" protobuf:"varint,2,opt,name=value"`
 }
 
 // +gogo:genproto=true
 type DomainCellCache struct {
-	Level         uint                `xml:"level,attr" json:"level" protobuf:"varint,1,opt,name=level"`
+	Level         int32               `xml:"level,attr" json:"level" protobuf:"varint,1,opt,name=level"`
 	Associativity string              `xml:"associativity,attr" json:"associativity" protobuf:"bytes,2,opt,name=associativity"`
 	Policy        string              `xml:"policy,attr" json:"policy" protobuf:"bytes,3,opt,name=policy"`
-	Size          DomainCellCacheSize `xml:"size" json:"size"`
+	Size_         DomainCellCacheSize `xml:"size" json:"size" protobuf:"bytes,4,opt,name=size"`
 	Line          DomainCellCacheLine `xml:"line" json:"line" protobuf:"bytes,5,opt,name=line"`
 }
 
@@ -2550,19 +2550,19 @@ type DomainNUMAInterconnects struct {
 
 // +gogo:genproto=true
 type DomainNUMAInterconnectLatency struct {
-	Initiator uint   `xml:"initiator,attr" json:"initiator" protobuf:"varint,1,opt,name=initiator"`
-	Target    uint   `xml:"target,attr" json:"target" protobuf:"varint,2,opt,name=target"`
-	Cache     uint   `xml:"cache,attr,omitempty" json:"cache,omitempty" protobuf:"varint,3,opt,name=cache"`
+	Initiator int32  `xml:"initiator,attr" json:"initiator" protobuf:"varint,1,opt,name=initiator"`
+	Target    int32  `xml:"target,attr" json:"target" protobuf:"varint,2,opt,name=target"`
+	Cache     int32  `xml:"cache,attr,omitempty" json:"cache,omitempty" protobuf:"varint,3,opt,name=cache"`
 	Type      string `xml:"type,attr" json:"type" protobuf:"bytes,4,opt,name=type"`
-	Value     uint   `xml:"value,attr" json:"value" protobuf:"varint,5,opt,name=value"`
+	Value     int32  `xml:"value,attr" json:"value" protobuf:"varint,5,opt,name=value"`
 }
 
 // +gogo:genproto=true
 type DomainNUMAInterconnectBandwidth struct {
-	Initiator uint   `xml:"initiator,attr" json:"initiator" protobuf:"varint,1,opt,name=initiator"`
-	Target    uint   `xml:"target,attr" json:"target" protobuf:"varint,2,opt,name=target"`
+	Initiator int32  `xml:"initiator,attr" json:"initiator" protobuf:"varint,1,opt,name=initiator"`
+	Target    int32  `xml:"target,attr" json:"target" protobuf:"varint,2,opt,name=target"`
 	Type      string `xml:"type,attr" json:"type" protobuf:"bytes,3,opt,name=type"`
-	Value     uint   `xml:"value,attr" json:"value" protobuf:"varint,4,opt,name=value"`
+	Value     int32  `xml:"value,attr" json:"value" protobuf:"varint,4,opt,name=value"`
 	Unit      string `xml:"unit,attr" json:"unit" protobuf:"bytes,5,opt,name=unit"`
 }
 
@@ -2581,16 +2581,16 @@ type DomainTimer struct {
 	Track      string              `xml:"track,attr,omitempty" json:"track,omitempty" protobuf:"bytes,2,opt,name=track"`
 	TickPolicy string              `xml:"tickpolicy,attr,omitempty" json:"tickpolicy,omitempty" protobuf:"bytes,3,opt,name=tickpolicy"`
 	CatchUp    *DomainTimerCatchUp `xml:"catchup" json:"catchup,omitempty" protobuf:"bytes,4,opt,name=catchup"`
-	Frequency  uint64              `xml:"frequency,attr,omitempty" json:"frequency,omitempty" protobuf:"varint,5,opt,name=frequency"`
+	Frequency  int64               `xml:"frequency,attr,omitempty" json:"frequency,omitempty" protobuf:"varint,5,opt,name=frequency"`
 	Mode       string              `xml:"mode,attr,omitempty" json:"mode,omitempty" protobuf:"bytes,6,opt,name=mode"`
 	Present    string              `xml:"present,attr,omitempty" json:"present,omitempty" protobuf:"bytes,7,opt,name=present"`
 }
 
 // +gogo:genproto=true
 type DomainTimerCatchUp struct {
-	Threshold uint `xml:"threshold,attr,omitempty" json:"threshold,omitempty" protobuf:"varint,1,opt,name=threshold"`
-	Slew      uint `xml:"slew,attr,omitempty" json:"slew,omitempty" protobuf:"varint,2,opt,name=slew"`
-	Limit     uint `xml:"limit,attr,omitempty" json:"limit,omitempty" protobuf:"varint,3,opt,name=limit"`
+	Threshold int32 `xml:"threshold,attr,omitempty" json:"threshold,omitempty" protobuf:"varint,1,opt,name=threshold"`
+	Slew      int32 `xml:"slew,attr,omitempty" json:"slew,omitempty" protobuf:"varint,2,opt,name=slew"`
+	Limit     int32 `xml:"limit,attr,omitempty" json:"limit,omitempty" protobuf:"varint,3,opt,name=limit"`
 }
 
 // +gogo:genproto=true
@@ -2616,7 +2616,7 @@ type DomainFeatureHyperVVendorId struct {
 // +gogo:genproto=true
 type DomainFeatureHyperVSpinlocks struct {
 	DomainFeatureState `json:",inline" protobuf:"bytes,1,opt,name=domainFeatureState"`
-	Retries            uint `xml:"retries,attr,omitempty" json:"retries,omitempty" protobuf:"varint,2,opt,name=retries"`
+	Retries            int32 `xml:"retries,attr,omitempty" json:"retries,omitempty" protobuf:"varint,2,opt,name=retries"`
 }
 
 // +gogo:genproto=true
@@ -2635,7 +2635,7 @@ type DomainFeatureHyperV struct {
 	Runtime         *DomainFeatureState           `xml:"runtime" json:"runtime,omitempty" protobuf:"bytes,6,opt,name=runtime"`
 	Synic           *DomainFeatureState           `xml:"synic" json:"synic,omitempty" protobuf:"bytes,7,opt,name=synic"`
 	STimer          *DomainFeatureHyperVSTimer    `xml:"stimer" json:"stimer,omitempty" protobuf:"bytes,8,opt,name=stimer"`
-	Reset           *DomainFeatureState           `xml:"reset" json:"reset,omitempty"`
+	Reset_          *DomainFeatureState           `xml:"reset" json:"reset,omitempty" protobuf:"bytes,9,opt,name=reset"`
 	VendorId        *DomainFeatureHyperVVendorId  `xml:"vendor_id" json:"vendorId,omitempty" protobuf:"bytes,10,opt,name=vendorId"`
 	Frequencies     *DomainFeatureState           `xml:"frequencies" json:"frequencies,omitempty" protobuf:"bytes,11,opt,name=frequencies"`
 	ReEnlightenment *DomainFeatureState           `xml:"reenlightenment" json:"reenlightenment,omitempty" protobuf:"bytes,12,opt,name=reenlightenment"`
@@ -2699,7 +2699,7 @@ type DomainFeatureSMM struct {
 // +gogo:genproto=true
 type DomainFeatureSMMTSeg struct {
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,1,opt,name=unit"`
-	Value uint   `xml:",chardata" json:"value" protobuf:"varint,2,opt,name=value"`
+	Value int32  `xml:",chardata" json:"value" protobuf:"varint,2,opt,name=value"`
 }
 
 // +gogo:genproto=true
@@ -2714,9 +2714,9 @@ type DomainLaunchSecurity struct {
 
 // +gogo:genproto=true
 type DomainLaunchSecuritySEV struct {
-	CBitPos         *uint  `xml:"cbitpos" json:"cBitPos,omitempty" protobuf:"varint,1,opt,name=cBitPos"`
-	ReducedPhysBits *uint  `xml:"reducedPhysBits" json:"reducedPhysBits,omitempty" protobuf:"varint,2,opt,name=reducedPhysBits"`
-	Policy          *uint  `xml:"policy" json:"policy,omitempty" protobuf:"varint,3,opt,name=policy"`
+	CBitPos         *int32 `xml:"cbitpos" json:"cBitPos,omitempty" protobuf:"varint,1,opt,name=cBitPos"`
+	ReducedPhysBits *int32 `xml:"reducedPhysBits" json:"reducedPhysBits,omitempty" protobuf:"varint,2,opt,name=reducedPhysBits"`
+	Policy          *int32 `xml:"policy" json:"policy,omitempty" protobuf:"varint,3,opt,name=policy"`
 	DHCert          string `xml:"dhCert" json:"dh_cert" protobuf:"bytes,4,opt,name=dh_cert,json=dhCert"`
 	Session         string `xml:"session" json:"session" protobuf:"bytes,5,opt,name=session"`
 }
@@ -2814,12 +2814,12 @@ type DomainFeatureList struct {
 
 // +gogo:genproto=true
 type DomainCPUTuneShares struct {
-	Value uint `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int32 `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 }
 
 // +gogo:genproto=true
 type DomainCPUTunePeriod struct {
-	Value uint64 `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int64 `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 }
 
 // +gogo:genproto=true
@@ -2829,7 +2829,7 @@ type DomainCPUTuneQuota struct {
 
 // +gogo:genproto=true
 type DomainCPUTuneVCPUPin struct {
-	VCPU   uint   `xml:"vcpu,attr" json:"vcpu" protobuf:"varint,1,opt,name=vcpu"`
+	VCPU   int32  `xml:"vcpu,attr" json:"vcpu" protobuf:"varint,1,opt,name=vcpu"`
 	CPUSet string `xml:"cpuset,attr" json:"cpu_set" protobuf:"bytes,2,opt,name=cpu_set,json=cpuSet"`
 }
 
@@ -2840,7 +2840,7 @@ type DomainCPUTuneEmulatorPin struct {
 
 // +gogo:genproto=true
 type DomainCPUTuneIOThreadPin struct {
-	IOThread uint   `xml:"iothread,attr" json:"iothread" protobuf:"varint,1,opt,name=iothread"`
+	IOThread int32  `xml:"iothread,attr" json:"iothread" protobuf:"varint,1,opt,name=iothread"`
 	CPUSet   string `xml:"cpuset,attr" json:"cpuset" protobuf:"bytes,2,opt,name=cpuset"`
 }
 
@@ -2848,20 +2848,20 @@ type DomainCPUTuneIOThreadPin struct {
 type DomainCPUTuneVCPUSched struct {
 	VCPUs     string `xml:"vcpus,attr" json:"vcpus" protobuf:"bytes,1,opt,name=vcpus"`
 	Scheduler string `xml:"scheduler,attr,omitempty" json:"scheduler,omitempty" protobuf:"bytes,2,opt,name=scheduler"`
-	Priority  *int   `xml:"priority,attr" json:"priority,omitempty" protobuf:"varint,3,opt,name=priority"`
+	Priority  *int32 `xml:"priority,attr" json:"priority,omitempty" protobuf:"varint,3,opt,name=priority"`
 }
 
 // +gogo:genproto=true
 type DomainCPUTuneIOThreadSched struct {
 	IOThreads string `xml:"iothreads,attr" json:"iothreads" protobuf:"bytes,1,opt,name=iothreads"`
 	Scheduler string `xml:"scheduler,attr,omitempty" json:"scheduler,omitempty" protobuf:"bytes,2,opt,name=scheduler"`
-	Priority  *int   `xml:"priority,attr" json:"priority" protobuf:"varint,3,opt,name=priority"`
+	Priority  *int32 `xml:"priority,attr" json:"priority" protobuf:"varint,3,opt,name=priority"`
 }
 
 // +gogo:genproto=true
 type DomainCPUTuneEmulatorSched struct {
 	Scheduler string `xml:"scheduler,attr,omitempty" json:"scheduler,omitempty" protobuf:"bytes,1,opt,name=scheduler"`
-	Priority  *int   `xml:"priority,attr" json:"priority,omitempty" protobuf:"varint,2,opt,name=priority"`
+	Priority  *int32 `xml:"priority,attr" json:"priority,omitempty" protobuf:"varint,2,opt,name=priority"`
 }
 
 // +gogo:genproto=true
@@ -2873,16 +2873,16 @@ type DomainCPUCacheTune struct {
 
 // +gogo:genproto=true
 type DomainCPUCacheTuneCache struct {
-	ID    uint   `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
-	Level uint   `xml:"level,attr" json:"level" protobuf:"varint,2,opt,name=level"`
+	ID    int32  `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
+	Level int32  `xml:"level,attr" json:"level" protobuf:"varint,2,opt,name=level"`
 	Type  string `xml:"type,attr" json:"type" protobuf:"bytes,3,opt,name=type"`
-	Size  uint   `xml:"size,attr" json:"size"`
+	Size_ int32  `xml:"size,attr" json:"size" protobuf:"varint,4,opt,name=size"`
 	Unit  string `xml:"unit,attr" json:"unit" protobuf:"bytes,5,opt,name=unit"`
 }
 
 // +gogo:genproto=true
 type DomainCPUCacheTuneMonitor struct {
-	Level uint   `xml:"level,attr,omitempty" json:"level,omitempty" protobuf:"varint,1,opt,name=level"`
+	Level int32  `xml:"level,attr,omitempty" json:"level,omitempty" protobuf:"varint,1,opt,name=level"`
 	VCPUs string `xml:"vcpus,attr,omitempty" json:"vcpus,omitempty" protobuf:"bytes,2,opt,name=vcpus"`
 }
 
@@ -2895,13 +2895,13 @@ type DomainCPUMemoryTune struct {
 
 // +gogo:genproto=true
 type DomainCPUMemoryTuneNode struct {
-	ID        uint `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
-	Bandwidth uint `xml:"bandwidth,attr" json:"bandwidth" protobuf:"varint,2,opt,name=bandwidth"`
+	ID        int32 `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
+	Bandwidth int32 `xml:"bandwidth,attr" json:"bandwidth" protobuf:"varint,2,opt,name=bandwidth"`
 }
 
 // +gogo:genproto=true
 type DomainCPUMemoryTuneMonitor struct {
-	Level uint   `xml:"level,attr,omitempty" json:"level,omitempty" protobuf:"varint,1,opt,name=level"`
+	Level int32  `xml:"level,attr,omitempty" json:"level,omitempty" protobuf:"varint,1,opt,name=level"`
 	VCPUs string `xml:"vcpus,attr,omitempty" json:"vcpus,omitempty" protobuf:"bytes,2,opt,name=vcpus"`
 }
 
@@ -3007,18 +3007,18 @@ type DomainXenCommandline struct {
 
 // +gogo:genproto=true
 type DomainBlockIOTune struct {
-	Weight uint                      `xml:"weight,omitempty" json:"weight" protobuf:"varint,1,opt,name=weight"`
+	Weight int32                     `xml:"weight,omitempty" json:"weight" protobuf:"varint,1,opt,name=weight"`
 	Device []DomainBlockIOTuneDevice `xml:"device" json:"device" protobuf:"bytes,2,rep,name=device"`
 }
 
 // +gogo:genproto=true
 type DomainBlockIOTuneDevice struct {
 	Path          string `xml:"path" json:"path" protobuf:"bytes,1,opt,name=path"`
-	Weight        uint   `xml:"weight,omitempty" json:"weight,omitempty" protobuf:"varint,2,opt,name=weight"`
-	ReadIopsSec   uint   `xml:"read_iops_sec,omitempty" json:"readIopsSec,omitempty" protobuf:"varint,3,opt,name=readIopsSec"`
-	WriteIopsSec  uint   `xml:"write_iops_sec,omitempty" json:"writeIopsSec,omitempty" protobuf:"varint,4,opt,name=writeIopsSec"`
-	ReadBytesSec  uint   `xml:"read_bytes_sec,omitempty" json:"readBytesSec,omitempty" protobuf:"varint,5,opt,name=readBytesSec"`
-	WriteBytesSec uint   `xml:"write_bytes_sec,omitempty" json:"writeBytesSec,omitempty" protobuf:"varint,6,opt,name=writeBytesSec"`
+	Weight        int32  `xml:"weight,omitempty" json:"weight,omitempty" protobuf:"varint,2,opt,name=weight"`
+	ReadIopsSec   int32  `xml:"read_iops_sec,omitempty" json:"readIopsSec,omitempty" protobuf:"varint,3,opt,name=readIopsSec"`
+	WriteIopsSec  int32  `xml:"write_iops_sec,omitempty" json:"writeIopsSec,omitempty" protobuf:"varint,4,opt,name=writeIopsSec"`
+	ReadBytesSec  int32  `xml:"read_bytes_sec,omitempty" json:"readBytesSec,omitempty" protobuf:"varint,5,opt,name=readBytesSec"`
+	WriteBytesSec int32  `xml:"write_bytes_sec,omitempty" json:"writeBytesSec,omitempty" protobuf:"varint,6,opt,name=writeBytesSec"`
 }
 
 // +gogo:genproto=true
@@ -3065,7 +3065,7 @@ type DomainNUMATuneMemory struct {
 
 // +gogo:genproto=true
 type DomainNUMATuneMemNode struct {
-	CellID  uint   `xml:"cellid,attr" json:"cellId,omitempty" protobuf:"varint,1,opt,name=cellId"`
+	CellID  int32  `xml:"cellid,attr" json:"cellId,omitempty" protobuf:"varint,1,opt,name=cellId"`
 	Mode    string `xml:"mode,attr" json:"mode,omitempty" protobuf:"bytes,2,opt,name=mode"`
 	Nodeset string `xml:"nodeset,attr" json:"nodeset,omitempty" protobuf:"bytes,3,opt,name=nodeset"`
 }
@@ -3077,7 +3077,7 @@ type DomainIOThreadIDs struct {
 
 // +gogo:genproto=true
 type DomainIOThread struct {
-	ID uint `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
+	ID int32 `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
 }
 
 // +gogo:genproto=true
@@ -3099,14 +3099,14 @@ type DomainIDMap struct {
 
 // +gogo:genproto=true
 type DomainIDMapRange struct {
-	Start  uint `xml:"start,attr" json:"start" protobuf:"varint,1,opt,name=start"`
-	Target uint `xml:"target,attr" json:"target" protobuf:"varint,2,opt,name=target"`
-	Count  uint `xml:"count,attr" json:"count" protobuf:"varint,3,opt,name=count"`
+	Start  int32 `xml:"start,attr" json:"start" protobuf:"varint,1,opt,name=start"`
+	Target int32 `xml:"target,attr" json:"target" protobuf:"varint,2,opt,name=target"`
+	Count  int32 `xml:"count,attr" json:"count" protobuf:"varint,3,opt,name=count"`
 }
 
 // +gogo:genproto=true
 type DomainMemoryTuneLimit struct {
-	Value uint64 `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
+	Value int64  `xml:",chardata" json:"value" protobuf:"varint,1,opt,name=value"`
 	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
@@ -3153,7 +3153,7 @@ type DomainGenID struct {
 type Domain struct {
 	XMLName        xml.Name              `xml:"domain" json:"-"`
 	Type           string                `xml:"type,attr,omitempty" json:"type,omitempty" protobuf:"bytes,1,opt,name=type"`
-	ID             *int                  `xml:"id,attr" json:"id" protobuf:"varint,2,opt,name=id"`
+	ID             *int32                `xml:"id,attr" json:"id" protobuf:"varint,2,opt,name=id"`
 	Name           string                `xml:"name,omitempty" json:"name,omitempty" protobuf:"bytes,3,opt,name=name"`
 	UUID           string                `xml:"uuid,omitempty" json:"uuid,omitempty" protobuf:"bytes,4,opt,name=uuid"`
 	GenID          *DomainGenID          `xml:"genid" json:"genId,omitempty" protobuf:"bytes,5,opt,name=genId"`
@@ -3168,7 +3168,7 @@ type Domain struct {
 	MemoryBacking  *DomainMemoryBacking  `xml:"memoryBacking" json:"memoryBacking,omitempty" protobuf:"bytes,14,opt,name=memoryBacking"`
 	VCPU           *DomainVCPU           `xml:"vcpu" json:"vcpu,omitempty" protobuf:"bytes,15,opt,name=vcpu"`
 	VCPUs          *DomainVCPUs          `xml:"vcpus" json:"vcpus,omitempty" protobuf:"bytes,16,opt,name=vcpus"`
-	IOThreads      uint                  `xml:"iothreads,omitempty" json:"iothreads,omitempty" protobuf:"varint,17,opt,name=iothreads"`
+	IOThreads      int32                 `xml:"iothreads,omitempty" json:"iothreads,omitempty" protobuf:"varint,17,opt,name=iothreads"`
 	IOThreadIDs    *DomainIOThreadIDs    `xml:"iothreadids" json:"iothreadids,omitempty" protobuf:"bytes,18,opt,name=iothreadids"`
 	CPUTune        *DomainCPUTune        `xml:"cputune" json:"cputune,omitempty" protobuf:"bytes,19,opt,name=cputune"`
 	NUMATune       *DomainNUMATune       `xml:"numatune" json:"numatune,omitempty" protobuf:"bytes,20,opt,name=numatune"`
@@ -3262,23 +3262,23 @@ func (a *DomainControllerPCITarget) MarshalXML(e *xml.Encoder, start xml.StartEl
 func (a *DomainControllerPCITarget) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "chassisNr" {
-			if err := unmarshalUintAttr(attr.Value, &a.ChassisNr, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.ChassisNr, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "chassis" {
-			if err := unmarshalUintAttr(attr.Value, &a.Chassis, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Chassis, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "port" {
-			if err := unmarshalUintAttr(attr.Value, &a.Port, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Port, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "busNr" {
-			if err := unmarshalUintAttr(attr.Value, &a.BusNr, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.BusNr, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "index" {
-			if err := unmarshalUintAttr(attr.Value, &a.Index, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Index, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "hotplug" {
@@ -3307,7 +3307,7 @@ func (a *DomainControllerPCITarget) UnmarshalXML(d *xml.Decoder, start xml.Start
 					if err != nil {
 						return err
 					}
-					vali := uint(val)
+					vali := int32(val)
 					a.NUMANode = &vali
 				}
 			}
@@ -4957,15 +4957,15 @@ func (a *DomainRedirFilterUSB) MarshalXML(e *xml.Encoder, start xml.StartElement
 func (a *DomainRedirFilterUSB) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "class" && attr.Value != "-1" {
-			if err := unmarshalUintAttr(attr.Value, &a.Class, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Class, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "product" && attr.Value != "-1" {
-			if err := unmarshalUintAttr(attr.Value, &a.Product, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Product, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "vendor" && attr.Value != "-1" {
-			if err := unmarshalUintAttr(attr.Value, &a.Vendor, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Vendor, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "version" && attr.Value != "-1" {
@@ -5792,7 +5792,7 @@ func (d *DomainWatchdog) MarshalX() (string, error) {
 	return string(doc), nil
 }
 
-func marshalUintAttr(start *xml.StartElement, name string, val *uint, format string) {
+func marshalUintAttr(start *xml.StartElement, name string, val *int32, format string) {
 	if val != nil {
 		start.Attr = append(start.Attr, xml.Attr{
 			xml.Name{Local: name}, fmt.Sprintf(format, *val),
@@ -5800,7 +5800,7 @@ func marshalUintAttr(start *xml.StartElement, name string, val *uint, format str
 	}
 }
 
-func marshalUint64Attr(start *xml.StartElement, name string, val *uint64, format string) {
+func marshalUint64Attr(start *xml.StartElement, name string, val *int64, format string) {
 	if val != nil {
 		start.Attr = append(start.Attr, xml.Attr{
 			xml.Name{Local: name}, fmt.Sprintf(format, *val),
@@ -5995,11 +5995,11 @@ func (a *DomainAddress) MarshalXML(e *xml.Encoder, start xml.StartElement) error
 	}
 }
 
-func unmarshalUint64Attr(valstr string, valptr **uint64, base int) error {
+func unmarshalInt64Attr(valstr string, valptr **int64, base int) error {
 	if base == 16 {
 		valstr = strings.TrimPrefix(valstr, "0x")
 	}
-	val, err := strconv.ParseUint(valstr, base, 64)
+	val, err := strconv.ParseInt(valstr, base, 64)
 	if err != nil {
 		return err
 	}
@@ -6007,15 +6007,15 @@ func unmarshalUint64Attr(valstr string, valptr **uint64, base int) error {
 	return nil
 }
 
-func unmarshalUintAttr(valstr string, valptr **uint, base int) error {
+func unmarshalIntAttr(valstr string, valptr **int32, base int) error {
 	if base == 16 {
 		valstr = strings.TrimPrefix(valstr, "0x")
 	}
-	val, err := strconv.ParseUint(valstr, base, 64)
+	val, err := strconv.ParseInt(valstr, base, 64)
 	if err != nil {
 		return err
 	}
-	vali := uint(val)
+	vali := int32(val)
 	*valptr = &vali
 	return nil
 }
@@ -6023,13 +6023,13 @@ func unmarshalUintAttr(valstr string, valptr **uint, base int) error {
 func (a *DomainAddressUSB) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "bus" {
-			if err := unmarshalUintAttr(attr.Value, &a.Bus, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Bus, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "port" {
 			a.Port = attr.Value
 		} else if attr.Name.Local == "device" {
-			if err := unmarshalUintAttr(attr.Value, &a.Device, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Device, 10); err != nil {
 				return err
 			}
 		}
@@ -6041,19 +6041,19 @@ func (a *DomainAddressUSB) UnmarshalXML(d *xml.Decoder, start xml.StartElement) 
 func (a *DomainAddressPCI) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "domain" {
-			if err := unmarshalUintAttr(attr.Value, &a.Domain, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Domain, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "bus" {
-			if err := unmarshalUintAttr(attr.Value, &a.Bus, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Bus, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "slot" {
-			if err := unmarshalUintAttr(attr.Value, &a.Slot, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Slot, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "function" {
-			if err := unmarshalUintAttr(attr.Value, &a.Function, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Function, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "multifunction" {
@@ -6087,11 +6087,11 @@ func (a *DomainAddressPCI) UnmarshalXML(d *xml.Decoder, start xml.StartElement) 
 func (a *DomainAddressZPCI) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "fid" {
-			if err := unmarshalUintAttr(attr.Value, &a.FID, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.FID, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "uid" {
-			if err := unmarshalUintAttr(attr.Value, &a.UID, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.UID, 0); err != nil {
 				return err
 			}
 		}
@@ -6104,19 +6104,19 @@ func (a *DomainAddressZPCI) UnmarshalXML(d *xml.Decoder, start xml.StartElement)
 func (a *DomainAddressDrive) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "controller" {
-			if err := unmarshalUintAttr(attr.Value, &a.Controller, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Controller, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "bus" {
-			if err := unmarshalUintAttr(attr.Value, &a.Bus, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Bus, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "target" {
-			if err := unmarshalUintAttr(attr.Value, &a.Target, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Target, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "unit" {
-			if err := unmarshalUintAttr(attr.Value, &a.Unit, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Unit, 10); err != nil {
 				return err
 			}
 		}
@@ -6128,11 +6128,11 @@ func (a *DomainAddressDrive) UnmarshalXML(d *xml.Decoder, start xml.StartElement
 func (a *DomainAddressDIMM) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "slot" {
-			if err := unmarshalUintAttr(attr.Value, &a.Slot, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Slot, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "base" {
-			if err := unmarshalUint64Attr(attr.Value, &a.Base, 16); err != nil {
+			if err := unmarshalInt64Attr(attr.Value, &a.Base, 16); err != nil {
 				return err
 			}
 		}
@@ -6144,11 +6144,11 @@ func (a *DomainAddressDIMM) UnmarshalXML(d *xml.Decoder, start xml.StartElement)
 func (a *DomainAddressISA) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "iobase" {
-			if err := unmarshalUintAttr(attr.Value, &a.IOBase, 16); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.IOBase, 16); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "irq" {
-			if err := unmarshalUintAttr(attr.Value, &a.IRQ, 16); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.IRQ, 16); err != nil {
 				return err
 			}
 		}
@@ -6165,15 +6165,15 @@ func (a *DomainAddressVirtioMMIO) UnmarshalXML(d *xml.Decoder, start xml.StartEl
 func (a *DomainAddressCCW) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "cssid" {
-			if err := unmarshalUintAttr(attr.Value, &a.CSSID, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.CSSID, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "ssid" {
-			if err := unmarshalUintAttr(attr.Value, &a.SSID, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.SSID, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "devno" {
-			if err := unmarshalUintAttr(attr.Value, &a.DevNo, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.DevNo, 0); err != nil {
 				return err
 			}
 		}
@@ -6185,15 +6185,15 @@ func (a *DomainAddressCCW) UnmarshalXML(d *xml.Decoder, start xml.StartElement) 
 func (a *DomainAddressVirtioSerial) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "controller" {
-			if err := unmarshalUintAttr(attr.Value, &a.Controller, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Controller, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "bus" {
-			if err := unmarshalUintAttr(attr.Value, &a.Bus, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Bus, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "port" {
-			if err := unmarshalUintAttr(attr.Value, &a.Port, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Port, 10); err != nil {
 				return err
 			}
 		}
@@ -6205,7 +6205,7 @@ func (a *DomainAddressVirtioSerial) UnmarshalXML(d *xml.Decoder, start xml.Start
 func (a *DomainAddressSpaprVIO) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "reg" {
-			if err := unmarshalUint64Attr(attr.Value, &a.Reg, 16); err != nil {
+			if err := unmarshalInt64Attr(attr.Value, &a.Reg, 16); err != nil {
 				return err
 			}
 		}
@@ -6217,11 +6217,11 @@ func (a *DomainAddressSpaprVIO) UnmarshalXML(d *xml.Decoder, start xml.StartElem
 func (a *DomainAddressCCID) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "controller" {
-			if err := unmarshalUintAttr(attr.Value, &a.Controller, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Controller, 10); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "slot" {
-			if err := unmarshalUintAttr(attr.Value, &a.Slot, 10); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Slot, 10); err != nil {
 				return err
 			}
 		}
@@ -6374,7 +6374,7 @@ func (a *DomainLaunchSecuritySEV) UnmarshalXML(d *xml.Decoder, start xml.StartEl
 				}
 				switch data := data.(type) {
 				case xml.CharData:
-					if err := unmarshalUintAttr(string(data), &a.Policy, 16); err != nil {
+					if err := unmarshalIntAttr(string(data), &a.Policy, 16); err != nil {
 						return err
 					}
 				}
@@ -6385,7 +6385,7 @@ func (a *DomainLaunchSecuritySEV) UnmarshalXML(d *xml.Decoder, start xml.StartEl
 				}
 				switch data := data.(type) {
 				case xml.CharData:
-					if err := unmarshalUintAttr(string(data), &a.CBitPos, 10); err != nil {
+					if err := unmarshalIntAttr(string(data), &a.CBitPos, 10); err != nil {
 						return err
 					}
 				}
@@ -6396,7 +6396,7 @@ func (a *DomainLaunchSecuritySEV) UnmarshalXML(d *xml.Decoder, start xml.StartEl
 				}
 				switch data := data.(type) {
 				case xml.CharData:
-					if err := unmarshalUintAttr(string(data), &a.ReducedPhysBits, 10); err != nil {
+					if err := unmarshalIntAttr(string(data), &a.ReducedPhysBits, 10); err != nil {
 						return err
 					}
 				}

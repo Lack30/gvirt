@@ -33,7 +33,7 @@ type NetworkPortVLAN struct {
 
 // +gogo:genproto=true
 type NetworkPortVLANTag struct {
-	ID         uint   `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
+	ID         int32  `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
 	NativeMode string `xml:"nativeMode,attr,omitempty" json:"nativeMode,omitempty" protobuf:"bytes,2,opt,name=nativeMode"`
 }
 
@@ -93,10 +93,10 @@ type NetworkPortPlugHostDevPCIDriver struct {
 
 // +gogo:genproto=true
 type NetworkPortPlugHostDevPCIAddress struct {
-	Domain   *uint `xml:"domain,attr" json:"domain" protobuf:"varint,1,opt,name=domain"`
-	Bus      *uint `xml:"bus,attr" json:"bus" protobuf:"varint,2,opt,name=bus"`
-	Slot     *uint `xml:"slot,attr" json:"slot" protobuf:"varint,3,opt,name=slot"`
-	Function *uint `xml:"function,attr" json:"function" protobuf:"varint,4,opt,name=function"`
+	Domain   *int32 `xml:"domain,attr" json:"domain" protobuf:"varint,1,opt,name=domain"`
+	Bus      *int32 `xml:"bus,attr" json:"bus" protobuf:"varint,2,opt,name=bus"`
+	Slot     *int32 `xml:"slot,attr" json:"slot" protobuf:"varint,3,opt,name=slot"`
+	Function *int32 `xml:"function,attr" json:"function" protobuf:"varint,4,opt,name=function"`
 }
 
 func (a *NetworkPortPlugHostDevPCIAddress) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
@@ -112,19 +112,19 @@ func (a *NetworkPortPlugHostDevPCIAddress) MarshalXML(e *xml.Encoder, start xml.
 func (a *NetworkPortPlugHostDevPCIAddress) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, attr := range start.Attr {
 		if attr.Name.Local == "domain" {
-			if err := unmarshalUintAttr(attr.Value, &a.Domain, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Domain, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "bus" {
-			if err := unmarshalUintAttr(attr.Value, &a.Bus, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Bus, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "slot" {
-			if err := unmarshalUintAttr(attr.Value, &a.Slot, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Slot, 0); err != nil {
 				return err
 			}
 		} else if attr.Name.Local == "function" {
-			if err := unmarshalUintAttr(attr.Value, &a.Function, 0); err != nil {
+			if err := unmarshalIntAttr(attr.Value, &a.Function, 0); err != nil {
 				return err
 			}
 		}

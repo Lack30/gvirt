@@ -22,6 +22,3 @@
 
 package gkvm
 
-type Pool interface {
-	GetXmlInfo() (StoragePoolXml, error)
-}

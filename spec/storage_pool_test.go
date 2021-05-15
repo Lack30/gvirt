@@ -5,10 +5,10 @@ import (
 	"testing"
 )
 
-var adapterDomain uint = 0
-var adapterBus uint = 0
-var adapterSlot uint = 31
-var adapterFunction uint = 2
+var adapterDomain int32 = 0
+var adapterBus int32 = 0
+var adapterSlot int32 = 31
+var adapterFunction int32 = 2
 
 var storagePoolTestData = []struct {
 	Object   *StoragePool

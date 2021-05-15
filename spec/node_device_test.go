@@ -5,10 +5,10 @@ import (
 	"testing"
 )
 
-var pciDomain uint = 1
-var pciBus uint = 21
-var pciSlot uint = 10
-var pciFunc uint = 50
+var pciDomain int32 = 1
+var pciBus int32 = 21
+var pciSlot int32 = 10
+var pciFunc int32 = 50
 
 var NodeDeviceTestData = []struct {
 	Object *NodeDevice

@@ -19,7 +19,7 @@ type DomainCaps struct {
 
 // +gogo:genproto=true
 type DomainCapsVCPU struct {
-	Max uint `xml:"max,attr" json:"max" protobuf:"varint,1,opt,name=max"`
+	Max int32 `xml:"max,attr" json:"max" protobuf:"varint,1,opt,name=max"`
 }
 
 // +gogo:genproto=true
@@ -130,8 +130,8 @@ type DomainCapsFeatureBackup struct {
 // +gogo:genproto=true
 type DomainCapsFeatureSEV struct {
 	Supported       string `xml:"supported,attr" json:"supported" protobuf:"bytes,1,opt,name=supported"`
-	CBitPos         uint   `xml:"cbitpos,omitempty" json:"cBitPos,omitempty" protobuf:"varint,2,opt,name=cBitPos"`
-	ReducedPhysBits uint   `xml:"reducedPhysBits,omitempty" json:"reducedPhysBits,omitempty" protobuf:"varint,3,opt,name=reducedPhysBits"`
+	CBitPos         int32  `xml:"cbitpos,omitempty" json:"cBitPos,omitempty" protobuf:"varint,2,opt,name=cBitPos"`
+	ReducedPhysBits int32  `xml:"reducedPhysBits,omitempty" json:"reducedPhysBits,omitempty" protobuf:"varint,3,opt,name=reducedPhysBits"`
 }
 
 func (c *DomainCaps) UnmarshalX(doc string) error {

@@ -82,7 +82,7 @@ func (c *Client) Close() error {
 	return fmt.Errorf("client no initialized")
 }
 
-func parseVersion(n int32) string {
+func parseVersion(n uint32) string {
 	sp := make([]string, 0)
 	for n > 1 {
 		sp = append([]string{strconv.FormatUint(uint64(n%1000), 10)}, sp...)
