@@ -206,7 +206,7 @@ var storageVolumeTestData = []struct {
 
 func TestStorageVolume(t *testing.T) {
 	for _, test := range storageVolumeTestData {
-		doc, err := test.Object.Marshal()
+		doc, err := test.Object.MarshalX()
 		if err != nil {
 			t.Fatal(err)
 		}

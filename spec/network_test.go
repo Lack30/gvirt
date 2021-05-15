@@ -338,7 +338,7 @@ var networkTestData = []struct {
 
 func TestNetwork(t *testing.T) {
 	for _, test := range networkTestData {
-		doc, err := test.Object.Marshal()
+		doc, err := test.Object.MarshalX()
 		if err != nil {
 			t.Fatal(err)
 		}

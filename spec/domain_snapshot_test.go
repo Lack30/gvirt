@@ -157,7 +157,7 @@ var domainSnapshotTestData = []struct {
 
 func TestDomainSnapshot(t *testing.T) {
 	for _, test := range domainSnapshotTestData {
-		doc, err := test.Object.Marshal()
+		doc, err := test.Object.MarshalX()
 		if err != nil {
 			t.Fatal(err)
 		}

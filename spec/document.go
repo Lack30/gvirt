@@ -1,6 +1,6 @@
 package spec
 
 type Document interface {
-	Unmarshal(doc string) error
-	Marshal() (string, error)
+	UnmarshalX(doc string) error
+	MarshalX() (string, error)
 }

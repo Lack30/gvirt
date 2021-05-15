@@ -84,7 +84,7 @@ func TestNodeDevice(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		doc, err := nodeDevice.Marshal()
+		doc, err := nodeDevice.MarshalX()
 		if err != nil {
 			t.Fatal(err)
 		}

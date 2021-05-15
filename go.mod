@@ -1,5 +1,8 @@
-module github.com/lack-io/gkvm
+module github.com/lack-io/gvirt
 
 go 1.16
 
-require libvirt.org/libvirt-go v7.0.0+incompatible
+require (
+	github.com/gogo/protobuf v1.3.2
+	libvirt.org/libvirt-go v7.0.0+incompatible
+)

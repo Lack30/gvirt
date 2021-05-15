@@ -3847,7 +3847,7 @@ var domainTestData = []struct {
 
 func TestDomain(t *testing.T) {
 	for _, test := range domainTestData {
-		doc, err := test.Object.Marshal()
+		doc, err := test.Object.MarshalX()
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -3872,7 +3872,7 @@ func TestDomain(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		doc, err = newdocobj.Marshal()
+		doc, err = newdocobj.MarshalX()
 		if err != nil {
 			t.Fatal(err)
 		}

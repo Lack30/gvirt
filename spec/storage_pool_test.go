@@ -211,7 +211,7 @@ var storagePoolTestData = []struct {
 
 func TestStoragePool(t *testing.T) {
 	for _, test := range storagePoolTestData {
-		doc, err := test.Object.Marshal()
+		doc, err := test.Object.MarshalX()
 		if err != nil {
 			t.Fatal(err)
 		}
