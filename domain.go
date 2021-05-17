@@ -27,7 +27,15 @@ import (
 	"libvirt.org/libvirt-go"
 )
 
-func (c *Client) GetDomains() ([]*spec.Domain, error) {
+type Domain struct {
+	cc *Client
+
+	ptr *libvirt.Domain
+
+	spec.Domain
+}
+
+func (c *Client) GetAllDomains() ([]*Domain, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
@@ -39,16 +47,152 @@ func (c *Client) GetDomains() ([]*spec.Domain, error) {
 		return nil, err
 	}
 
-	out := make([]*spec.Domain, 0, len(domains))
+	out := make([]*Domain, 0, len(domains))
 	for _, dom := range domains {
 		doc, err := dom.GetXMLDesc(libvirt.DOMAIN_XML_SECURE | libvirt.DOMAIN_XML_INACTIVE)
 		if err != nil {
 			continue
 		}
-		d := &spec.Domain{}
+		d := &Domain{cc: c, ptr: &dom}
 		if err := d.UnmarshalX(doc); err == nil {
 			out = append(out, d)
 		}
 	}
 	return out, nil
 }
+
+func (c *Client) GetDomainById(id uint32) (*Domain, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	dom, err := cc.LookupDomainById(id)
+	if err != nil {
+		return nil, err
+	}
+	xml, err := dom.GetXMLDesc(libvirt.DOMAIN_XML_SECURE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &Domain{cc: c, ptr: dom}
+	err = out.UnmarshalX(xml)
+	return out, err
+}
+
+func (c *Client) GetDomainByUUID(uuid string) (*Domain, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	dom, err := cc.LookupDomainByUUIDString(uuid)
+	if err != nil {
+		return nil, err
+	}
+	xml, err := dom.GetXMLDesc(libvirt.DOMAIN_XML_SECURE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &Domain{cc: c, ptr: dom}
+	err = out.UnmarshalX(xml)
+	return out, err
+}
+
+func (c *Client) GetDomainByName(name string) (*Domain, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	dom, err := cc.LookupDomainByName(name)
+	if err != nil {
+		return nil, err
+	}
+	xml, err := dom.GetXMLDesc(libvirt.DOMAIN_XML_SECURE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &Domain{cc: c, ptr: dom}
+	err = out.UnmarshalX(xml)
+	return out, err
+}
+
+func (c *Client) DomainCreateXML(xml string) (*Domain, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	dom, err := cc.DomainCreateXML(xml, libvirt.DOMAIN_START_VALIDATE)
+	if err != nil {
+		return nil, err
+	}
+	doc, err := dom.GetXMLDesc(libvirt.DOMAIN_XML_SECURE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &Domain{cc: c, ptr: dom}
+	err = out.UnmarshalX(doc)
+	return out, err
+}
+
+func (c *Client) DomainDefineXML(xml string) (*Domain, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	dom, err := cc.DomainDefineXMLFlags(xml, libvirt.DOMAIN_DEFINE_VALIDATE)
+	if err != nil {
+		return nil, err
+	}
+	doc, err := dom.GetXMLDesc(libvirt.DOMAIN_XML_SECURE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &Domain{cc: c, ptr: dom}
+	err = out.UnmarshalX(doc)
+	return out, err
+}
+
+func (d *Domain) Create() error {
+	return d.ptr.Create()
+}
+
+func (d *Domain) Shutdown() error {
+	return d.ptr.ShutdownFlags(libvirt.DOMAIN_SHUTDOWN_ACPI_POWER_BTN)
+}
+
+func (d *Domain) Suspend() error {
+	return d.ptr.Suspend()
+}
+
+func (d *Domain) Resume() error {
+	return d.ptr.Resume()
+}
+
+func (d *Domain) Reboot() error {
+	return d.ptr.Reboot(libvirt.DOMAIN_REBOOT_ACPI_POWER_BTN)
+}
+
+func (d *Domain) Destroy() error {
+	return d.ptr.DestroyFlags(libvirt.DOMAIN_DESTROY_GRACEFUL)
+}
+
+func (d *Domain) UnDefine() error {
+	return d.ptr.UndefineFlags(libvirt.DOMAIN_UNDEFINE_MANAGED_SAVE |
+		libvirt.DOMAIN_UNDEFINE_SNAPSHOTS_METADATA |
+		libvirt.DOMAIN_UNDEFINE_NVRAM)
+}
+
