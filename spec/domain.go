@@ -10,8 +10,8 @@ import (
 
 // +gogo:genproto=true
 type DomainControllerPCIHole64 struct {
-	Size_ int64  `xml:",chardata" json:"size" protobuf:"varint,1,opt,name=size"`
-	Unit  string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
+	Size int64  `xml:",chardata" json:"size" protobuf:"varint,1,opt,name=size"`
+	Unit string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 }
 
 // +gogo:genproto=true
@@ -127,7 +127,7 @@ type DomainDiskCookies struct {
 
 // +gogo:genproto=true
 type DomainDiskSourceReadahead struct {
-	Size_ string `xml:"size,attr" json:"size" protobuf:"bytes,1,opt,name=size"`
+	Size string `xml:"size,attr" json:"size" protobuf:"bytes,1,opt,name=size"`
 }
 
 // +gogo:genproto=true
@@ -174,7 +174,7 @@ type DomainDiskSlices struct {
 type DomainDiskSlice struct {
 	Type   string `xml:"type,attr" json:"type" protobuf:"bytes,1,opt,name=type"`
 	Offset int32  `xml:"offset,attr" json:"offset" protobuf:"varint,2,opt,name=offset"`
-	Size_  int32  `xml:"size,attr" json:"size" protobuf:"varint,3,opt,name=size"`
+	Size   int32  `xml:"size,attr" json:"size" protobuf:"varint,3,opt,name=size"`
 }
 
 // +gogo:genproto=true
@@ -813,7 +813,7 @@ type DomainInterfaceTune struct {
 
 // +gogo:genproto=true
 type DomainInterfaceMTU struct {
-	Size_ int32 `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
+	Size int32 `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
 }
 
 // +gogo:genproto=true
@@ -1986,12 +1986,12 @@ type DomainMemorydevTargetSize struct {
 
 // +gogo:genproto=true
 type DomainMemorydevTargetLabel struct {
-	Size_ *DomainMemorydevTargetSize `xml:"size" json:"size,omitempty" protobuf:"bytes,1,opt,name=size"`
+	Size *DomainMemorydevTargetSize `xml:"size" json:"size,omitempty" protobuf:"bytes,1,opt,name=size"`
 }
 
 // +gogo:genproto=true
 type DomainMemorydevTarget struct {
-	Size_    *DomainMemorydevTargetSize     `xml:"size" json:"size,omitempty" protobuf:"bytes,1,opt,name=size"`
+	Size     *DomainMemorydevTargetSize     `xml:"size" json:"size,omitempty" protobuf:"bytes,1,opt,name=size"`
 	Node     *DomainMemorydevTargetNode     `xml:"node" json:"node,omitempty" protobuf:"bytes,2,opt,name=node"`
 	Label    *DomainMemorydevTargetLabel    `xml:"label" json:"label,omitempty" protobuf:"bytes,3,opt,name=label"`
 	ReadOnly *DomainMemorydevTargetReadOnly `xml:"readonly" json:"readonly,omitempty" protobuf:"bytes,4,opt,name=readonly"`
@@ -2129,7 +2129,7 @@ type DomainShmem struct {
 	XMLName xml.Name           `xml:"shmem" json:"-"`
 	Name    string             `xml:"name,attr" json:"name" protobuf:"bytes,1,opt,name=name"`
 	Role    string             `xml:"role,attr,omitempty" json:"role,omitempty" protobuf:"bytes,2,opt,name=role"`
-	Size_   *DomainShmemSize   `xml:"size" json:"size,omitempty" protobuf:"bytes,3,opt,name=size"`
+	Size    *DomainShmemSize   `xml:"size" json:"size,omitempty" protobuf:"bytes,3,opt,name=size"`
 	Model   *DomainShmemModel  `xml:"model" json:"model,omitempty" protobuf:"bytes,4,opt,name=model"`
 	Server  *DomainShmemServer `xml:"server" json:"server,omitempty" protobuf:"bytes,5,opt,name=server"`
 	MSI     *DomainShmemMSI    `xml:"msi" json:"msi,omitempty" protobuf:"bytes,6,opt,name=msi"`
@@ -2217,7 +2217,7 @@ type DomainMaxMemory struct {
 
 // +gogo:genproto=true
 type DomainMemoryHugepage struct {
-	Size_   int32  `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
+	Size    int32  `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
 	Unit    string `xml:"unit,attr,omitempty" json:"unit,omitempty" protobuf:"bytes,2,opt,name=unit"`
 	Nodeset string `xml:"nodeset,attr,omitempty" json:"nodeset,omitempty" protobuf:"bytes,3,opt,name=nodeset"`
 }
@@ -2526,7 +2526,7 @@ type DomainCellCache struct {
 	Level         int32               `xml:"level,attr" json:"level" protobuf:"varint,1,opt,name=level"`
 	Associativity string              `xml:"associativity,attr" json:"associativity" protobuf:"bytes,2,opt,name=associativity"`
 	Policy        string              `xml:"policy,attr" json:"policy" protobuf:"bytes,3,opt,name=policy"`
-	Size_         DomainCellCacheSize `xml:"size" json:"size" protobuf:"bytes,4,opt,name=size"`
+	Size          DomainCellCacheSize `xml:"size" json:"size" protobuf:"bytes,4,opt,name=size"`
 	Line          DomainCellCacheLine `xml:"line" json:"line" protobuf:"bytes,5,opt,name=line"`
 }
 
@@ -2876,7 +2876,7 @@ type DomainCPUCacheTuneCache struct {
 	ID    int32  `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
 	Level int32  `xml:"level,attr" json:"level" protobuf:"varint,2,opt,name=level"`
 	Type  string `xml:"type,attr" json:"type" protobuf:"bytes,3,opt,name=type"`
-	Size_ int32  `xml:"size,attr" json:"size" protobuf:"varint,4,opt,name=size"`
+	Size  int32  `xml:"size,attr" json:"size" protobuf:"varint,4,opt,name=size"`
 	Unit  string `xml:"unit,attr" json:"unit" protobuf:"bytes,5,opt,name=unit"`
 }
 

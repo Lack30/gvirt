@@ -44,7 +44,7 @@ var networkTestData = []struct {
 		Object: &Network{
 			Name: "test",
 			MTU: &NetworkMTU{
-				Size_: 1400,
+				Size: 1400,
 			},
 			Domain: &NetworkDomain{
 				Name: "example.com",

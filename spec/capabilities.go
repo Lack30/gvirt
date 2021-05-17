@@ -16,8 +16,8 @@ type CapsHostCPUFeatureFlag struct {
 
 // +gogo:genproto=true
 type CapsHostCPUPageSize struct {
-	Size_ int32  `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
-	Unit  string `xml:"unit,attr" json:"unit" protobuf:"bytes,2,opt,name=unit"`
+	Size int32  `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
+	Unit string `xml:"unit,attr" json:"unit" protobuf:"bytes,2,opt,name=unit"`
 }
 
 // +gogo:genproto=true
@@ -52,13 +52,13 @@ type CapsHostCPUFeatures struct {
 
 // +gogo:genproto=true
 type CapsHostNUMAMemory struct {
-	Size_ int64  `xml:",chardata" json:"size" protobuf:"varint,1,opt,name=size"`
-	Unit  string `xml:"unit,attr" json:"unit" protobuf:"bytes,2,opt,name=unit"`
+	Size int64  `xml:",chardata" json:"size" protobuf:"varint,1,opt,name=size"`
+	Unit string `xml:"unit,attr" json:"unit" protobuf:"bytes,2,opt,name=unit"`
 }
 
 // +gogo:genproto=true
 type CapsHostNUMAPageInfo struct {
-	Size_ int32  `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
+	Size  int32  `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
 	Unit  string `xml:"unit,attr" json:"unit" protobuf:"bytes,2,opt,name=unit"`
 	Count int64  `xml:",chardata" json:"count" protobuf:"varint,3,opt,name=count"`
 }
@@ -177,7 +177,7 @@ type CapsHostCacheBank struct {
 	ID      int32                  `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
 	Level   int32                  `xml:"level,attr" json:"level" protobuf:"varint,2,opt,name=level"`
 	Type    string                 `xml:"type,attr" json:"type" protobuf:"bytes,3,opt,name=type"`
-	Size_   int32                  `xml:"size,attr" json:"size" protobuf:"varint,4,opt,name=size"`
+	Size    int32                  `xml:"size,attr" json:"size" protobuf:"varint,4,opt,name=size"`
 	Unit    string                 `xml:"unit,attr" json:"unit" protobuf:"bytes,5,opt,name=unit"`
 	CPUs    string                 `xml:"cpus,attr" json:"cpus" protobuf:"bytes,6,opt,name=cpus"`
 	Control []CapsHostCacheControl `xml:"control" json:"control" protobuf:"bytes,7,rep,name=control"`

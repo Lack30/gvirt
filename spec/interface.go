@@ -23,7 +23,7 @@ type InterfaceStart struct {
 
 // +gogo:genproto=true
 type InterfaceMTU struct {
-	Size_ int32 `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
+	Size int32 `xml:"size,attr" json:"size" protobuf:"varint,1,opt,name=size"`
 }
 
 // +gogo:genproto=true

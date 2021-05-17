@@ -524,7 +524,7 @@ var domainTestData = []struct {
 						Model:  "dimm",
 						Access: "private",
 						Target: &DomainMemorydevTarget{
-							Size_: &DomainMemorydevTargetSize{
+							Size: &DomainMemorydevTargetSize{
 								Value: 1,
 								Unit:  "GiB",
 							},
@@ -637,12 +637,12 @@ var domainTestData = []struct {
 				MemoryHugePages: &DomainMemoryHugepages{
 					Hugepages: []DomainMemoryHugepage{
 						{
-							Size_:    1,
+							Size:    1,
 							Unit:    "G",
 							Nodeset: "0-3,5",
 						},
 						{
-							Size_:    2,
+							Size:    2,
 							Unit:    "M",
 							Nodeset: "4",
 						},
@@ -2006,7 +2006,7 @@ var domainTestData = []struct {
 								NUMANode:  &pciTargetNUMANode,
 							},
 							Hole64: &DomainControllerPCIHole64{
-								Size_: 1024,
+								Size: 1024,
 							},
 						},
 					},
@@ -2897,7 +2897,7 @@ var domainTestData = []struct {
 	{
 		Object: &DomainShmem{
 			Name: "demo",
-			Size_: &DomainShmemSize{
+			Size: &DomainShmemSize{
 				Value: 1,
 				Unit:  "GiB",
 			},
@@ -3768,7 +3768,7 @@ var domainTestData = []struct {
 				NodeMask: "0-1",
 			},
 			Target: &DomainMemorydevTarget{
-				Size_: &DomainMemorydevTargetSize{
+				Size: &DomainMemorydevTargetSize{
 					Value: 1,
 					Unit:  "GiB",
 				},
@@ -3776,7 +3776,7 @@ var domainTestData = []struct {
 					Value: 0,
 				},
 				Label: &DomainMemorydevTargetLabel{
-					Size_: &DomainMemorydevTargetSize{
+					Size: &DomainMemorydevTargetSize{
 						Value: 200,
 						Unit:  "KiB",
 					},

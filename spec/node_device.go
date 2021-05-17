@@ -286,7 +286,7 @@ type NodeDeviceStorageCapability struct {
 	Model            string                           `xml:"model,omitempty" json:"model,omitempty" protobuf:"bytes,4,opt,name=model"`
 	Vendor           string                           `xml:"vendor,omitempty" json:"vendor,omitempty" protobuf:"bytes,5,opt,name=vendor"`
 	Serial           string                           `xml:"serial,omitempty" json:"serial,omitempty" protobuf:"bytes,6,opt,name=serial"`
-	Size_            *int32                           `xml:"size" json:"size,omitempty" protobuf:"varint,7,opt,name=size"`
+	Size             *int32                           `xml:"size" json:"size,omitempty" protobuf:"varint,7,opt,name=size"`
 	LogicalBlockSize *int32                           `xml:"logical_block_size" json:"logicalBlockSize,omitempty" protobuf:"varint,8,opt,name=logicalBlockSize"`
 	NumBlocks        *int32                           `xml:"num_blocks" json:"numBlocks,omitempty" protobuf:"varint,9,opt,name=numBlocks"`
 	Capability       []NodeDeviceStorageSubCapability `xml:"capability" json:"capability" protobuf:"bytes,10,rep,name=capability"`

@@ -8,10 +8,10 @@ type StorageEncryptionSecret struct {
 
 // +gogo:genproto=true
 type StorageEncryptionCipher struct {
-	Name  string `xml:"name,attr" json:"name" protobuf:"bytes,1,opt,name=name"`
-	Size_ int64  `xml:"size,attr" json:"size" protobuf:"varint,5,opt,name=size"`
-	Mode  string `xml:"mode,attr" json:"mode" protobuf:"bytes,3,opt,name=mode"`
-	Hash  string `xml:"hash,attr" json:"hash" protobuf:"bytes,4,opt,name=hash"`
+	Name string `xml:"name,attr" json:"name" protobuf:"bytes,1,opt,name=name"`
+	Size int64  `xml:"size,attr" json:"size" protobuf:"varint,5,opt,name=size"`
+	Mode string `xml:"mode,attr" json:"mode" protobuf:"bytes,3,opt,name=mode"`
+	Hash string `xml:"hash,attr" json:"hash" protobuf:"bytes,4,opt,name=hash"`
 }
 
 // +gogo:genproto=true

@@ -79,7 +79,7 @@ func TestNodeDevice(t *testing.T) {
 		expect := strings.Join(test.XML, "\n")
 
 		nodeDevice := NodeDevice{}
-		err := nodeDevice.Unmarshal(expect)
+		err := nodeDevice.UnmarshalX(expect)
 		if err != nil {
 			t.Fatal(err)
 		}

@@ -175,7 +175,7 @@ var storageVolumeTestData = []struct {
 					},
 					Cipher: &StorageEncryptionCipher{
 						Name: "twofish",
-						Size_: 256,
+						Size: 256,
 						Mode: "cbc",
 						Hash: "sha256",
 					},
