@@ -27,43 +27,32 @@ import (
 	"libvirt.org/libvirt-go"
 )
 
-type NodeDevice struct {
+type Secret struct {
 	cc *Client
 
-	ptr *libvirt.NodeDevice
+	ptr *libvirt.Secret
 
-	spec.NodeDevice
+	spec.Secret
 }
 
-func (c *Client) GetAllNodeDevices() ([]*NodeDevice, error) {
+func (c *Client) GetAllSecrets() ([]*Secret, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	devs, err := cc.ListAllNodeDevices(libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SYSTEM |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_PCI_DEV |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_USB_DEV |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_USB_INTERFACE |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_NET |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI_HOST |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI_TARGET |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_STORAGE |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_FC_HOST |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_VPORTS |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI_GENERIC)
+	secrets, err := cc.ListAllSecrets(libvirt.CONNECT_LIST_SECRETS_EPHEMERAL | libvirt.CONNECT_LIST_SECRETS_NO_EPHEMERAL)
 	if err != nil {
 		return nil, err
 	}
-	outs := make([]*NodeDevice, 0, len(devs))
-	for _, dev := range devs {
-		doc, err := dev.GetXMLDesc(0)
+	outs := make([]*Secret, 0, len(secrets))
+	for _, sec := range secrets {
+		doc, err := sec.GetXMLDesc(0)
 		if err != nil {
 			continue
 		}
-		p := &NodeDevice{cc: c, ptr: &dev}
+		p := &Secret{cc: c, ptr: &sec}
 		if err := p.UnmarshalX(doc); err != nil {
 			continue
 		}
@@ -72,54 +61,54 @@ func (c *Client) GetAllNodeDevices() ([]*NodeDevice, error) {
 	return outs, nil
 }
 
-func (c *Client) GetNodeDeviceByName(name string) (*NodeDevice, error) {
+func (c *Client) GetSecretByName(typ libvirt.SecretUsageType, usage string) (*Secret, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	dev, err := cc.LookupDeviceByName(name)
+	net, err := cc.LookupSecretByUsage(typ, usage)
 	if err != nil {
 		return nil, err
 	}
-	doc, err := dev.GetXMLDesc(0)
+	doc, err := net.GetXMLDesc(0)
 	if err != nil {
 		return nil, err
 	}
-	p := &NodeDevice{cc: c, ptr: dev}
+	p := &Secret{cc: c, ptr: net}
 	err = p.UnmarshalX(doc)
 	return p, err
 }
 
-func (c *Client) GetNodeDeviceByWWN(wwnn, wwpn string) (*NodeDevice, error) {
+func (c *Client) GetSecretByUUID(uuid string) (*Secret, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	dev, err := cc.LookupDeviceSCSIHostByWWN(wwnn, wwpn, 0)
+	net, err := cc.LookupSecretByUUIDString(uuid)
 	if err != nil {
 		return nil, err
 	}
-	doc, err := dev.GetXMLDesc(0)
+	doc, err := net.GetXMLDesc(0)
 	if err != nil {
 		return nil, err
 	}
-	p := &NodeDevice{cc: c, ptr: dev}
+	p := &Secret{cc: c, ptr: net}
 	err = p.UnmarshalX(doc)
 	return p, err
 }
 
-func (c *Client) NodeDeviceCreateXML(xml string) (*NodeDevice, error) {
+func (c *Client) SecretDefineXML(xml string) (*Secret, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	net, err := cc.DeviceCreateXML(xml, 0)
+	net, err := cc.SecretDefineXML(xml, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -128,15 +117,11 @@ func (c *Client) NodeDeviceCreateXML(xml string) (*NodeDevice, error) {
 		return nil, err
 	}
 
-	out := &NodeDevice{cc: c, ptr: net}
+	out := &Secret{cc: c, ptr: net}
 	err = out.UnmarshalX(doc)
 	return out, err
 }
 
-func (d *NodeDevice) Destroy() error {
-	return d.ptr.Destroy()
-}
-
-func (d *NodeDevice) Detach() error {
-	return d.ptr.Detach()
+func (n *Secret) UnDefine() error {
+	return n.ptr.Undefine()
 }

@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package gkvm
+package gvirt
 
 import (
 	"github.com/lack-io/gvirt/spec"
@@ -174,6 +174,21 @@ func (d *Domain) Shutdown() error {
 	return d.ptr.ShutdownFlags(libvirt.DOMAIN_SHUTDOWN_ACPI_POWER_BTN)
 }
 
+func (d *Domain) Define() error {
+	cc, err := d.cc.NewSession()
+	if err != nil {
+		return err
+	}
+	defer cc.Close()
+
+	doc, err := d.MarshalX()
+	if err != nil {
+		return err
+	}
+	_, err = cc.DomainDefineXML(doc)
+	return err
+}
+
 func (d *Domain) Suspend() error {
 	return d.ptr.Suspend()
 }
@@ -195,4 +210,12 @@ func (d *Domain) UnDefine() error {
 		libvirt.DOMAIN_UNDEFINE_SNAPSHOTS_METADATA |
 		libvirt.DOMAIN_UNDEFINE_NVRAM)
 }
+
+// SetVCPUs set up domain cpu, placement has value static
+func (d *Domain) SetVCPUs(vcpu *spec.DomainVCPU, cpus ...spec.DomainVCPUsVCPU) error {
+	d.VCPU = vcpu
+	d.VCPUs = &spec.DomainVCPUs{VCPU: cpus}
+	return d.Define()
+}
+
 

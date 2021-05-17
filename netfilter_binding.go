@@ -27,43 +27,32 @@ import (
 	"libvirt.org/libvirt-go"
 )
 
-type NodeDevice struct {
+type NWFilterBinding struct {
 	cc *Client
 
-	ptr *libvirt.NodeDevice
+	ptr *libvirt.NWFilterBinding
 
-	spec.NodeDevice
+	spec.NWFilterBinding
 }
 
-func (c *Client) GetAllNodeDevices() ([]*NodeDevice, error) {
+func (c *Client) GetAllNWFilterBindings() ([]*NWFilterBinding, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	devs, err := cc.ListAllNodeDevices(libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SYSTEM |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_PCI_DEV |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_USB_DEV |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_USB_INTERFACE |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_NET |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI_HOST |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI_TARGET |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_STORAGE |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_FC_HOST |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_VPORTS |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI_GENERIC)
+	bindings, err := cc.ListAllNWFilterBindings(0)
 	if err != nil {
 		return nil, err
 	}
-	outs := make([]*NodeDevice, 0, len(devs))
-	for _, dev := range devs {
+	outs := make([]*NWFilterBinding, 0, len(bindings))
+	for _, dev := range bindings {
 		doc, err := dev.GetXMLDesc(0)
 		if err != nil {
 			continue
 		}
-		p := &NodeDevice{cc: c, ptr: &dev}
+		p := &NWFilterBinding{cc: c, ptr: &dev}
 		if err := p.UnmarshalX(doc); err != nil {
 			continue
 		}
@@ -72,71 +61,48 @@ func (c *Client) GetAllNodeDevices() ([]*NodeDevice, error) {
 	return outs, nil
 }
 
-func (c *Client) GetNodeDeviceByName(name string) (*NodeDevice, error) {
+func (c *Client) GetNWFilterBindingByName(name string) (*NWFilterBinding, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	dev, err := cc.LookupDeviceByName(name)
+	binding, err := cc.LookupNWFilterBindingByPortDev(name)
 	if err != nil {
 		return nil, err
 	}
-	doc, err := dev.GetXMLDesc(0)
+	doc, err := binding.GetXMLDesc(0)
 	if err != nil {
 		return nil, err
 	}
-	p := &NodeDevice{cc: c, ptr: dev}
+	p := &NWFilterBinding{cc: c, ptr: binding}
 	err = p.UnmarshalX(doc)
 	return p, err
 }
 
-func (c *Client) GetNodeDeviceByWWN(wwnn, wwpn string) (*NodeDevice, error) {
+
+func (c *Client) NWFilterBindingCreateXML(xml string) (*NWFilterBinding, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	dev, err := cc.LookupDeviceSCSIHostByWWN(wwnn, wwpn, 0)
+	binding, err := cc.NWFilterBindingCreateXML(xml, 0)
 	if err != nil {
 		return nil, err
 	}
-	doc, err := dev.GetXMLDesc(0)
-	if err != nil {
-		return nil, err
-	}
-	p := &NodeDevice{cc: c, ptr: dev}
-	err = p.UnmarshalX(doc)
-	return p, err
-}
-
-func (c *Client) NodeDeviceCreateXML(xml string) (*NodeDevice, error) {
-	cc, err := c.NewSession()
-	if err != nil {
-		return nil, err
-	}
-	defer cc.Close()
-
-	net, err := cc.DeviceCreateXML(xml, 0)
-	if err != nil {
-		return nil, err
-	}
-	doc, err := net.GetXMLDesc(0)
+	doc, err := binding.GetXMLDesc(0)
 	if err != nil {
 		return nil, err
 	}
 
-	out := &NodeDevice{cc: c, ptr: net}
+	out := &NWFilterBinding{cc: c, ptr: binding}
 	err = out.UnmarshalX(doc)
 	return out, err
 }
 
-func (d *NodeDevice) Destroy() error {
-	return d.ptr.Destroy()
-}
-
-func (d *NodeDevice) Detach() error {
-	return d.ptr.Detach()
+func (binding *NWFilterBinding) Delete() error {
+	return binding.ptr.Delete()
 }

@@ -27,43 +27,32 @@ import (
 	"libvirt.org/libvirt-go"
 )
 
-type NodeDevice struct {
+type Interface struct {
 	cc *Client
 
-	ptr *libvirt.NodeDevice
+	ptr *libvirt.Interface
 
-	spec.NodeDevice
+	spec.Interface
 }
 
-func (c *Client) GetAllNodeDevices() ([]*NodeDevice, error) {
+func (c *Client) GetAllInterfaces() ([]*Interface, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	devs, err := cc.ListAllNodeDevices(libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SYSTEM |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_PCI_DEV |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_USB_DEV |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_USB_INTERFACE |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_NET |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI_HOST |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI_TARGET |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_STORAGE |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_FC_HOST |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_VPORTS |
-		libvirt.CONNECT_LIST_NODE_DEVICES_CAP_SCSI_GENERIC)
+	interfaces, err := cc.ListAllInterfaces(libvirt.CONNECT_LIST_INTERFACES_ACTIVE | libvirt.CONNECT_LIST_INTERFACES_INACTIVE)
 	if err != nil {
 		return nil, err
 	}
-	outs := make([]*NodeDevice, 0, len(devs))
-	for _, dev := range devs {
-		doc, err := dev.GetXMLDesc(0)
+	outs := make([]*Interface, 0, len(interfaces))
+	for _, in := range interfaces {
+		doc, err := in.GetXMLDesc(libvirt.INTERFACE_XML_INACTIVE)
 		if err != nil {
 			continue
 		}
-		p := &NodeDevice{cc: c, ptr: &dev}
+		p := &Interface{cc: c, ptr: &in}
 		if err := p.UnmarshalX(doc); err != nil {
 			continue
 		}
@@ -72,71 +61,71 @@ func (c *Client) GetAllNodeDevices() ([]*NodeDevice, error) {
 	return outs, nil
 }
 
-func (c *Client) GetNodeDeviceByName(name string) (*NodeDevice, error) {
+func (c *Client) GetInterfaceByName(name string) (*Interface, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	dev, err := cc.LookupDeviceByName(name)
+	net, err := cc.LookupInterfaceByName(name)
 	if err != nil {
 		return nil, err
 	}
-	doc, err := dev.GetXMLDesc(0)
+	doc, err := net.GetXMLDesc(libvirt.INTERFACE_XML_INACTIVE)
 	if err != nil {
 		return nil, err
 	}
-	p := &NodeDevice{cc: c, ptr: dev}
+	p := &Interface{cc: c, ptr: net}
 	err = p.UnmarshalX(doc)
 	return p, err
 }
 
-func (c *Client) GetNodeDeviceByWWN(wwnn, wwpn string) (*NodeDevice, error) {
+func (c *Client) GetInterfaceByMAC(mac string) (*Interface, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	dev, err := cc.LookupDeviceSCSIHostByWWN(wwnn, wwpn, 0)
+	net, err := cc.LookupInterfaceByMACString(mac)
 	if err != nil {
 		return nil, err
 	}
-	doc, err := dev.GetXMLDesc(0)
+	doc, err := net.GetXMLDesc(libvirt.INTERFACE_XML_INACTIVE)
 	if err != nil {
 		return nil, err
 	}
-	p := &NodeDevice{cc: c, ptr: dev}
+	p := &Interface{cc: c, ptr: net}
 	err = p.UnmarshalX(doc)
 	return p, err
 }
 
-func (c *Client) NodeDeviceCreateXML(xml string) (*NodeDevice, error) {
+func (c *Client) InterfaceDefineXML(xml string) (*Interface, error) {
 	cc, err := c.NewSession()
 	if err != nil {
 		return nil, err
 	}
 	defer cc.Close()
 
-	net, err := cc.DeviceCreateXML(xml, 0)
+	net, err := cc.InterfaceDefineXML(xml, 0)
 	if err != nil {
 		return nil, err
 	}
-	doc, err := net.GetXMLDesc(0)
+	doc, err := net.GetXMLDesc(libvirt.INTERFACE_XML_INACTIVE)
 	if err != nil {
 		return nil, err
 	}
 
-	out := &NodeDevice{cc: c, ptr: net}
+	out := &Interface{cc: c, ptr: net}
 	err = out.UnmarshalX(doc)
 	return out, err
 }
 
-func (d *NodeDevice) Destroy() error {
-	return d.ptr.Destroy()
+func (i *Interface) Create() error {
+	return i.ptr.Create(0)
 }
 
-func (d *NodeDevice) Detach() error {
-	return d.ptr.Detach()
+func (i *Interface) UnDefine() error {
+	return i.ptr.Undefine()
 }

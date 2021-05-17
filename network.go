@@ -20,4 +20,137 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package gkvm
+package gvirt
+
+import (
+	"github.com/lack-io/gvirt/spec"
+	"libvirt.org/libvirt-go"
+)
+
+type Network struct {
+	cc *Client
+
+	ptr *libvirt.Network
+
+	spec.Network
+}
+
+func (c *Client) GetAllNetworks() ([]*Network, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	nets, err := cc.ListAllNetworks(libvirt.CONNECT_LIST_NETWORKS_ACTIVE | libvirt.CONNECT_LIST_NETWORKS_INACTIVE)
+	if err != nil {
+		return nil, err
+	}
+	outs := make([]*Network, 0, len(nets))
+	for _, net := range nets {
+		doc, err := net.GetXMLDesc(libvirt.NETWORK_XML_INACTIVE)
+		if err != nil {
+			continue
+		}
+		p := &Network{cc: c, ptr: &net}
+		if err := p.UnmarshalX(doc); err != nil {
+			continue
+		}
+		outs = append(outs, p)
+	}
+	return outs, nil
+}
+
+func (c *Client) GetNetworkByName(name string) (*Network, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	net, err := cc.LookupNetworkByName(name)
+	if err != nil {
+		return nil, err
+	}
+	doc, err := net.GetXMLDesc(libvirt.NETWORK_XML_INACTIVE)
+	if err != nil {
+		return nil, err
+	}
+	p := &Network{cc: c, ptr: net}
+	err = p.UnmarshalX(doc)
+	return p, err
+}
+
+func (c *Client) GetNetworkByUUID(uuid string) (*Network, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	net, err := cc.LookupNetworkByUUIDString(uuid)
+	if err != nil {
+		return nil, err
+	}
+	doc, err := net.GetXMLDesc(libvirt.NETWORK_XML_INACTIVE)
+	if err != nil {
+		return nil, err
+	}
+	p := &Network{cc: c, ptr: net}
+	err = p.UnmarshalX(doc)
+	return p, err
+}
+
+func (c *Client) NetworkCreateXML(xml string) (*Network, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	net, err := cc.NetworkCreateXML(xml)
+	if err != nil {
+		return nil, err
+	}
+	doc, err := net.GetXMLDesc(libvirt.NETWORK_XML_INACTIVE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &Network{cc: c, ptr: net}
+	err = out.UnmarshalX(doc)
+	return out, err
+}
+
+func (c *Client) NetworkDefineXML(xml string) (*Network, error) {
+	cc, err := c.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer cc.Close()
+
+	net, err := cc.NetworkDefineXML(xml)
+	if err != nil {
+		return nil, err
+	}
+	doc, err := net.GetXMLDesc(libvirt.NETWORK_XML_INACTIVE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &Network{cc: c, ptr: net}
+	err = out.UnmarshalX(doc)
+	return out, err
+}
+
+func (n *Network) Create() error {
+	return n.ptr.Create()
+}
+
+func (n *Network) Destroy() error {
+	return n.ptr.Destroy()
+}
+
+func (n *Network) UnDefine() error {
+	return n.ptr.Undefine()
+}
