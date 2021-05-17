@@ -218,4 +218,67 @@ func (d *Domain) SetVCPUs(vcpu *spec.DomainVCPU, cpus ...spec.DomainVCPUsVCPU) e
 	return d.Define()
 }
 
+type DomainSnapshot struct {
+	cc *Client
 
+	ptr *libvirt.DomainSnapshot
+
+	spec.DomainSnapshot
+}
+
+func (d *Domain) GetAllDomainSnapshots() ([]*DomainSnapshot, error) {
+	snapshots, err := d.ptr.ListAllSnapshots(libvirt.DOMAIN_SNAPSHOT_LIST_ACTIVE | libvirt.DOMAIN_SNAPSHOT_LIST_INACTIVE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]*DomainSnapshot, 0, len(snapshots))
+	for _, snapshot := range snapshots {
+		doc, err := snapshot.GetXMLDesc(libvirt.DOMAIN_SNAPSHOT_XML_SECURE)
+		if err != nil {
+			continue
+		}
+		s := &DomainSnapshot{cc: d.cc, ptr: &snapshot}
+		if err := s.UnmarshalX(doc); err == nil {
+			out = append(out, s)
+		}
+	}
+	return out, nil
+}
+
+func (d *Domain) GetDomainSnapshotByName(name string) (*DomainSnapshot, error) {
+	snapshot, err := d.ptr.SnapshotLookupByName(name, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	xml, err := snapshot.GetXMLDesc(libvirt.DOMAIN_SNAPSHOT_XML_SECURE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &DomainSnapshot{cc: d.cc, ptr: snapshot}
+	err = out.UnmarshalX(xml)
+	return out, err
+}
+
+func (d *Domain) DomainSnapshotCreateXML(xml string) (*DomainSnapshot, error) {
+	snapshot, err := d.ptr.CreateSnapshotXML(xml, libvirt.DOMAIN_SNAPSHOT_CREATE_ATOMIC|
+		libvirt.DOMAIN_SNAPSHOT_CREATE_VALIDATE)
+	if err != nil {
+		return nil, err
+	}
+
+	doc, err := snapshot.GetXMLDesc(libvirt.DOMAIN_SNAPSHOT_XML_SECURE)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &DomainSnapshot{cc: d.cc, ptr: snapshot}
+	err = out.UnmarshalX(doc)
+	return out, err
+}
+
+func (s *DomainSnapshot) Create() error {
+	return s.ptr.Delete(libvirt.DOMAIN_SNAPSHOT_DELETE_CHILDREN)
+}
