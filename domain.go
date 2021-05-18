@@ -218,6 +218,46 @@ func (d *Domain) SetVCPUs(vcpu *spec.DomainVCPU, cpus ...spec.DomainVCPUsVCPU) e
 	return d.Define()
 }
 
+func (d *Domain) SetAutoStart(b bool) error {
+	return d.ptr.SetAutostart(b)
+}
+
+func (d *Domain) AttachDevice(xml string) error {
+	err := d.ptr.AttachDeviceFlags(xml, libvirt.DOMAIN_DEVICE_MODIFY_FORCE)
+	if err != nil {
+		return nil
+	}
+	doc, err := d.ptr.GetXMLDesc(libvirt.DOMAIN_XML_SECURE)
+	if err != nil {
+		return err
+	}
+	return d.UnmarshalX(doc)
+}
+
+func (d *Domain) DetachDevice(xml string) error {
+	err := d.ptr.DetachDeviceFlags(xml, libvirt.DOMAIN_DEVICE_MODIFY_FORCE)
+	if err != nil {
+		return nil
+	}
+	doc, err := d.ptr.GetXMLDesc(libvirt.DOMAIN_XML_SECURE)
+	if err != nil {
+		return err
+	}
+	return d.UnmarshalX(doc)
+}
+
+func (d *Domain) DetachDeviceAlias(alias string) error {
+	err := d.ptr.DetachDeviceAlias(alias, libvirt.DOMAIN_DEVICE_MODIFY_FORCE)
+	if err != nil {
+		return nil
+	}
+	doc, err := d.ptr.GetXMLDesc(libvirt.DOMAIN_XML_SECURE)
+	if err != nil {
+		return err
+	}
+	return d.UnmarshalX(doc)
+}
+
 type DomainSnapshot struct {
 	cc *Client
 
@@ -279,6 +319,6 @@ func (d *Domain) DomainSnapshotCreateXML(xml string) (*DomainSnapshot, error) {
 	return out, err
 }
 
-func (s *DomainSnapshot) Create() error {
+func (s *DomainSnapshot) Delete() error {
 	return s.ptr.Delete(libvirt.DOMAIN_SNAPSHOT_DELETE_CHILDREN)
 }
