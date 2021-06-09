@@ -2,42 +2,37 @@ package spec
 
 import "encoding/xml"
 
-// +gogo:genproto=true
 type DomainSnapshotDisk struct {
-	Name     string            `xml:"name,attr" json:"name,omitempty" protobuf:"bytes,1,opt,name=name"`
-	Snapshot string            `xml:"snapshot,attr,omitempty" json:"snapshot,omitempty" protobuf:"bytes,2,opt,name=snapshot"`
-	Driver   *DomainDiskDriver `xml:"driver" json:"driver,omitempty" protobuf:"bytes,3,opt,name=driver"`
-	Source   *DomainDiskSource `xml:"source" json:"source,omitempty" protobuf:"bytes,4,opt,name=source"`
+	Name     string            `xml:"name,attr" json:"name,omitempty"`
+	Snapshot string            `xml:"snapshot,attr,omitempty" json:"snapshot,omitempty"`
+	Driver   *DomainDiskDriver `xml:"driver" json:"driver,omitempty"`
+	Source   *DomainDiskSource `xml:"source" json:"source,omitempty"`
 }
 
-// +gogo:genproto=true
 type DomainSnapshotDisks struct {
-	Disks []DomainSnapshotDisk `xml:"disk" json:"disks" protobuf:"bytes,1,rep,name=disks"`
+	Disks []DomainSnapshotDisk `xml:"disk" json:"disks"`
 }
 
-// +gogo:genproto=true
 type DomainSnapshotMemory struct {
-	Snapshot string `xml:"snapshot,attr" json:"snapshot" protobuf:"bytes,1,opt,name=snapshot"`
-	File     string `xml:"file,attr,omitempty" json:"file,omitempty" protobuf:"bytes,2,opt,name=file"`
+	Snapshot string `xml:"snapshot,attr" json:"snapshot"`
+	File     string `xml:"file,attr,omitempty" json:"file,omitempty"`
 }
 
-// +gogo:genproto=true
 type DomainSnapshotParent struct {
-	Name string `xml:"name" json:"name" protobuf:"bytes,1,opt,name=name"`
+	Name string `xml:"name" json:"name"`
 }
 
-// +gogo:genproto=true
 type DomainSnapshot struct {
 	XMLName      xml.Name              `xml:"domainsnapshot" json:"-"`
-	Name         string                `xml:"name,omitempty" json:"name,omitempty" protobuf:"bytes,1,opt,name=name"`
-	Description  string                `xml:"description,omitempty" json:"description,omitempty" protobuf:"bytes,2,opt,name=description"`
-	State        string                `xml:"state,omitempty" json:"state,omitempty" protobuf:"bytes,3,opt,name=state"`
-	CreationTime string                `xml:"creationTime,omitempty" json:"creationTime,omitempty" protobuf:"bytes,4,opt,name=creationTime"`
-	Parent       *DomainSnapshotParent `xml:"parent" json:"parent,omitempty" protobuf:"bytes,5,opt,name=parent"`
-	Memory       *DomainSnapshotMemory `xml:"memory" json:"memory,omitempty" protobuf:"bytes,6,opt,name=memory"`
-	Disks        *DomainSnapshotDisks  `xml:"disks" json:"disks,omitempty" protobuf:"bytes,7,opt,name=disks"`
-	Domain       *Domain               `xml:"domain" json:"domain,omitempty" protobuf:"bytes,8,opt,name=domain"`
-	Active       *int32                `xml:"active" json:"active,omitempty" protobuf:"varint,9,opt,name=active"`
+	Name         string                `xml:"name,omitempty" json:"name,omitempty"`
+	Description  string                `xml:"description,omitempty" json:"description,omitempty"`
+	State        string                `xml:"state,omitempty" json:"state,omitempty"`
+	CreationTime string                `xml:"creationTime,omitempty" json:"creationTime,omitempty"`
+	Parent       *DomainSnapshotParent `xml:"parent" json:"parent,omitempty"`
+	Memory       *DomainSnapshotMemory `xml:"memory" json:"memory,omitempty"`
+	Disks        *DomainSnapshotDisks  `xml:"disks" json:"disks,omitempty"`
+	Domain       *Domain               `xml:"domain" json:"domain,omitempty"`
+	Active       *int32                `xml:"active" json:"active,omitempty"`
 }
 
 type domainSnapshotDisk DomainSnapshotDisk

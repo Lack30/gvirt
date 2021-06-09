@@ -183,6 +183,10 @@ func (sp *StoragePool) Destroy() error {
 	return sp.ptr.Destroy()
 }
 
+func (sp *StoragePool) SetAutoStart(b bool) error{
+	return sp.ptr.SetAutostart(b)
+}
+
 type StorageVolume struct {
 	cc *Client
 
