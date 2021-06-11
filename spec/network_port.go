@@ -5,98 +5,84 @@ import (
 	"fmt"
 )
 
-// +gogo:genproto=true
 type NetworkPort struct {
 	XMLName     xml.Name                `xml:"networkport" json:"-"`
-	UUID        string                  `xml:"uuid,omitempty" json:"uuid" protobuf:"bytes,1,opt,name=uuid"`
-	Owner       *NetworkPortOwner       `xml:"owner" json:"owner,omitempty" protobuf:"bytes,2,opt,name=owner"`
-	MAC         *NetworkPortMAC         `xml:"mac" json:"mac,omitempty" protobuf:"bytes,3,opt,name=mac"`
-	Group       string                  `xml:"group,omitempty" json:"group,omitempty" protobuf:"bytes,4,opt,name=group"`
-	Bandwidth   *NetworkBandwidth       `xml:"bandwidth" json:"bandwidth,omitempty" protobuf:"bytes,5,opt,name=bandwidth"`
-	VLAN        *NetworkPortVLAN        `xml:"vlan" json:"vlan,omitempty" protobuf:"bytes,6,opt,name=vlan"`
-	PortOptions *NetworkPortPortOptions `xml:"port" json:"portOptions,omitempty" protobuf:"bytes,7,opt,name=portOptions"`
-	VirtualPort *NetworkVirtualPort     `xml:"virtualport" json:"virtualPort,omitempty" protobuf:"bytes,8,opt,name=virtualPort"`
-	RXFilters   *NetworkPortRXFilters   `xml:"rxfilters" json:"rxFilters,omitempty" protobuf:"bytes,9,opt,name=rxFilters"`
-	Plug        *NetworkPortPlug        `xml:"plug" json:"plug,omitempty" protobuf:"bytes,10,opt,name=plug"`
+	UUID        string                  `xml:"uuid,omitempty" json:"uuid"`
+	Owner       *NetworkPortOwner       `xml:"owner" json:"owner,omitempty"`
+	MAC         *NetworkPortMAC         `xml:"mac" json:"mac,omitempty"`
+	Group       string                  `xml:"group,omitempty" json:"group,omitempty"`
+	Bandwidth   *NetworkBandwidth       `xml:"bandwidth" json:"bandwidth,omitempty"`
+	VLAN        *NetworkPortVLAN        `xml:"vlan" json:"vlan,omitempty"`
+	PortOptions *NetworkPortPortOptions `xml:"port" json:"portOptions,omitempty"`
+	VirtualPort *NetworkVirtualPort     `xml:"virtualport" json:"virtualPort,omitempty"`
+	RXFilters   *NetworkPortRXFilters   `xml:"rxfilters" json:"rxFilters,omitempty"`
+	Plug        *NetworkPortPlug        `xml:"plug" json:"plug,omitempty"`
 }
 
-// +gogo:genproto=true
 type NetworkPortPortOptions struct {
-	Isolated string `xml:"isolated,attr,omitempty" json:"isolated,omitempty" protobuf:"bytes,1,opt,name=isolated"`
+	Isolated string `xml:"isolated,attr,omitempty" json:"isolated,omitempty"`
 }
 
-// +gogo:genproto=true
 type NetworkPortVLAN struct {
-	Trunk string               `xml:"trunk,attr,omitempty" json:"trunk,omitempty" protobuf:"bytes,1,opt,name=trunk"`
-	Tags  []NetworkPortVLANTag `xml:"tag" json:"tags" protobuf:"bytes,2,rep,name=tags"`
+	Trunk string               `xml:"trunk,attr,omitempty" json:"trunk,omitempty"`
+	Tags  []NetworkPortVLANTag `xml:"tag" json:"tags"`
 }
 
-// +gogo:genproto=true
 type NetworkPortVLANTag struct {
-	ID         int32  `xml:"id,attr" json:"id" protobuf:"varint,1,opt,name=id"`
-	NativeMode string `xml:"nativeMode,attr,omitempty" json:"nativeMode,omitempty" protobuf:"bytes,2,opt,name=nativeMode"`
+	ID         int32  `xml:"id,attr" json:"id"`
+	NativeMode string `xml:"nativeMode,attr,omitempty" json:"nativeMode,omitempty"`
 }
 
-// +gogo:genproto=true
 type NetworkPortOwner struct {
-	UUID string `xml:"uuid,omitempty" json:"uuid,omitempty" protobuf:"bytes,1,opt,name=uuid"`
-	Name string `xml:"name,omitempty" json:"name,omitempty" protobuf:"bytes,2,opt,name=name"`
+	UUID string `xml:"uuid,omitempty" json:"uuid,omitempty"`
+	Name string `xml:"name,omitempty" json:"name,omitempty"`
 }
 
-// +gogo:genproto=true
 type NetworkPortMAC struct {
-	Address string `xml:"address,attr" json:"address" protobuf:"bytes,1,opt,name=address"`
+	Address string `xml:"address,attr" json:"address"`
 }
 
-// +gogo:genproto=true
 type NetworkPortRXFilters struct {
-	TrustGuest string `xml:"trustGuest,attr" json:"trustGuest" protobuf:"bytes,1,opt,name=trustGuest"`
+	TrustGuest string `xml:"trustGuest,attr" json:"trustGuest"`
 }
 
-// +gogo:genproto=true
 type NetworkPortPlug struct {
-	Bridge     *NetworkPortPlugBridge     `xml:"-" json:"bridge,omitempty" protobuf:"bytes,1,opt,name=bridge"`
-	Network    *NetworkPortPlugNetwork    `xml:"-" json:"network,omitempty" protobuf:"bytes,2,opt,name=network"`
-	Direct     *NetworkPortPlugDirect     `xml:"-" json:"direct,omitempty" protobuf:"bytes,3,opt,name=direct"`
-	HostDevPCI *NetworkPortPlugHostDevPCI `xml:"-" json:"hostDevPCI,omitempty" protobuf:"bytes,4,opt,name=hostDevPCI"`
+	Bridge     *NetworkPortPlugBridge     `xml:"-" json:"bridge,omitempty"`
+	Network    *NetworkPortPlugNetwork    `xml:"-" json:"network,omitempty"`
+	Direct     *NetworkPortPlugDirect     `xml:"-" json:"direct,omitempty"`
+	HostDevPCI *NetworkPortPlugHostDevPCI `xml:"-" json:"hostDevPCI,omitempty"`
 }
 
-// +gogo:genproto=true
 type NetworkPortPlugBridge struct {
-	Bridge          string `xml:"bridge,attr" json:"bridge" protobuf:"bytes,1,opt,name=bridge"`
-	MacTableManager string `xml:"macTableManager,attr,omitempty" json:"macTableManager,omitempty" protobuf:"bytes,2,opt,name=macTableManager"`
+	Bridge          string `xml:"bridge,attr" json:"bridge"`
+	MacTableManager string `xml:"macTableManager,attr,omitempty" json:"macTableManager,omitempty"`
 }
 
-// +gogo:genproto=true
 type NetworkPortPlugNetwork struct {
-	Bridge          string `xml:"bridge,attr" json:"bridge" protobuf:"bytes,1,opt,name=bridge"`
-	MacTableManager string `xml:"macTableManager,attr,omitempty" json:"macTableManager,omitempty" protobuf:"bytes,2,opt,name=macTableManager"`
+	Bridge          string `xml:"bridge,attr" json:"bridge"`
+	MacTableManager string `xml:"macTableManager,attr,omitempty" json:"macTableManager,omitempty"`
 }
 
-// +gogo:genproto=true
 type NetworkPortPlugDirect struct {
-	Dev  string `xml:"dev,attr" json:"dev" protobuf:"bytes,1,opt,name=dev"`
-	Mode string `xml:"mode,attr" json:"mode" protobuf:"bytes,2,opt,name=mode"`
+	Dev  string `xml:"dev,attr" json:"dev"`
+	Mode string `xml:"mode,attr" json:"mode"`
 }
 
-// +gogo:genproto=true
 type NetworkPortPlugHostDevPCI struct {
-	Managed string                            `xml:"managed,attr,omitempty" json:"managed,omitempty" protobuf:"bytes,1,opt,name=managed"`
-	Driver  *NetworkPortPlugHostDevPCIDriver  `xml:"driver" json:"driver,omitempty" protobuf:"bytes,2,opt,name=driver"`
-	Address *NetworkPortPlugHostDevPCIAddress `xml:"address" json:"address,omitempty" protobuf:"bytes,3,opt,name=address"`
+	Managed string                            `xml:"managed,attr,omitempty" json:"managed,omitempty"`
+	Driver  *NetworkPortPlugHostDevPCIDriver  `xml:"driver" json:"driver,omitempty"`
+	Address *NetworkPortPlugHostDevPCIAddress `xml:"address" json:"address,omitempty"`
 }
 
-// +gogo:genproto=true
 type NetworkPortPlugHostDevPCIDriver struct {
-	Name string `xml:"name,attr" json:"name" protobuf:"bytes,1,opt,name=name"`
+	Name string `xml:"name,attr" json:"name"`
 }
 
-// +gogo:genproto=true
 type NetworkPortPlugHostDevPCIAddress struct {
-	Domain   *int32 `xml:"domain,attr" json:"domain" protobuf:"varint,1,opt,name=domain"`
-	Bus      *int32 `xml:"bus,attr" json:"bus" protobuf:"varint,2,opt,name=bus"`
-	Slot     *int32 `xml:"slot,attr" json:"slot" protobuf:"varint,3,opt,name=slot"`
-	Function *int32 `xml:"function,attr" json:"function" protobuf:"varint,4,opt,name=function"`
+	Domain   *int32 `xml:"domain,attr" json:"domain"`
+	Bus      *int32 `xml:"bus,attr" json:"bus"`
+	Slot     *int32 `xml:"slot,attr" json:"slot"`
+	Function *int32 `xml:"function,attr" json:"function"`
 }
 
 func (a *NetworkPortPlugHostDevPCIAddress) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
@@ -104,8 +90,8 @@ func (a *NetworkPortPlugHostDevPCIAddress) MarshalXML(e *xml.Encoder, start xml.
 	marshalUintAttr(&start, "bus", a.Bus, "0x%02x")
 	marshalUintAttr(&start, "slot", a.Slot, "0x%02x")
 	marshalUintAttr(&start, "function", a.Function, "0x%x")
-	e.EncodeToken(start)
-	e.EncodeToken(start.End())
+	_ = e.EncodeToken(start)
+	_ = e.EncodeToken(start.End())
 	return nil
 }
 
