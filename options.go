@@ -62,7 +62,7 @@ func newOptions(opts ...Option) Options {
 		u: url.URL{
 			Path: "/system",
 		},
-		Kind: KindQemu,
+		Kind:           KindQemu,
 		PoolSize:       DefaultPoolSize,
 		PoolTTL:        DefaultPoolTTL,
 		PoolMaxStreams: DefaultPoolMaxStreams,
@@ -82,6 +82,16 @@ type Option func(*Options)
 func Kind(kind ClientKind) Option {
 	return func(o *Options) {
 		o.Kind = kind
+	}
+}
+
+// URL specifies the value for url.URL
+func URL(u url.URL) Option {
+	return func(o *Options) {
+		if strings.HasPrefix(u.String(), string(KindQemu)) {
+			o.Kind = KindQemu
+		}
+		o.u = u
 	}
 }
 
