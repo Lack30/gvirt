@@ -81,7 +81,6 @@ func (c *Client) GetNWFilterBindingByName(name string) (*NWFilterBinding, error)
 	return p, err
 }
 
-
 func (c *Client) NWFilterBindingCreateXML(xml string) (*NWFilterBinding, error) {
 	cc, err := c.NewSession()
 	if err != nil {
@@ -105,4 +104,8 @@ func (c *Client) NWFilterBindingCreateXML(xml string) (*NWFilterBinding, error) 
 
 func (binding *NWFilterBinding) Delete() error {
 	return binding.ptr.Delete()
+}
+
+func (binding *NWFilterBinding) Deref() *libvirt.NWFilterBinding {
+	return binding.ptr
 }

@@ -184,12 +184,8 @@ type Domain struct {
 	spec.Domain
 }
 
-func (d *Domain) Create() error {
-	return d.ptr.Create()
-}
-
-func (d *Domain) Shutdown() error {
-	return d.ptr.ShutdownFlags(libvirt.DOMAIN_SHUTDOWN_ACPI_POWER_BTN)
+func (d *Domain) Deref() *libvirt.Domain {
+	return d.ptr
 }
 
 func (d *Domain) Define() error {
@@ -205,28 +201,6 @@ func (d *Domain) Define() error {
 	}
 	_, err = cc.DomainDefineXML(doc)
 	return err
-}
-
-func (d *Domain) Suspend() error {
-	return d.ptr.Suspend()
-}
-
-func (d *Domain) Resume() error {
-	return d.ptr.Resume()
-}
-
-func (d *Domain) Reboot() error {
-	return d.ptr.Reboot(libvirt.DOMAIN_REBOOT_ACPI_POWER_BTN)
-}
-
-func (d *Domain) Destroy() error {
-	return d.ptr.DestroyFlags(libvirt.DOMAIN_DESTROY_GRACEFUL)
-}
-
-func (d *Domain) UnDefine() error {
-	return d.ptr.UndefineFlags(libvirt.DOMAIN_UNDEFINE_MANAGED_SAVE |
-		libvirt.DOMAIN_UNDEFINE_SNAPSHOTS_METADATA |
-		libvirt.DOMAIN_UNDEFINE_NVRAM)
 }
 
 // SetVCPUs set up domain cpu, placement has value static

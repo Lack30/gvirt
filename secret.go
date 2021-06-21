@@ -125,3 +125,7 @@ func (c *Client) SecretDefineXML(xml string) (*Secret, error) {
 func (n *Secret) UnDefine() error {
 	return n.ptr.Undefine()
 }
+
+func (n *Secret) Deref() *libvirt.Secret {
+	return n.ptr
+}

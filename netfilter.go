@@ -125,3 +125,7 @@ func (c *Client) NWFilterDefineXML(xml string) (*NWFilter, error) {
 func (f *NWFilter) UnDefine() error {
 	return f.ptr.Undefine()
 }
+
+func (f *NWFilter) Deref() *libvirt.NWFilter {
+	return f.ptr
+}

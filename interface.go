@@ -129,3 +129,7 @@ func (i *Interface) Create() error {
 func (i *Interface) UnDefine() error {
 	return i.ptr.Undefine()
 }
+
+func (i *Interface) Deref() *libvirt.Interface {
+	return i.ptr
+}

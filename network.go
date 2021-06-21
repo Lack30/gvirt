@@ -27,14 +27,6 @@ import (
 	"libvirt.org/libvirt-go"
 )
 
-type Network struct {
-	cc *Client
-
-	ptr *libvirt.Network
-
-	spec.Network
-}
-
 func (c *Client) GetAllNetworks() ([]*Network, error) {
 	cc, err := c.NewSession()
 	if err != nil {
@@ -143,14 +135,14 @@ func (c *Client) NetworkDefineXML(xml string) (*Network, error) {
 	return out, err
 }
 
-func (n *Network) Create() error {
-	return n.ptr.Create()
+type Network struct {
+	cc *Client
+
+	ptr *libvirt.Network
+
+	spec.Network
 }
 
-func (n *Network) Destroy() error {
-	return n.ptr.Destroy()
-}
-
-func (n *Network) UnDefine() error {
-	return n.ptr.Undefine()
+func (n *Network) Deref() *libvirt.Network {
+	return n.ptr
 }

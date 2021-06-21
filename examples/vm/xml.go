@@ -22,7 +22,7 @@ var dev = `<volume type='file'>
   </target>
 </volume>`
 
-var xml = `<domain type='kvm' id='11'>
+var xml = `<domain type='kvm'>
   <name>test</name>
   <memory unit='KiB'>1048576</memory>
   <currentMemory unit='KiB'>1048576</currentMemory>

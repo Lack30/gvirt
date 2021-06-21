@@ -91,3 +91,7 @@ func (d *Domain) DomainSnapshotCreateXML(xml string) (*DomainSnapshot, error) {
 func (s *DomainSnapshot) Delete() error {
 	return s.ptr.Delete(libvirt.DOMAIN_SNAPSHOT_DELETE_CHILDREN)
 }
+
+func (s *DomainSnapshot) Deref() *libvirt.DomainSnapshot {
+	return s.ptr
+}

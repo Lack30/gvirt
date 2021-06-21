@@ -183,8 +183,8 @@ func (sp *StoragePool) Destroy() error {
 	return sp.ptr.Destroy()
 }
 
-func (sp *StoragePool) SetAutoStart(b bool) error{
-	return sp.ptr.SetAutostart(b)
+func (sp *StoragePool) Deref() *libvirt.StoragePool {
+	return sp.ptr
 }
 
 type StorageVolume struct {
@@ -294,4 +294,8 @@ func (v *StorageVolume) Delete() error {
 
 func (v *StorageVolume) Resize(cap uint64) error {
 	return v.ptr.Resize(cap, libvirt.STORAGE_VOL_RESIZE_ALLOCATE)
+}
+
+func (v *StorageVolume) Deref() *libvirt.StorageVol {
+	return v.ptr
 }

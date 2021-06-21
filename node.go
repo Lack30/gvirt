@@ -140,3 +140,7 @@ func (d *NodeDevice) Destroy() error {
 func (d *NodeDevice) Detach() error {
 	return d.ptr.Detach()
 }
+
+func (d *NodeDevice) Deref() *libvirt.NodeDevice {
+	return d.ptr
+}
