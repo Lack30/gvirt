@@ -58,12 +58,12 @@ func (c *Client) GetAllNodeDevices() ([]*NodeDevice, error) {
 		return nil, err
 	}
 	outs := make([]*NodeDevice, 0, len(devs))
-	for _, dev := range devs {
+	for i, dev := range devs {
 		doc, err := dev.GetXMLDesc(0)
 		if err != nil {
 			continue
 		}
-		p := &NodeDevice{cc: c, ptr: &dev}
+		p := &NodeDevice{cc: c, ptr: &devs[i]}
 		if err := p.UnmarshalX(doc); err != nil {
 			continue
 		}

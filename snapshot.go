@@ -42,12 +42,12 @@ func (d *Domain) GetAllDomainSnapshots() ([]*DomainSnapshot, error) {
 	}
 
 	out := make([]*DomainSnapshot, 0, len(snapshots))
-	for _, snapshot := range snapshots {
+	for i, snapshot := range snapshots {
 		doc, err := snapshot.GetXMLDesc(libvirt.DOMAIN_SNAPSHOT_XML_SECURE)
 		if err != nil {
 			continue
 		}
-		s := &DomainSnapshot{cc: d.cc, ptr: &snapshot}
+		s := &DomainSnapshot{cc: d.cc, ptr: &snapshots[i]}
 		if err := s.UnmarshalX(doc); err == nil {
 			out = append(out, s)
 		}

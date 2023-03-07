@@ -47,12 +47,12 @@ func (c *Client) GetAllNWFilterBindings() ([]*NWFilterBinding, error) {
 		return nil, err
 	}
 	outs := make([]*NWFilterBinding, 0, len(bindings))
-	for _, dev := range bindings {
+	for i, dev := range bindings {
 		doc, err := dev.GetXMLDesc(0)
 		if err != nil {
 			continue
 		}
-		p := &NWFilterBinding{cc: c, ptr: &dev}
+		p := &NWFilterBinding{cc: c, ptr: &bindings[i]}
 		if err := p.UnmarshalX(doc); err != nil {
 			continue
 		}

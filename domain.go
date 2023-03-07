@@ -42,12 +42,12 @@ func (c *Client) GetAllDomains() ([]*Domain, error) {
 	}
 
 	out := make([]*Domain, 0, len(domains))
-	for _, dom := range domains {
+	for i, dom := range domains {
 		doc, err := dom.GetXMLDesc(libvirt.DOMAIN_XML_SECURE | libvirt.DOMAIN_XML_INACTIVE)
 		if err != nil {
 			continue
 		}
-		d := &Domain{cc: c, ptr: &dom}
+		d := &Domain{cc: c, ptr: &domains[i]}
 		if err := d.UnmarshalX(doc); err == nil {
 			out = append(out, d)
 		}

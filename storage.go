@@ -47,12 +47,12 @@ func (c *Client) GetAllStoragePools() ([]*StoragePool, error) {
 		return nil, err
 	}
 	outs := make([]*StoragePool, 0, len(pools))
-	for _, pool := range pools {
+	for i, pool := range pools {
 		doc, err := pool.GetXMLDesc(libvirt.STORAGE_XML_INACTIVE)
 		if err != nil {
 			continue
 		}
-		p := &StoragePool{cc: c, ptr: &pool}
+		p := &StoragePool{cc: c, ptr: &pools[i]}
 		if err := p.UnmarshalX(doc); err != nil {
 			continue
 		}
@@ -202,12 +202,12 @@ func (sp *StoragePool) GetAllStorageVolumes() ([]*StorageVolume, error) {
 	}
 
 	outs := make([]*StorageVolume, 0, len(volumes))
-	for _, volume := range volumes {
+	for i, volume := range volumes {
 		doc, err := volume.GetXMLDesc(0)
 		if err != nil {
 			continue
 		}
-		vol := &StorageVolume{cc: sp.cc, ptr: &volume}
+		vol := &StorageVolume{cc: sp.cc, ptr: &volumes[i]}
 		if err := vol.UnmarshalX(doc); err != nil {
 			continue
 		}

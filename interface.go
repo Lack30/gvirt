@@ -47,12 +47,12 @@ func (c *Client) GetAllInterfaces() ([]*Interface, error) {
 		return nil, err
 	}
 	outs := make([]*Interface, 0, len(interfaces))
-	for _, in := range interfaces {
+	for i, in := range interfaces {
 		doc, err := in.GetXMLDesc(libvirt.INTERFACE_XML_INACTIVE)
 		if err != nil {
 			continue
 		}
-		p := &Interface{cc: c, ptr: &in}
+		p := &Interface{cc: c, ptr: &interfaces[i]}
 		if err := p.UnmarshalX(doc); err != nil {
 			continue
 		}

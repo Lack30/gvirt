@@ -39,12 +39,12 @@ func (c *Client) GetAllNetworks() ([]*Network, error) {
 		return nil, err
 	}
 	outs := make([]*Network, 0, len(nets))
-	for _, net := range nets {
+	for i, net := range nets {
 		doc, err := net.GetXMLDesc(libvirt.NETWORK_XML_INACTIVE)
 		if err != nil {
 			continue
 		}
-		p := &Network{cc: c, ptr: &net}
+		p := &Network{cc: c, ptr: &nets[i]}
 		if err := p.UnmarshalX(doc); err != nil {
 			continue
 		}

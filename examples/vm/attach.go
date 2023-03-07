@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/lack-io/gvirt"
 	"github.com/lack-io/gvirt/spec"
@@ -14,7 +15,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	dom, err := cc.GetDomainByName("centos")
+	dom, err := cc.GetDomainByName("oracle")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	nw, err := cc.GetNetworkByName("default")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -33,16 +39,23 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	//time.Sleep(time.Second * 2)
-	//
-	//for _, i := range dom.Devices.Interfaces {
-	//	fmt.Println("mac:", i.MAC.Address)
-	//	if i.MAC.Address != "52:54:00:bb:f3:ac" {
-	//		x, _ := i.MarshalX()
-	//		_, err = dom.DetachDevice(x)
-	//		if err != nil {
-	//			log.Fatalln(err)
-	//		}
-	//	}
-	//}
+	iface := dom.Devices.Interfaces[len(dom.Devices.Interfaces)-1]
+	fmt.Println(iface.MAC.Address)
+
+	var ip string
+	for {
+		time.Sleep(time.Second * 2)
+		leases, _ := nw.Deref().GetDHCPLeases()
+		for _, lease := range leases {
+			if lease.Mac == iface.MAC.Address {
+				ip = lease.IPaddr
+			}
+			if ip != "" {
+				goto LEASE
+			}
+		}
+	}
+
+LEASE:
+	fmt.Println(ip)
 }

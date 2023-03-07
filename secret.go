@@ -47,12 +47,12 @@ func (c *Client) GetAllSecrets() ([]*Secret, error) {
 		return nil, err
 	}
 	outs := make([]*Secret, 0, len(secrets))
-	for _, sec := range secrets {
+	for i, sec := range secrets {
 		doc, err := sec.GetXMLDesc(0)
 		if err != nil {
 			continue
 		}
-		p := &Secret{cc: c, ptr: &sec}
+		p := &Secret{cc: c, ptr: &secrets[i]}
 		if err := p.UnmarshalX(doc); err != nil {
 			continue
 		}

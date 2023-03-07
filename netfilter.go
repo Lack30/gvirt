@@ -47,12 +47,12 @@ func (c *Client) GetAllNWFilters() ([]*NWFilter, error) {
 		return nil, err
 	}
 	outs := make([]*NWFilter, 0, len(filters))
-	for _, dev := range filters {
+	for i, dev := range filters {
 		doc, err := dev.GetXMLDesc(0)
 		if err != nil {
 			continue
 		}
-		p := &NWFilter{cc: c, ptr: &dev}
+		p := &NWFilter{cc: c, ptr: &filters[i]}
 		if err := p.UnmarshalX(doc); err != nil {
 			continue
 		}
